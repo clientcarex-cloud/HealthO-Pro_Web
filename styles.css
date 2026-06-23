@@ -201,8 +201,8 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 .drop-item:hover { background: var(--bg-soft); }
 .drop-ic { width: 38px; height: 38px; flex: none; border-radius: 11px; display: grid; place-items: center; color: #fff; }
 .drop-ic svg { width: 20px; height: 20px; }
-.drop-tt { font-weight: 700; color: var(--ink); font-size: .95rem; }
-.drop-ds { font-size: .8rem; color: var(--text-mute); line-height: 1.4; }
+.drop-tt { font-weight: 700; color: var(--ink); font-size: 1.05rem; display: block; margin-bottom: 2px; }
+.drop-ds { font-size: .85rem; color: var(--text-mute); line-height: 1.4; display: block; }
 
 .nav-actions { display: flex; align-items: center; gap: 12px; }
 .nav-cta { padding: 11px 22px; font-size: .92rem; }
