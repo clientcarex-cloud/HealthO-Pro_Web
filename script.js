@@ -100,7 +100,47 @@
 
         /* ---------- Pricing: billing toggle ---------- */
         var billBtns = document.querySelectorAll('.billing-toggle button');
+
+        /* ---------- Real-time Pricing Calculator ---------- */
+        var currentBillingCycle = 'year';
+        var recalculatePrices = function(cycle) {
+            currentBillingCycle = cycle;
+            document.querySelectorAll('.user-select').forEach(function(select) {
+                var card = select.closest('.price-card');
+                if (!card) return;
+                
+                var users = parseInt(select.value, 10);
+                var pricePerUser = parseInt(select.getAttribute('data-price-' + cycle), 10);
+                
+                var subtotal = users * pricePerUser;
+                var gst = Math.round(subtotal * 0.18);
+                var total = subtotal + gst;
+                
+                var baseEl = card.querySelector('.calc-base');
+                var gstEl = card.querySelector('.calc-gst');
+                var totalEl = card.querySelector('.calc-total');
+                var billedEl = card.querySelector('.calc-billed');
+                var freqEl = card.querySelector('.calc-billed-freq');
+                
+                var months = (cycle === 'year') ? 12 : 6;
+                var billedAmount = total * months;
+                
+                if (baseEl) baseEl.textContent = subtotal.toLocaleString('en-IN');
+                if (gstEl) gstEl.textContent = gst.toLocaleString('en-IN');
+                if (totalEl) totalEl.textContent = total.toLocaleString('en-IN');
+                if (billedEl) billedEl.textContent = billedAmount.toLocaleString('en-IN');
+                if (freqEl) freqEl.textContent = (cycle === 'year') ? 'Annually' : 'Every 6 Months';
+            });
+        };
+
+        document.querySelectorAll('.user-select').forEach(function(select) {
+            select.addEventListener('change', function() {
+                recalculatePrices(currentBillingCycle);
+            });
+        });
+
         var setBilling = function (cycle) {
+            recalculatePrices(cycle);
             billBtns.forEach(function (b) { b.classList.toggle('active', b.dataset.cycle === cycle); });
             document.querySelectorAll('[data-half]').forEach(function (el) {
                 el.style.display = (cycle === 'half') ? '' : 'none';
