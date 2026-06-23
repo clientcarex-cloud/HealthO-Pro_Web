@@ -343,10 +343,10 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
     box-shadow: var(--e1); transition: transform .3s, box-shadow .3s, border-color .3s;
 }
 .country:hover { transform: translateY(-5px); box-shadow: var(--e3); border-color: var(--cyan-light); }
-.country .flag { font-size: 1.7rem; line-height: 1; }
-.country .cn { font-weight: 700; color: var(--ink); font-size: .98rem; }
-.country .cr { font-size: .76rem; color: var(--text-mute); }
-
+.country .flag { font-size: 1.7rem; line-height: 1; flex: none; }
+.country > span:last-child { flex: 1; }
+.country .cn { display: block; font-weight: 700; color: var(--ink); font-size: 1rem; line-height: 1.2; margin-bottom: 2px; }
+.country .cr { display: block; font-size: .82rem; color: var(--text-mute); line-height: 1.2; }
 /* ---------- Pricing ---------- */
 .billing-toggle { display: inline-flex; align-items: center; gap: 6px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-pill); padding: 6px; box-shadow: var(--e1); margin: 0 auto; }
 .billing-toggle button { padding: 11px 26px; border-radius: var(--r-pill); font-weight: 700; font-size: .95rem; color: var(--text-soft); transition: all .25s; position: relative; }
