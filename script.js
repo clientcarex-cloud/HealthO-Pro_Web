@@ -176,18 +176,21 @@
 
                 var data = new FormData(form);
                 fetch('contact.php', { method: 'POST', body: data })
-                    .then(function (r) { return r.json().catch(function () { return { status: 'success' }; }); })
+                    .then(function (r) {
+                        return r.json().catch(function () {
+                            throw new Error('Invalid response from server.');
+                        });
+                    })
                     .then(function (res) {
                         if (res.status === 'success') {
-                            showStatus('ok', '✓ Thank you! Our team will get back to you within one business day.');
+                            showStatus('ok', res.message || '✓ Thank you! Our team will get back to you within one business day.');
                             form.reset();
                         } else {
-                            showStatus('bad', res.message || 'Something went wrong. Please email sales@healtho.pro.');
+                            showStatus('bad', res.message || 'Something went wrong. Please email digicarelynx@gmail.com.');
                         }
                     })
-                    .catch(function () {
-                        showStatus('ok', '✓ Thank you! Your request has been received. We will contact you shortly.');
-                        form.reset();
+                    .catch(function (error) {
+                        showStatus('bad', 'Could not send message. ' + (error.message || 'Please email digicarelynx@gmail.com directly.'));
                     })
                     .finally(function () {
                         if (btn) { btn.disabled = false; btn.innerHTML = btnText; }

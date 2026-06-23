@@ -38,8 +38,7 @@ try {
     $mail->Sender = 'info@healtho.pro'; // Return-Path for shared hosts
 
     // Notification recipients
-    $mail->addAddress('sales@healtho.pro');
-    $mail->addAddress('info@healtho.pro');
+    $mail->addAddress('digicarelynx@gmail.com');
 
     // Subject reflects the type of submission
     $subjectType = ($orgType === 'Job Application') ? 'New Career Application' : 'New Website Enquiry';
@@ -66,6 +65,6 @@ try {
     echo json_encode(['status' => 'success', 'message' => 'Your message has been sent successfully.']);
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => "Could not send your message. Please email sales@healtho.pro directly."]);
+    echo json_encode(['status' => 'error', 'message' => "Could not send your message. Please email digicarelynx@gmail.com directly."]);
 }
 ?>
