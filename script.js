@@ -126,6 +126,30 @@
             });
         });
 
+        /* ---------- Handle hash on load for pricing plans & tabs ---------- */
+        if (window.location.hash) {
+            var hash = window.location.hash.substring(1);
+            var productMatch = hash.match(/-(hims|lims|cims|ris)/);
+            if (productMatch) {
+                var tabToActivate = document.querySelector('.product-tab[data-product="' + productMatch[1] + '"]');
+                if (tabToActivate) {
+                    tabToActivate.click();
+                    if (hash.startsWith('plan-')) {
+                        setTimeout(function() {
+                            var el = document.getElementById(hash);
+                            if (el) {
+                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                el.style.transition = 'box-shadow 0.3s ease';
+                                var oldShadow = el.style.boxShadow;
+                                el.style.boxShadow = '0 0 0 4px var(--cyan)';
+                                setTimeout(function() { el.style.boxShadow = oldShadow; }, 1500);
+                            }
+                        }, 100);
+                    }
+                }
+            }
+        }
+
         /* ---------- FAQ accordion ---------- */
         document.querySelectorAll('.faq-q').forEach(function (q) {
             q.addEventListener('click', function () {
@@ -208,8 +232,22 @@
         /* ---------- Smooth scroll for in-page anchors ---------- */
         document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(function (a) {
             a.addEventListener('click', function (e) {
-                var el = document.querySelector(a.getAttribute('href'));
-                if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+                var href = a.getAttribute('href');
+                var el = document.querySelector(href);
+                if (el) { 
+                    e.preventDefault(); 
+                    var productMatch = href.match(/-(hims|lims|cims|ris)/);
+                    if (productMatch) {
+                        var tabToActivate = document.querySelector('.product-tab[data-product="' + productMatch[1] + '"]');
+                        if (tabToActivate) tabToActivate.click();
+                    }
+                    setTimeout(function() {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 50);
+                    if (history.pushState) {
+                        history.pushState(null, null, href);
+                    }
+                }
             });
         });
     });
