@@ -294,6 +294,7 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 .sol-card h3 { margin-bottom: 12px; }
 .sol-card p { color: var(--text-soft); margin-bottom: 20px; flex: 1; }
 .sol-link { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--cyan-dark); font-size: .95rem; }
+.sol-link::after { content: ""; position: absolute; inset: 0; z-index: 1; }
 .sol-link svg { width: 16px; height: 16px; transition: transform .25s; }
 .sol-card:hover .sol-link svg { transform: translateX(5px); }
 .sol-tag { position: absolute; top: 22px; right: 22px; font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-mute); }
