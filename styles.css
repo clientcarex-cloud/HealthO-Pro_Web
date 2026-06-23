@@ -450,8 +450,8 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 .tcard blockquote { font-size: var(--text-base); color: var(--text); line-height: 1.7; flex: 1; margin-bottom: 22px; }
 .tperson { display: flex; align-items: center; gap: 14px; }
 .tavatar { width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; font-size: var(--text-lg); flex: none; }
-.tperson .tn { font-weight: 700; color: var(--ink); font-size: var(--text-base); }
-.tperson .tr { font-size: var(--text-sm); color: var(--text-mute); }
+.tperson .tn { display: block; font-weight: 700; color: var(--ink); font-size: var(--text-base); line-height: 1.2; margin-bottom: 2px; }
+.tperson .tr { display: block; font-size: var(--text-sm); color: var(--text-mute); }
 
 /* ---------- Logos / clients strip ---------- */
 .logos-strip { display: flex; flex-wrap: wrap; gap: 14px 40px; justify-content: center; align-items: center; }
