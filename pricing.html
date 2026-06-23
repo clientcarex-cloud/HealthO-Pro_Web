@@ -75,19 +75,19 @@
   <div class="container">
     <!-- Product tabs -->
     <div class="product-tabs">
-      <button id="tab-hims" class="product-tab active" data-product="hims"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>HIMS</button>
-      <button id="tab-lims" class="product-tab" data-product="lims"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6M10 3v6l-4 8a2 2 0 0 0 2 3h8a2 2 0 0 0 2-3l-4-8V3"/><path d="M7 14h10"/></svg>LIMS</button>
-      <button id="tab-cims" class="product-tab" data-product="cims"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>CIMS</button>
-      <button id="tab-ris" class="product-tab" data-product="ris"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18M3 12h18"/></svg>RIS / RIMS</button>
+      <a href="#tab-hims" id="tab-hims" class="product-tab active" data-product="hims"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>HIMS</a>
+      <a href="#tab-lims" id="tab-lims" class="product-tab" data-product="lims"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6M10 3v6l-4 8a2 2 0 0 0 2 3h8a2 2 0 0 0 2-3l-4-8V3"/><path d="M7 14h10"/></svg>LIMS</a>
+      <a href="#tab-cims" id="tab-cims" class="product-tab" data-product="cims"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>CIMS</a>
+      <a href="#tab-ris" id="tab-ris" class="product-tab" data-product="ris"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18M3 12h18"/></svg>RIS / RIMS</a>
     </div>
 
     <!-- ===== HIMS PANEL ===== -->
     <div class="price-panel active" id="panel-hims">
       <div class="grid grid-3">
         <div id="plan-hims-startup" class="price-card">
-          <div class="plan-name">Startup</div>
+          <div class="plan-name"><a href="#plan-hims-startup" style="color:inherit;text-decoration:none;">Startup</a></div>
           <div class="plan-desc">For small hospitals &amp; nursing homes</div>
-          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year>3,999</span><span class="amt" data-half style="display:none;">4,999</span><span class="per">/ month</span></div>
+          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year><a href="#plan-hims-startup-year" style="color:inherit;text-decoration:none;">3,999</a></span><span class="amt" data-half style="display:none;"><a href="#plan-hims-startup-half" style="color:inherit;text-decoration:none;">4,999</a></span><span class="per">/ month</span></div>
           <div class="plan-note"><span data-year>Billed yearly</span><span data-half style="display:none;">Billed 6-monthly</span></div>
           <ul class="plan-feats">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Up to 50 beds</li>
@@ -99,9 +99,9 @@
           <a href="contact.html" class="btn btn-outline btn-block">Get Started</a>
         </div>
         <div id="plan-hims-business" class="price-card featured">
-          <div class="plan-name">Business</div>
+          <div class="plan-name"><a href="#plan-hims-business" style="color:inherit;text-decoration:none;">Business</a></div>
           <div class="plan-desc">For growing multi-specialty hospitals</div>
-          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year>7,999</span><span class="amt" data-half style="display:none;">9,999</span><span class="per">/ month</span></div>
+          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year><a href="#plan-hims-business-year" style="color:inherit;text-decoration:none;">7,999</a></span><span class="amt" data-half style="display:none;"><a href="#plan-hims-business-half" style="color:inherit;text-decoration:none;">9,999</a></span><span class="per">/ month</span></div>
           <div class="plan-note"><span data-year>Billed yearly</span><span data-half style="display:none;">Billed 6-monthly</span></div>
           <ul class="plan-feats">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Up to 150 beds</li>
@@ -114,7 +114,7 @@
           <a href="contact.html" class="btn btn-primary btn-block">Get Started</a>
         </div>
         <div id="plan-hims-enterprise" class="price-card">
-          <div class="plan-name">Enterprise</div>
+          <div class="plan-name"><a href="#plan-hims-enterprise" style="color:inherit;text-decoration:none;">Enterprise</a></div>
           <div class="plan-desc">For large hospitals &amp; chains</div>
           <div class="plan-price"><span class="amt" style="font-size:1.9rem;">Custom</span></div>
           <div class="plan-note">Tailored to your scale</div>
@@ -130,13 +130,13 @@
       </div>
     </div>
 
-     LIMS PANEL ===== -->
+    <!-- ===== LIMS PANEL ===== -->
     <div class="price-panel" id="panel-lims">
       <div class="grid grid-3">
         <div id="plan-lims-startup" class="price-card">
-          <div class="plan-name">Startup</div>
+          <div class="plan-name"><a href="#plan-lims-startup" style="color:inherit;text-decoration:none;">Startup</a></div>
           <div class="plan-desc">For single diagnostic labs</div>
-          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year>2,999</span><span class="amt" data-half style="display:none;">3,999</span><span class="per">/ month</span></div>
+          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year><a href="#plan-lims-startup-year" style="color:inherit;text-decoration:none;">2,999</a></span><span class="amt" data-half style="display:none;"><a href="#plan-lims-startup-half" style="color:inherit;text-decoration:none;">3,999</a></span><span class="per">/ month</span></div>
           <div class="plan-note"><span data-year>Billed yearly</span><span data-half style="display:none;">Billed 6-monthly</span></div>
           <ul class="plan-feats">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Up to 100 tests/day</li>
@@ -147,10 +147,10 @@
           </ul>
           <a href="contact.html" class="btn btn-outline btn-block">Get Started</a>
         </div>
-        <div id="plan-hims-business" class="price-card featured">
-          <div class="plan-name">Business</div>
+        <div id="plan-lims-business" class="price-card featured">
+          <div class="plan-name"><a href="#plan-lims-business" style="color:inherit;text-decoration:none;">Business</a></div>
           <div class="plan-desc">For busy multi-test laboratories</div>
-          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year>5,999</span><span class="amt" data-half style="display:none;">7,999</span><span class="per">/ month</span></div>
+          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year><a href="#plan-lims-business-year" style="color:inherit;text-decoration:none;">5,999</a></span><span class="amt" data-half style="display:none;"><a href="#plan-lims-business-half" style="color:inherit;text-decoration:none;">7,999</a></span><span class="per">/ month</span></div>
           <div class="plan-note"><span data-year>Billed yearly</span><span data-half style="display:none;">Billed 6-monthly</span></div>
           <ul class="plan-feats">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Up to 500 tests/day</li>
@@ -162,8 +162,8 @@
           </ul>
           <a href="contact.html" class="btn btn-primary btn-block">Get Started</a>
         </div>
-        <div id="plan-hims-enterprise" class="price-card">
-          <div class="plan-name">Enterprise</div>
+        <div id="plan-lims-enterprise" class="price-card">
+          <div class="plan-name"><a href="#plan-lims-enterprise" style="color:inherit;text-decoration:none;">Enterprise</a></div>
           <div class="plan-desc">For reference &amp; chain laboratories</div>
           <div class="plan-price"><span class="amt" style="font-size:1.9rem;">Custom</span></div>
           <div class="plan-note">Tailored to your scale</div>
@@ -179,13 +179,13 @@
       </div>
     </div>
 
-     CIMS PANEL ===== -->
+    <!-- ===== CIMS PANEL ===== -->
     <div class="price-panel" id="panel-cims">
       <div class="grid grid-3">
-        <div id="plan-lims-startup" class="price-card">
-          <div class="plan-name">Startup</div>
+        <div id="plan-cims-startup" class="price-card">
+          <div class="plan-name"><a href="#plan-cims-startup" style="color:inherit;text-decoration:none;">Startup</a></div>
           <div class="plan-desc">For single-doctor clinics</div>
-          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year>1,499</span><span class="amt" data-half style="display:none;">1,999</span><span class="per">/ month</span></div>
+          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year><a href="#plan-cims-startup-year" style="color:inherit;text-decoration:none;">1,499</a></span><span class="amt" data-half style="display:none;"><a href="#plan-cims-startup-half" style="color:inherit;text-decoration:none;">1,999</a></span><span class="per">/ month</span></div>
           <div class="plan-note"><span data-year>Billed yearly</span><span data-half style="display:none;">Billed 6-monthly</span></div>
           <ul class="plan-feats">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>1 doctor / 1 location</li>
@@ -196,10 +196,10 @@
           </ul>
           <a href="contact.html" class="btn btn-outline btn-block">Get Started</a>
         </div>
-        <div id="plan-lims-business" class="price-card featured">
-          <div class="plan-name">Business</div>
+        <div id="plan-cims-business" class="price-card featured">
+          <div class="plan-name"><a href="#plan-cims-business" style="color:inherit;text-decoration:none;">Business</a></div>
           <div class="plan-desc">For multi-specialty polyclinics</div>
-          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year>2,999</span><span class="amt" data-half style="display:none;">3,999</span><span class="per">/ month</span></div>
+          <div class="plan-price"><span class="cur">₹</span><span class="amt" data-year><a href="#plan-cims-business-year" style="color:inherit;text-decoration:none;">2,999</a></span><span class="amt" data-half style="display:none;"><a href="#plan-cims-business-half" style="color:inherit;text-decoration:none;">3,999</a></span><span class="per">/ month</span></div>
           <div class="plan-note"><span data-year>Billed yearly</span><span data-half style="display:none;">Billed 6-monthly</span></div>
           <ul class="plan-feats">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Up to 10 doctors</li>
@@ -210,8 +210,8 @@
           </ul>
           <a href="contact.html" class="btn btn-primary btn-block">Get Started</a>
         </div>
-        <div id="plan-hims-enterprise" class="price-card">
-          <div class="plan-name">Enterprise</div>
+        <div id="plan-cims-enterprise" class="price-card">
+          <div class="plan-name"><a href="#plan-cims-enterprise" style="color:inherit;text-decoration:none;">Enterprise</a></div>
           <div class="plan-desc">For clinic chains &amp; franchises</div>
           <div class="plan-price"><span class="amt" style="font-size:1.9rem;">Custom</span></div>
           <div class="plan-note">Tailored to your scale</div>
@@ -227,12 +227,12 @@
       </div>
     </div>
 
-     RIS PANEL ===== -->
+    <!-- ===== RIS PANEL ===== -->
     <div class="price-panel" id="panel-ris">
       <div id="plan-ris-payg" class="payg">
         <div>
           <span class="eyebrow">Pay-As-You-Go</span>
-          <h3 class="h-sec" style="margin-bottom:14px;">RIS / RIMS — billed per patient</h3>
+          <h3 class="h-sec" style="margin-bottom:14px;"><a href="#plan-ris-payg" style="color:inherit;text-decoration:none;">RIS / RIMS — billed per patient</a></h3>
           <p style="color:var(--text-soft);margin-bottom:22px;">Get the complete Radiology Information System with no fixed license fees. You only pay for the patients you process — pricing that scales naturally with your imaging volume.</p>
           <ul class="checks">
             <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>All core RIS/RIMS features included</span></li>

@@ -128,7 +128,12 @@
 
         /* ---------- Handle hash on load for pricing plans & tabs ---------- */
         if (window.location.hash) {
-            var hash = window.location.hash.substring(1);
+            var fullHash = window.location.hash.substring(1);
+            var billingMatch = fullHash.match(/-(year|half)$/);
+            if (billingMatch) {
+                setBilling(billingMatch[1]);
+            }
+            var hash = fullHash.replace(/-(year|half)$/, '');
             var productMatch = hash.match(/-(hims|lims|cims|ris)/);
             if (productMatch) {
                 var tabToActivate = document.querySelector('.product-tab[data-product="' + productMatch[1] + '"]');
@@ -233,10 +238,16 @@
         document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(function (a) {
             a.addEventListener('click', function (e) {
                 var href = a.getAttribute('href');
-                var el = document.querySelector(href);
+                var targetId = href;
+                var billingMatch = href.match(/-(year|half)$/);
+                if (billingMatch) {
+                    setBilling(billingMatch[1]);
+                    targetId = href.replace(/-(year|half)$/, '');
+                }
+                var el = document.querySelector(targetId);
                 if (el) { 
                     e.preventDefault(); 
-                    var productMatch = href.match(/-(hims|lims|cims|ris)/);
+                    var productMatch = targetId.match(/-(hims|lims|cims|ris)/);
                     if (productMatch) {
                         var tabToActivate = document.querySelector('.product-tab[data-product="' + productMatch[1] + '"]');
                         if (tabToActivate) tabToActivate.click();
