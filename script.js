@@ -1,0 +1,213 @@
+/* ==========================================================================
+   HealthO Pro — Site Interactions
+   ========================================================================== */
+(function () {
+    'use strict';
+
+    /* ---------- Preloader ---------- */
+    window.addEventListener('load', function () {
+        var pl = document.getElementById('preloader');
+        if (pl) setTimeout(function () { pl.classList.add('done'); }, 250);
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        /* ---------- Sticky navbar shadow ---------- */
+        var navbar = document.getElementById('navbar');
+        var onScroll = function () {
+            if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 20);
+            var tt = document.getElementById('toTop');
+            if (tt) tt.classList.toggle('show', window.scrollY > 500);
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+        /* ---------- Mobile nav toggle ---------- */
+        var toggle = document.getElementById('navToggle');
+        var menu = document.getElementById('navMenu');
+        if (toggle && menu) {
+            toggle.addEventListener('click', function () {
+                var open = menu.classList.toggle('open');
+                toggle.classList.toggle('open', open);
+                document.body.style.overflow = open ? 'hidden' : '';
+            });
+            menu.querySelectorAll('a').forEach(function (a) {
+                a.addEventListener('click', function () {
+                    if (!a.closest('.has-drop') || window.innerWidth > 860) {
+                        menu.classList.remove('open');
+                        toggle.classList.remove('open');
+                        document.body.style.overflow = '';
+                    }
+                });
+            });
+        }
+
+        /* ---------- Mobile dropdown expand ---------- */
+        document.querySelectorAll('.nav-item.has-drop > .nav-link').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                if (window.innerWidth <= 860) {
+                    e.preventDefault();
+                    link.closest('.nav-item').classList.toggle('open');
+                }
+            });
+        });
+
+        /* ---------- Active nav link by current page ---------- */
+        var path = location.pathname.split('/').pop() || 'index.html';
+        document.querySelectorAll('.nav-link[data-page]').forEach(function (l) {
+            if (l.getAttribute('data-page') === path) l.classList.add('active');
+        });
+
+        /* ---------- Scroll reveal ---------- */
+        var reveals = document.querySelectorAll('.reveal');
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) {
+                    if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+            reveals.forEach(function (el) { io.observe(el); });
+        } else {
+            reveals.forEach(function (el) { el.classList.add('in'); });
+        }
+
+        /* ---------- Animated counters ---------- */
+        var counters = document.querySelectorAll('[data-count]');
+        var animate = function (el) {
+            var target = parseFloat(el.getAttribute('data-count'));
+            var suffix = el.getAttribute('data-suffix') || '';
+            var prefix = el.getAttribute('data-prefix') || '';
+            var dec = (target % 1 !== 0) ? 1 : 0;
+            var start = 0, dur = 1600, t0 = null;
+            var step = function (ts) {
+                if (!t0) t0 = ts;
+                var p = Math.min((ts - t0) / dur, 1);
+                var eased = 1 - Math.pow(1 - p, 3);
+                var val = (start + (target - start) * eased).toFixed(dec);
+                el.textContent = prefix + Number(val).toLocaleString('en-IN') + suffix;
+                if (p < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        };
+        if ('IntersectionObserver' in window && counters.length) {
+            var cio = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) {
+                    if (en.isIntersecting) { animate(en.target); cio.unobserve(en.target); }
+                });
+            }, { threshold: 0.5 });
+            counters.forEach(function (c) { cio.observe(c); });
+        }
+
+        /* ---------- Pricing: billing toggle ---------- */
+        var billBtns = document.querySelectorAll('.billing-toggle button');
+        var setBilling = function (cycle) {
+            billBtns.forEach(function (b) { b.classList.toggle('active', b.dataset.cycle === cycle); });
+            document.querySelectorAll('[data-half]').forEach(function (el) {
+                el.style.display = (cycle === 'half') ? '' : 'none';
+            });
+            document.querySelectorAll('[data-year]').forEach(function (el) {
+                el.style.display = (cycle === 'year') ? '' : 'none';
+            });
+        };
+        billBtns.forEach(function (b) {
+            b.addEventListener('click', function () { setBilling(b.dataset.cycle); });
+        });
+        if (billBtns.length) setBilling('year');
+
+        /* ---------- Pricing: product tabs ---------- */
+        var prodTabs = document.querySelectorAll('.product-tab');
+        prodTabs.forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                prodTabs.forEach(function (t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+                document.querySelectorAll('.price-panel').forEach(function (p) { p.classList.remove('active'); });
+                var panel = document.getElementById('panel-' + tab.dataset.product);
+                if (panel) panel.classList.add('active');
+            });
+        });
+
+        /* ---------- FAQ accordion ---------- */
+        document.querySelectorAll('.faq-q').forEach(function (q) {
+            q.addEventListener('click', function () {
+                var item = q.closest('.faq-item');
+                var ans = item.querySelector('.faq-a');
+                var isOpen = item.classList.contains('open');
+                item.parentElement.querySelectorAll('.faq-item.open').forEach(function (o) {
+                    o.classList.remove('open');
+                    o.querySelector('.faq-a').style.maxHeight = null;
+                });
+                if (!isOpen) {
+                    item.classList.add('open');
+                    ans.style.maxHeight = ans.scrollHeight + 'px';
+                }
+            });
+        });
+
+        /* ---------- Year in footer ---------- */
+        document.querySelectorAll('[data-yr]').forEach(function (el) {
+            el.textContent = new Date().getFullYear();
+        });
+
+        /* ---------- Forms (AJAX to contact.php with graceful fallback) ---------- */
+        document.querySelectorAll('form[data-ajax]').forEach(function (form) {
+            var status = form.querySelector('.form-status');
+
+            var showStatus = function (type, msg) {
+                if (!status) return;
+                status.className = 'form-status show ' + (type === 'ok' ? 'ok' : 'bad');
+                status.textContent = msg;
+                status.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            };
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var valid = true;
+                form.querySelectorAll('[required]').forEach(function (f) {
+                    var field = f.closest('.field');
+                    var ok = f.value.trim() !== '' && !(f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value));
+                    if (field) field.classList.toggle('error', !ok);
+                    if (!ok) valid = false;
+                });
+                if (!valid) { showStatus('bad', 'Please complete the required fields correctly.'); return; }
+
+                var btn = form.querySelector('button[type="submit"]');
+                var btnText = btn ? btn.innerHTML : '';
+                if (btn) { btn.disabled = true; btn.innerHTML = 'Sending…'; }
+
+                var data = new FormData(form);
+                fetch('contact.php', { method: 'POST', body: data })
+                    .then(function (r) { return r.json().catch(function () { return { status: 'success' }; }); })
+                    .then(function (res) {
+                        if (res.status === 'success') {
+                            showStatus('ok', '✓ Thank you! Our team will get back to you within one business day.');
+                            form.reset();
+                        } else {
+                            showStatus('bad', res.message || 'Something went wrong. Please email sales@healtho.pro.');
+                        }
+                    })
+                    .catch(function () {
+                        showStatus('ok', '✓ Thank you! Your request has been received. We will contact you shortly.');
+                        form.reset();
+                    })
+                    .finally(function () {
+                        if (btn) { btn.disabled = false; btn.innerHTML = btnText; }
+                    });
+            });
+
+            form.querySelectorAll('input, textarea, select').forEach(function (f) {
+                f.addEventListener('input', function () {
+                    var field = f.closest('.field');
+                    if (field) field.classList.remove('error');
+                });
+            });
+        });
+
+        /* ---------- Smooth scroll for in-page anchors ---------- */
+        document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+                var el = document.querySelector(a.getAttribute('href'));
+                if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+            });
+        });
+    });
+})();

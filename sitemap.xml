@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://healtho.pro/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://healtho.pro/solutions.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://healtho.pro/hims.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://healtho.pro/lims.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://healtho.pro/cims.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://healtho.pro/ris.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://healtho.pro/pricing.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://healtho.pro/testimonials.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://healtho.pro/careers.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://healtho.pro/contact.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://healtho.pro/privacy-policy.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://healtho.pro/terms-conditions.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+</urlset>
