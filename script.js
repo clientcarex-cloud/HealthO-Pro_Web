@@ -53,7 +53,7 @@
         });
 
         /* ---------- Active nav link by current page ---------- */
-        var path = location.pathname.split('/').pop() || 'index.html';
+        var path = location.pathname.split('/').pop() || '';
         document.querySelectorAll('.nav-link[data-page]').forEach(function (l) {
             if (l.getAttribute('data-page') === path) l.classList.add('active');
         });
