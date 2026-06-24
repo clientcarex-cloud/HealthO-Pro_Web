@@ -373,7 +373,8 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
     box-shadow: var(--e1); transition: transform .3s, box-shadow .3s, border-color .3s;
 }
 .country:hover { transform: translateY(-5px); box-shadow: var(--e3); border-color: var(--cyan-light); }
-.country .flag { font-size: var(--text-3xl); line-height: 1; flex: none; }
+.country .flag { font-size: var(--text-3xl); line-height: 1; flex: none; display: inline-flex; }
+.country .flag .flag-png { width: 38px; height: auto; display: block; border-radius: 4px; box-shadow: 0 1px 3px rgba(15, 27, 51, .22); }
 .country > span:last-child { flex: 1; }
 .country .cn { display: block; font-weight: 700; color: var(--ink); font-size: var(--text-base); line-height: 1.2; margin-bottom: 2px; }
 .country .cr { display: block; font-size: var(--text-sm); color: var(--text-mute); line-height: 1.2; }
@@ -495,7 +496,8 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 
 /* ---------- Logos / clients strip ---------- */
 .logos-strip { display: flex; flex-wrap: wrap; gap: 14px 40px; justify-content: center; align-items: center; }
-.logos-strip .lg { font-weight: 800; font-size: var(--text-lg); color: var(--text-mute); opacity: .7; }
+.logos-strip .lg { display: inline-flex; align-items: center; gap: 9px; font-weight: 800; font-size: var(--text-lg); color: var(--text-mute); opacity: .7; }
+.logos-strip .lg .flag-png { width: 26px; height: auto; border-radius: 3px; box-shadow: 0 1px 2px rgba(15, 27, 51, .2); }
 
 /* ---------- Careers / jobs ---------- */
 .job { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 24px 28px; box-shadow: var(--e1); transition: transform .3s, box-shadow .3s, border-color .3s; }
@@ -660,4 +662,40 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
     .reveal { opacity: 1; transform: none; }
+}
+
+/* ==========================================================================
+   Demo popup modal
+   ========================================================================== */
+.demo-modal {
+    position: fixed; inset: 0; z-index: 2000;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 40px 18px; overflow-y: auto;
+    background: rgba(12, 31, 69, .55);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s ease;
+}
+.demo-modal.open { opacity: 1; visibility: visible; }
+.demo-modal__dialog {
+    position: relative; width: 100%; max-width: 560px; margin: auto;
+    background: var(--surface); border-radius: var(--r-xl); box-shadow: var(--e4);
+    padding: 40px; transform: translateY(24px) scale(.98);
+    transition: transform .3s cubic-bezier(.2, .8, .25, 1);
+}
+.demo-modal.open .demo-modal__dialog { transform: translateY(0) scale(1); }
+.demo-modal__head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+.demo-modal__head h3 { font-size: var(--text-2xl); margin-bottom: 6px; }
+.demo-modal__head p { color: var(--text-mute); font-size: .92rem; }
+.demo-modal__close {
+    position: absolute; top: 16px; right: 16px;
+    width: 38px; height: 38px; flex: none; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line); background: var(--bg); border-radius: 50%;
+    color: var(--text-soft); cursor: pointer; transition: background .2s, color .2s, transform .2s;
+}
+.demo-modal__close:hover { background: var(--cyan-tint); color: var(--cyan-dark); transform: rotate(90deg); }
+.demo-modal__close svg { width: 18px; height: 18px; }
+body.demo-open { overflow: hidden; }
+@media (max-width: 600px) {
+    .demo-modal { padding: 18px; }
+    .demo-modal__dialog { padding: 30px 22px; }
 }

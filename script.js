@@ -12,6 +12,111 @@
 
     document.addEventListener('DOMContentLoaded', function () {
 
+        /* ---------- Demo popup modal ----------
+           Injected before the geo + form-binding blocks below so its
+           [data-ajax] form is picked up automatically (validation, geo,
+           AJAX submit all reuse the shared handlers). */
+        (function () {
+            var modal = document.createElement('div');
+            modal.className = 'demo-modal';
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            modal.setAttribute('aria-label', 'Book a free demo');
+            modal.innerHTML =
+                '<div class="demo-modal__dialog">'
+                + '<button type="button" class="demo-modal__close" aria-label="Close">'
+                + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>'
+                + '</button>'
+                + '<div class="demo-modal__head"><div>'
+                + '<h3 class="h-card">Book a free demo</h3>'
+                + '<p>Fill in the form and our team will reach out shortly.</p>'
+                + '</div></div>'
+                + '<form data-ajax novalidate>'
+                + '<div class="form-status"></div>'
+                + '<input type="hidden" name="source" value="Demo popup">'
+                + '<div class="form-row">'
+                + '<div class="field"><label>Full Name <span class="req">*</span></label><input type="text" name="fullName" placeholder="Your name" required></div>'
+                + '<div class="field"><label>Email <span class="req">*</span></label><input type="email" name="email" placeholder="you@example.com" required><span class="err-msg">Enter a valid email.</span></div>'
+                + '</div>'
+                + '<div class="form-row">'
+                + '<div class="field"><label>Mobile Number <span class="req">*</span></label><input type="tel" name="phone" placeholder="+91 ..." required></div>'
+                + '<div class="field"><label>Organization Type</label><select name="orgType"><option value="">Select…</option><option>Hospital</option><option>Laboratory</option><option>Clinic</option><option>Radiology Center</option><option>Other</option></select></div>'
+                + '</div>'
+                + '<div class="field"><label>Interested In</label><select name="interest"><option value="">Select a solution…</option><option>HIMS</option><option>LIMS</option><option>CIMS</option><option>RIS / RIMS</option><option>Multiple / Not sure</option></select></div>'
+                + '<div class="field"><label>Message</label><textarea name="message" placeholder="Tell us about your requirements…"></textarea></div>'
+                + '<button type="submit" class="btn btn-primary btn-block btn-lg">Request Demo</button>'
+                + '<p class="form-note">By submitting, you agree to our <a href="privacy-policy" style="color:var(--cyan-dark);">Privacy Policy</a>.</p>'
+                + '</form>'
+                + '</div>';
+            document.body.appendChild(modal);
+
+            var form = modal.querySelector('form');
+            var interestSel = form.querySelector('select[name="interest"]');
+            var statusEl = form.querySelector('.form-status');
+            var lastFocused = null;
+
+            var PRODUCTS = { hims: 'HIMS', lims: 'LIMS', cims: 'CIMS', ris: 'RIS / RIMS' };
+            var pagePath = (location.pathname.split('/').pop() || '').replace('.html', '');
+            var pageInterest = PRODUCTS[pagePath] || '';
+
+            var setInterest = function (val) {
+                if (!val || !interestSel) return;
+                for (var i = 0; i < interestSel.options.length; i++) {
+                    var o = interestSel.options[i];
+                    if (o.value === val || o.text === val) { interestSel.selectedIndex = i; return; }
+                }
+            };
+
+            var openModal = function (interest) {
+                lastFocused = document.activeElement;
+                setInterest(interest);
+                // Close the mobile menu if it happens to be open behind the modal
+                var menu = document.getElementById('navMenu');
+                var toggle = document.getElementById('navToggle');
+                if (menu && menu.classList.contains('open')) {
+                    menu.classList.remove('open');
+                    if (toggle) toggle.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+                modal.classList.add('open');
+                document.body.classList.add('demo-open');
+                var first = form.querySelector('input, select, textarea');
+                if (first) setTimeout(function () { first.focus(); }, 90);
+            };
+            var closeModal = function () {
+                modal.classList.remove('open');
+                document.body.classList.remove('demo-open');
+                if (lastFocused && lastFocused.focus) lastFocused.focus();
+            };
+            window.openDemoModal = openModal;
+
+            modal.querySelector('.demo-modal__close').addEventListener('click', closeModal);
+            modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+            });
+
+            // Intercept every demo trigger in the capture phase so neither the
+            // smooth-scroll nor the mobile-menu handlers also fire.
+            var DEMO_SELECTOR = '[data-demo], .nav-cta, .mobile-cta, a[href="#demo"]';
+            document.addEventListener('click', function (e) {
+                var trigger = e.target.closest && e.target.closest(DEMO_SELECTOR);
+                if (!trigger || modal.contains(trigger)) return;
+                e.preventDefault();
+                e.stopPropagation();
+                openModal(trigger.getAttribute('data-demo-interest') || pageInterest);
+            }, true);
+
+            // Auto-close shortly after a successful submission
+            if (statusEl) {
+                new MutationObserver(function () {
+                    if (statusEl.classList.contains('ok') && modal.classList.contains('open')) {
+                        setTimeout(closeModal, 2600);
+                    }
+                }).observe(statusEl, { attributes: true, attributeFilter: ['class'] });
+            }
+        })();
+
         /* ---------- Sticky navbar shadow ---------- */
         var navbar = document.getElementById('navbar');
         var onScroll = function () {
