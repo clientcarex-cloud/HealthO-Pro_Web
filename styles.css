@@ -407,7 +407,7 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 .user-scaler { position: relative; margin: 0 0 46px; padding: 30px 34px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--e2); overflow: hidden; }
 .user-scaler::after { content: ""; position: absolute; top: 0; left: 0; bottom: 0; width: 5px; background: var(--grad-cyan); }
 .user-scaler-head { display: flex; align-items: center; justify-content: space-between; gap: 22px; flex-wrap: wrap; margin-bottom: 20px; }
-.user-scaler-head h3 { font-size: var(--text-xl); font-weight: 800; color: var(--navy); margin: 8px 0 3px; }
+.user-scaler-head h3 { font-size: var(--text-xl); font-weight: 800; color: var(--navy); margin: 0; }
 .user-scaler-head p { font-size: var(--text-base); color: var(--text-soft); margin: 0; max-width: 540px; }
 .user-scaler-count { display: flex; align-items: center; gap: 4px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--r-pill); padding: 6px; }
 .us-step { width: 36px; height: 36px; border-radius: 50%; background: var(--white); border: 1px solid var(--line); color: var(--navy); font-size: 1.35rem; font-weight: 700; line-height: 1; display: grid; place-items: center; transition: all .2s; }
