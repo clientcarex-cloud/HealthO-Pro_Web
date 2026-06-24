@@ -1,6 +1,5 @@
 Options +FollowSymLinks -MultiViews
 RewriteEngine On
-RewriteBase /
 
 # Internally add .html extension if the file exists
 RewriteCond %{REQUEST_FILENAME} !-d
