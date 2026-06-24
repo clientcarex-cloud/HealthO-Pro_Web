@@ -101,61 +101,134 @@
         /* ---------- Pricing: billing toggle ---------- */
         var billBtns = document.querySelectorAll('.billing-toggle button');
 
-        /* ---------- Real-time Pricing Calculator ---------- */
+        /* ---------- Global user scaler + real-time pricing ---------- */
         var currentBillingCycle = 'year';
-        var recalculatePrices = function(cycle) {
-            currentBillingCycle = cycle;
-            document.querySelectorAll('.user-select').forEach(function(select) {
+        var slider = document.getElementById('userSlider');
+        var numInput = document.getElementById('globalUsers');
+        var presetBtns = document.querySelectorAll('.user-scaler-presets button');
+        var recText = document.querySelector('.user-scaler-rec-text');
+        var SLIDER_MIN = 1, SLIDER_MAX = 100;
+        var TIER_NAMES = { startup: 'Startup', business: 'Business', corporate: 'Corporate' };
+
+        // Volume → recommended plan tier
+        var recommendTier = function (users) {
+            if (users < 10) return 'startup';
+            if (users < 25) return 'business';
+            return 'corporate';
+        };
+
+        // Replace each per-plan dropdown with a live user-count readout
+        document.querySelectorAll('.plan-users').forEach(function (box) {
+            if (box.querySelector('.plan-users-readout')) return;
+            var r = document.createElement('div');
+            r.className = 'plan-users-readout';
+            r.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
+                + '<span>Billed for <strong class="pu-count">0</strong> users</span>'
+                + '<span class="pu-min-note" style="display:none;">min <b class="pu-min">0</b></span>';
+            box.appendChild(r);
+        });
+
+        var getGlobalUsers = function () {
+            var v = parseInt(numInput && numInput.value, 10);
+            if (isNaN(v)) v = SLIDER_MIN;
+            return Math.min(SLIDER_MAX, Math.max(SLIDER_MIN, v));
+        };
+
+        var recalculate = function () {
+            var globalUsers = getGlobalUsers();
+            var tier = recommendTier(globalUsers);
+
+            document.querySelectorAll('.user-select').forEach(function (select) {
                 var card = select.closest('.price-card');
                 if (!card) return;
-                
-                var users = parseInt(select.value, 10);
-                var pricePerUser = parseInt(select.getAttribute('data-price-' + cycle), 10);
-                
+
+                var base = parseInt(select.getAttribute('data-base'), 10) || 1;
+                var users = Math.max(globalUsers, base);
+                var pricePerUser = parseInt(select.getAttribute('data-price-' + currentBillingCycle), 10);
+
                 var subtotal = users * pricePerUser;
                 var gst = Math.round(subtotal * 0.18);
                 var total = subtotal + gst;
-                
-                var baseEl = card.querySelector('.calc-base');
-                var gstEl = card.querySelector('.calc-gst');
-                var totalEl = card.querySelector('.calc-total');
-                var billedEl = card.querySelector('.calc-billed');
+                var months = (currentBillingCycle === 'year') ? 12 : 6;
+                var billedAmount = total * months;
+
+                var setTxt = function (sel, val) {
+                    var el = card.querySelector(sel);
+                    if (el) el.textContent = val.toLocaleString('en-IN');
+                };
+                setTxt('.calc-base', subtotal);
+                setTxt('.calc-gst', gst);
+                setTxt('.calc-total', total);
+                setTxt('.calc-billed', billedAmount);
+
                 var freqEl = card.querySelector('.calc-billed-freq');
+                if (freqEl) freqEl.textContent = (currentBillingCycle === 'year') ? 'Annually' : 'Every 6 Months';
+
                 var savingsRow = card.querySelector('.calc-savings-row');
                 var savingsEl = card.querySelector('.calc-savings');
-                
-                var months = (cycle === 'year') ? 12 : 6;
-                var billedAmount = total * months;
-                
-                if (baseEl) baseEl.textContent = subtotal.toLocaleString('en-IN');
-                if (gstEl) gstEl.textContent = gst.toLocaleString('en-IN');
-                if (totalEl) totalEl.textContent = total.toLocaleString('en-IN');
-                if (billedEl) billedEl.textContent = billedAmount.toLocaleString('en-IN');
-                if (freqEl) freqEl.textContent = (cycle === 'year') ? 'Annually' : 'Every 6 Months';
-                
-                if (cycle === 'year') {
+                if (currentBillingCycle === 'year') {
                     var priceHalf = parseInt(select.getAttribute('data-price-half'), 10);
-                    var totalIfHalf = (users * priceHalf) * 1.18;
-                    var yearlyCostIfHalf = Math.round(totalIfHalf * 12);
+                    var yearlyCostIfHalf = Math.round((users * priceHalf) * 1.18 * 12);
                     var savings = yearlyCostIfHalf - billedAmount;
-                    
                     if (savingsRow) {
                         savingsRow.style.display = 'flex';
                         if (savingsEl) savingsEl.textContent = savings.toLocaleString('en-IN');
                     }
-                } else {
-                    if (savingsRow) savingsRow.style.display = 'none';
-                }            });
+                } else if (savingsRow) {
+                    savingsRow.style.display = 'none';
+                }
+
+                // Per-plan user readout + minimum-seats note
+                var cntEl = card.querySelector('.pu-count');
+                if (cntEl) cntEl.textContent = users;
+                var minNote = card.querySelector('.pu-min-note');
+                var minEl = card.querySelector('.pu-min');
+                if (minNote) {
+                    if (globalUsers < base) {
+                        minNote.style.display = '';
+                        if (minEl) minEl.textContent = base;
+                    } else {
+                        minNote.style.display = 'none';
+                    }
+                }
+
+                // Volume-based recommendation highlight (overrides static "Most Popular")
+                var cardTier = card.id.split('-').pop();
+                card.classList.remove('featured');
+                card.classList.toggle('recommended', cardTier === tier);
+            });
+
+            if (recText) {
+                recText.innerHTML = 'For <strong>' + globalUsers + ' user' + (globalUsers > 1 ? 's' : '')
+                    + '</strong>, we recommend the <strong>' + TIER_NAMES[tier] + '</strong> plan.';
+            }
         };
 
-        document.querySelectorAll('.user-select').forEach(function(select) {
-            select.addEventListener('change', function() {
-                recalculatePrices(currentBillingCycle);
-            });
+        var syncUsers = function (value, source) {
+            value = parseInt(value, 10);
+            if (isNaN(value)) value = SLIDER_MIN;
+            value = Math.min(SLIDER_MAX, Math.max(SLIDER_MIN, value));
+            if (numInput && source !== 'num') numInput.value = value;
+            if (slider && source !== 'slider') slider.value = value;
+            if (slider) slider.style.setProperty('--fill', ((value - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN) * 100) + '%');
+            presetBtns.forEach(function (b) { b.classList.toggle('active', parseInt(b.dataset.users, 10) === value); });
+            recalculate();
+        };
+
+        if (slider) slider.addEventListener('input', function () { syncUsers(slider.value, 'slider'); });
+        if (numInput) {
+            numInput.addEventListener('input', function () { syncUsers(numInput.value, 'num'); });
+            numInput.addEventListener('blur', function () { syncUsers(numInput.value, 'blur'); });
+        }
+        document.querySelectorAll('.us-step').forEach(function (btn) {
+            btn.addEventListener('click', function () { syncUsers(getGlobalUsers() + parseInt(btn.dataset.step, 10), 'step'); });
+        });
+        presetBtns.forEach(function (b) {
+            b.addEventListener('click', function () { syncUsers(b.dataset.users, 'preset'); });
         });
 
         var setBilling = function (cycle) {
-            recalculatePrices(cycle);
+            currentBillingCycle = cycle;
             billBtns.forEach(function (b) { b.classList.toggle('active', b.dataset.cycle === cycle); });
             document.querySelectorAll('[data-half]').forEach(function (el) {
                 el.style.display = (cycle === 'half') ? '' : 'none';
@@ -163,10 +236,12 @@
             document.querySelectorAll('[data-year]').forEach(function (el) {
                 el.style.display = (cycle === 'year') ? '' : 'none';
             });
+            recalculate();
         };
         billBtns.forEach(function (b) {
             b.addEventListener('click', function () { setBilling(b.dataset.cycle); });
         });
+        if (slider) syncUsers(getGlobalUsers(), 'init');
         if (billBtns.length) setBilling('year');
 
         /* ---------- Pricing: product tabs ---------- */

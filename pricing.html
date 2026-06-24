@@ -81,6 +81,34 @@
       <a href="#tab-ris" id="tab-ris" class="product-tab" data-product="ris"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18M3 12h18"/></svg>RIS / RIMS</a>
     </div>
 
+    <!-- ===== GLOBAL USER SCALER ===== -->
+    <div class="user-scaler reveal">
+      <div class="user-scaler-head">
+        <div>
+          <span class="eyebrow">Scale to your team</span>
+          <h3>How many users do you need?</h3>
+          <p>Drag the slider — every plan updates instantly and we'll highlight your best-fit plan.</p>
+        </div>
+        <div class="user-scaler-count">
+          <button type="button" class="us-step" data-step="-1" aria-label="Decrease users">−</button>
+          <input type="number" id="globalUsers" min="1" max="100" value="10" aria-label="Number of users">
+          <span class="us-unit">users</span>
+          <button type="button" class="us-step" data-step="1" aria-label="Increase users">+</button>
+        </div>
+      </div>
+      <input type="range" id="userSlider" class="user-range" min="1" max="100" value="10" step="1" aria-label="Number of users slider">
+      <div class="user-scaler-presets">
+        <button type="button" data-users="5">Solo · 5</button>
+        <button type="button" data-users="10">Small · 10</button>
+        <button type="button" data-users="25">Growing · 25</button>
+        <button type="button" data-users="50">Large · 50</button>
+      </div>
+      <div class="user-scaler-rec">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 15.09 8.26 22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span class="user-scaler-rec-text">For <strong>10 users</strong>, we recommend the <strong>Business</strong> plan.</span>
+      </div>
+    </div>
+
     <!-- ===== HIMS PANEL ===== -->
     <div class="price-panel active" id="panel-hims">
       <div class="grid grid-3">
