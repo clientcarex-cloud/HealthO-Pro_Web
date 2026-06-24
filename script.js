@@ -307,6 +307,49 @@
             el.textContent = new Date().getFullYear();
         });
 
+        /* ---------- Auto-detect location (city / state / country) from IP ---------- */
+        (function () {
+            var geoForms = document.querySelectorAll('form[data-ajax]');
+            if (!geoForms.length) return;
+
+            // Ensure each form carries hidden geo fields
+            geoForms.forEach(function (form) {
+                ['city', 'state', 'country'].forEach(function (name) {
+                    if (!form.querySelector('input[name="' + name + '"]')) {
+                        var inp = document.createElement('input');
+                        inp.type = 'hidden';
+                        inp.name = name;
+                        form.appendChild(inp);
+                    }
+                });
+            });
+
+            var applyGeo = function (city, state, country) {
+                geoForms.forEach(function (form) {
+                    if (city) form.querySelector('input[name="city"]').value = city;
+                    if (state) form.querySelector('input[name="state"]').value = state;
+                    if (country) form.querySelector('input[name="country"]').value = country;
+                });
+            };
+
+            // Primary provider, with a fallback — geo is best-effort and never blocks the form
+            fetch('https://ipwho.is/')
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    if (d && d.success !== false) {
+                        applyGeo(d.city || '', d.region || '', d.country || '');
+                    } else {
+                        throw new Error('primary geo unavailable');
+                    }
+                })
+                .catch(function () {
+                    fetch('https://ipapi.co/json/')
+                        .then(function (r) { return r.json(); })
+                        .then(function (d) { if (d) applyGeo(d.city || '', d.region || '', d.country_name || d.country || ''); })
+                        .catch(function () { /* geo optional — ignore */ });
+                });
+        })();
+
         /* ---------- Forms (AJAX to contact.php with graceful fallback) ---------- */
         document.querySelectorAll('form[data-ajax]').forEach(function (form) {
             var status = form.querySelector('.form-status');
