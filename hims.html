@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" href="assets/images/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 <div class="preloader" id="preloader"><div class="spinner"></div></div>
@@ -65,7 +65,7 @@
     <p>Run your entire hospital on a single, connected platform — from registration and EMR to billing, pharmacy and discharge.</p>
     <div class="hero-actions" style="justify-content:center;margin-top:28px;">
       <a href="#demo" class="btn btn-primary btn-lg">Book a Demo</a>
-      <a href="pricing" class="btn btn-ghost-light btn-lg">View Pricing</a>
+      <a href="#pricing" class="btn btn-ghost-light btn-lg">View Pricing</a>
     </div>
   </div>
 </header>
@@ -118,6 +118,241 @@
       <div class="stat reveal d1"><div class="n"><span data-count="60" data-suffix="%">0</span></div><div class="l">Fewer billing errors</div></div>
       <div class="stat reveal d2"><div class="n"><span data-count="100" data-suffix="%">0</span></div><div class="l">Paperless records</div></div>
       <div class="stat reveal d3"><div class="n"><span data-count="24" data-suffix="×7">0</span></div><div class="l">Support &amp; uptime</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="section section--soft" id="pricing">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Pricing</span>
+      <h2 class="h-sec">HIMS plans &amp; pricing</h2>
+      <p class="lead">Pay 6-monthly or yearly and save. Set your team size and we'll highlight your best-fit plan.</p>
+    </div>
+    <div style="text-align:center;">
+      <div class="billing-toggle" style="margin:0 auto 36px;">
+        <button data-cycle="half">6 Months</button>
+        <button data-cycle="year" class="active">Yearly<span class="save-badge">Save 20%</span></button>
+      </div>
+    </div>
+    <div class="user-scaler reveal">
+      <div class="user-scaler-head">
+        <div>
+          <span class="eyebrow">Scale to your team</span>
+          <h3>How many users do you need?</h3>
+        </div>
+        <div class="user-scaler-count">
+          <button type="button" class="us-step" data-step="-1" aria-label="Decrease users">−</button>
+          <input type="number" id="globalUsers" min="1" max="100" value="10" aria-label="Number of users">
+          <span class="us-unit">users</span>
+          <button type="button" class="us-step" data-step="1" aria-label="Increase users">+</button>
+        </div>
+      </div>
+      <input type="range" id="userSlider" class="user-range" min="1" max="100" value="10" step="1" aria-label="Number of users slider">
+      <div class="user-scaler-presets">
+        <button type="button" data-users="5">Solo · 5</button>
+        <button type="button" data-users="10">Small · 10</button>
+        <button type="button" data-users="25">Growing · 25</button>
+        <button type="button" data-users="50">Large · 50</button>
+      </div>
+      <div class="user-scaler-rec">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 15.09 8.26 22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span class="user-scaler-rec-text">For <strong>10 users</strong>, we recommend the <strong>Business</strong> plan.</span>
+      </div>
+    </div>
+    <div class="price-panel active" id="panel-hims">
+      <div class="grid grid-3">
+        <div id="plan-hims-startup" class="price-card">
+          <div class="plan-name"><a href="#plan-hims-startup" style="color:inherit;text-decoration:none;">Startup</a></div>
+          <div class="plan-desc">For small hospitals &amp; nursing homes</div>
+        <div class="plan-price" style="margin-bottom:10px; display:flex; flex-direction:column; align-items:flex-start;">
+          <div data-year>
+            <span style="font-size:1.1rem; color:var(--text-soft); text-decoration:line-through; margin-right:8px;">₹1124</span>
+            <span class="cur">₹</span><span class="amt"><a href="#plan-hims-startup-year" style="color:inherit;text-decoration:none;">899</a></span><span class="per">/ user / mo</span>
+          </div>
+          <div data-half style="display:none;">
+            <span class="cur">₹</span><span class="amt"><a href="#plan-hims-startup-half" style="color:inherit;text-decoration:none;">1124</a></span><span class="per">/ user / mo</span>
+          </div>
+        </div>
+        <div class="plan-users" style="margin-top:15px; margin-bottom:15px;">
+          <select class="user-select" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--line); font-size:1rem; background:var(--bg); color:var(--text);" data-base="5" data-price-year="899" data-price-half="1124">
+            <option value="5">5 Users (Base)</option><option value="6">6 Users</option><option value="7">7 Users</option><option value="8">8 Users</option><option value="9">9 Users</option><option value="10">10 Users</option><option value="11">11 Users</option><option value="12">12 Users</option><option value="13">13 Users</option><option value="14">14 Users</option><option value="15">15 Users</option><option value="16">16 Users</option><option value="17">17 Users</option><option value="18">18 Users</option><option value="19">19 Users</option><option value="20">20 Users</option><option value="25">25 Users</option><option value="30">30 Users</option><option value="35">35 Users</option><option value="40">40 Users</option><option value="45">45 Users</option><option value="50">50 Users</option>
+          </select>
+        </div>
+        <div class="plan-calc" style="background:var(--bg-sec); border:1px solid var(--line); padding:16px; border-radius:8px; margin-bottom:24px; font-size:0.95rem;">
+   <!-- Breakdown -->
+   <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-soft);">
+       <span>Subtotal</span>
+       <span style="color:var(--text); font-weight:500;">₹ <span class="calc-base">0</span> <span style="font-size:0.85rem;">/ mo</span></span>
+   </div>
+   <div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text-soft);">
+       <span>GST (18%)</span>
+       <span style="color:var(--text); font-weight:500;">₹ <span class="calc-gst">0</span> <span style="font-size:0.85rem;">/ mo</span></span>
+   </div>
+   
+   <!-- Monthly Equivalent -->
+   <div style="display:flex; justify-content:space-between; margin-bottom:16px; color:var(--text-soft);">
+       <span>Monthly Equivalent</span>
+       <span style="color:var(--text); font-weight:500;">₹ <span class="calc-total">0</span> <span style="font-size:0.85rem;">/ mo</span></span>
+   </div>
+
+   <!-- Commitment Box -->
+   <div style="background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+       <div style="display:flex; justify-content:space-between; align-items:center;">
+           <span style="font-size:0.9rem; font-weight:600; color:var(--navy);">Billed <span class="calc-billed-freq">Annually</span></span>
+           <span style="font-weight:800; font-size:1.15rem; color:var(--primary);">₹ <span class="calc-billed">0</span></span>
+       </div>
+       <div class="calc-savings-row" style="display:flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:700; color:#10b981; margin-top:8px; display:none;">
+           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+           <span>You save ₹ <span class="calc-savings">0</span> a year</span>
+       </div>
+   </div>
+</div>
+                              <ul class="checks">
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Dashboard</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Billing</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Appointment Booking</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Token System</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Medical Records</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Case Taking</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Doctors</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Team Management</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Prescription</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Medicines</span></li>
+          
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Standard Support <span style="background:rgba(15, 59, 116, 0.06); color:var(--navy, #0f3b74); border:1px solid rgba(15, 59, 116, 0.15); padding:2px 8px; border-radius:12px; font-size:0.75rem; font-weight:700; margin-left:4px; vertical-align:middle;">10AM - 6PM</span></span></li>
+          </ul>
+          <a href="contact" class="btn btn-outline btn-block">⚡ Sign Up Now</a>
+        </div>
+        <div id="plan-hims-business" class="price-card featured">
+          <div class="plan-name"><a href="#plan-hims-business" style="color:inherit;text-decoration:none;">Business</a></div>
+          <div class="plan-desc">For growing multi-specialty hospitals</div>
+        <div class="plan-price" style="margin-bottom:10px; display:flex; flex-direction:column; align-items:flex-start;">
+          <div data-year>
+            <span style="font-size:1.1rem; color:var(--text-soft); text-decoration:line-through; margin-right:8px;">₹1374</span>
+            <span class="cur">₹</span><span class="amt"><a href="#plan-hims-business-year" style="color:inherit;text-decoration:none;">1099</a></span><span class="per">/ user / mo</span>
+          </div>
+          <div data-half style="display:none;">
+            <span class="cur">₹</span><span class="amt"><a href="#plan-hims-business-half" style="color:inherit;text-decoration:none;">1374</a></span><span class="per">/ user / mo</span>
+          </div>
+        </div>
+        <div class="plan-users" style="margin-top:15px; margin-bottom:15px;">
+          <select class="user-select" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--line); font-size:1rem; background:var(--bg); color:var(--text);" data-base="10" data-price-year="1099" data-price-half="1374">
+            <option value="10">10 Users (Base)</option><option value="11">11 Users</option><option value="12">12 Users</option><option value="13">13 Users</option><option value="14">14 Users</option><option value="15">15 Users</option><option value="16">16 Users</option><option value="17">17 Users</option><option value="18">18 Users</option><option value="19">19 Users</option><option value="20">20 Users</option><option value="25">25 Users</option><option value="30">30 Users</option><option value="35">35 Users</option><option value="40">40 Users</option><option value="45">45 Users</option><option value="50">50 Users</option>
+          </select>
+        </div>
+        <div class="plan-calc" style="background:var(--bg-sec); border:1px solid var(--line); padding:16px; border-radius:8px; margin-bottom:24px; font-size:0.95rem;">
+   <!-- Breakdown -->
+   <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-soft);">
+       <span>Subtotal</span>
+       <span style="color:var(--text); font-weight:500;">₹ <span class="calc-base">0</span> <span style="font-size:0.85rem;">/ mo</span></span>
+   </div>
+   <div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text-soft);">
+       <span>GST (18%)</span>
+       <span style="color:var(--text); font-weight:500;">₹ <span class="calc-gst">0</span> <span style="font-size:0.85rem;">/ mo</span></span>
+   </div>
+   
+   <!-- Monthly Equivalent -->
+   <div style="display:flex; justify-content:space-between; margin-bottom:16px; color:var(--text-soft);">
+       <span>Monthly Equivalent</span>
+       <span style="color:var(--text); font-weight:500;">₹ <span class="calc-total">0</span> <span style="font-size:0.85rem;">/ mo</span></span>
+   </div>
+
+   <!-- Commitment Box -->
+   <div style="background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+       <div style="display:flex; justify-content:space-between; align-items:center;">
+           <span style="font-size:0.9rem; font-weight:600; color:var(--navy);">Billed <span class="calc-billed-freq">Annually</span></span>
+           <span style="font-weight:800; font-size:1.15rem; color:var(--primary);">₹ <span class="calc-billed">0</span></span>
+       </div>
+       <div class="calc-savings-row" style="display:flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:700; color:#10b981; margin-top:8px; display:none;">
+           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+           <span>You save ₹ <span class="calc-savings">0</span> a year</span>
+       </div>
+   </div>
+</div>
+                              <ul class="checks">
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span><strong>Everything in Startup, plus:</strong></span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Rooms</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Nursing Station</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Surgeries Management</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Blood Management</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Medical Examination</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Tasks Management</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>SMS/WA/Email/ AI Call Agent</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>MIS Reports</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Shift Reports</span></li>
+          
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Standard Support <span style="background:rgba(15, 59, 116, 0.06); color:var(--navy, #0f3b74); border:1px solid rgba(15, 59, 116, 0.15); padding:2px 8px; border-radius:12px; font-size:0.75rem; font-weight:700; margin-left:4px; vertical-align:middle;">10AM - 6PM</span></span></li>
+          </ul>
+          <a href="contact" class="btn btn-primary btn-block">⚡ Sign Up Now</a>
+        </div>
+        <div id="plan-hims-corporate" class="price-card">
+          <div class="plan-name"><a href="#plan-hims-corporate" style="color:inherit;text-decoration:none;">Corporate</a></div>
+          <div class="plan-desc">For large hospitals &amp; chains</div>
+        <div class="plan-price" style="margin-bottom:10px; display:flex; flex-direction:column; align-items:flex-start;">
+          <div data-year>
+            <span style="font-size:1.1rem; color:var(--text-soft); text-decoration:line-through; margin-right:8px;">₹2250</span>
+            <span class="cur">₹</span><span class="amt"><a href="#plan-hims-corporate-year" style="color:inherit;text-decoration:none;">1800</a></span><span class="per">/ user / mo</span>
+          </div>
+          <div data-half style="display:none;">
+            <span class="cur">₹</span><span class="amt"><a href="#plan-hims-corporate-half" style="color:inherit;text-decoration:none;">2250</a></span><span class="per">/ user / mo</span>
+          </div>
+        </div>
+        <div class="plan-users" style="margin-top:15px; margin-bottom:15px;">
+          <select class="user-select" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--line); font-size:1rem; background:var(--bg); color:var(--text);" data-base="10" data-price-year="1800" data-price-half="2250">
+            <option value="10">10 Users (Base)</option><option value="11">11 Users</option><option value="12">12 Users</option><option value="13">13 Users</option><option value="14">14 Users</option><option value="15">15 Users</option><option value="16">16 Users</option><option value="17">17 Users</option><option value="18">18 Users</option><option value="19">19 Users</option><option value="20">20 Users</option><option value="25">25 Users</option><option value="30">30 Users</option><option value="35">35 Users</option><option value="40">40 Users</option><option value="45">45 Users</option><option value="50">50 Users</option>
+          </select>
+        </div>
+        <div class="plan-calc" style="background:var(--bg-sec); border:1px solid var(--line); padding:16px; border-radius:8px; margin-bottom:24px; font-size:0.95rem;">
+   <!-- Breakdown -->
+   <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-soft);">
+       <span>Subtotal</span>
+       <span style="color:var(--text); font-weight:500;">₹ <span class="calc-base">0</span> <span style="font-size:0.85rem;">/ mo</span></span>
+   </div>
+   <div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text-soft);">
+       <span>GST (18%)</span>
+       <span style="color:var(--text); font-weight:500;">₹ <span class="calc-gst">0</span> <span style="font-size:0.85rem;">/ mo</span></span>
+   </div>
+   
+   <!-- Monthly Equivalent -->
+   <div style="display:flex; justify-content:space-between; margin-bottom:16px; color:var(--text-soft);">
+       <span>Monthly Equivalent</span>
+       <span style="color:var(--text); font-weight:500;">₹ <span class="calc-total">0</span> <span style="font-size:0.85rem;">/ mo</span></span>
+   </div>
+
+   <!-- Commitment Box -->
+   <div style="background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+       <div style="display:flex; justify-content:space-between; align-items:center;">
+           <span style="font-size:0.9rem; font-weight:600; color:var(--navy);">Billed <span class="calc-billed-freq">Annually</span></span>
+           <span style="font-weight:800; font-size:1.15rem; color:var(--primary);">₹ <span class="calc-billed">0</span></span>
+       </div>
+       <div class="calc-savings-row" style="display:flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:700; color:#10b981; margin-top:8px; display:none;">
+           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+           <span>You save ₹ <span class="calc-savings">0</span> a year</span>
+       </div>
+   </div>
+</div>
+                              <ul class="checks">
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span><strong>Everything in Business, plus:</strong></span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Canteen Management</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Parking Management</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Assets Management</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Purchase Management</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>HR Records</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>HR Payroll</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Leave Management</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>HealthO AI Assistant</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Patient App</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Payment Gateway</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Process Management</span></li>
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Staff Approvals</span></li>
+          
+            <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span><span style="background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#fff; padding:2px 8px; border-radius:12px; font-size:0.75rem; font-weight:700; margin-right:6px; vertical-align:middle; box-shadow:0 2px 4px rgba(16,185,129,0.2);">24/7</span><span style="font-weight:600; color:var(--text);">Support &amp; Dedicated Manager</span></span></li>
+          </ul>
+          <a href="contact" class="btn btn-navy btn-block">⚡ Sign Up Now</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -189,6 +424,6 @@
 
 <a class="wa-float" href="https://wa.me/919700730044" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.06 2.88 1.21 3.08.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35M12 21.5a9.5 9.5 0 0 1-4.84-1.32l-.35-.21-3.59.94.96-3.5-.23-.36A9.5 9.5 0 1 1 12 21.5M12 2a11.5 11.5 0 0 0-9.86 17.4L1 23l3.7-1.12A11.5 11.5 0 1 0 12 2"/></svg></a>
 <button class="to-top" id="toTop" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m18 15-6-6-6 6"/></svg></button>
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>
