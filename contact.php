@@ -27,6 +27,10 @@ $city     = isset($_POST['city'])     ? strip_tags(trim($_POST['city']))    : ''
 $state    = isset($_POST['state'])    ? strip_tags(trim($_POST['state']))   : '';
 $country  = isset($_POST['country'])  ? strip_tags(trim($_POST['country'])) : '';
 
+// Optional form context (e.g. "Message to CEO") and a free-form category
+$formType = isset($_POST['formType']) ? strip_tags(trim($_POST['formType'])) : '';
+$category = isset($_POST['category']) ? strip_tags(trim($_POST['category'])) : '';
+
 // Mobile number is now mandatory alongside name & email
 if (empty($fullName) || empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL) || empty($phone)) {
     http_response_code(400);
@@ -50,7 +54,13 @@ try {
     $mail->addAddress('digicarelynx@gmail.com');
 
     // Subject reflects the type of submission
-    $subjectType = ($orgType === 'Job Application') ? 'New Career Application' : 'New Website Enquiry';
+    if ($formType !== '') {
+        $subjectType = $formType;
+    } elseif ($orgType === 'Job Application') {
+        $subjectType = 'New Career Application';
+    } else {
+        $subjectType = 'New Website Enquiry';
+    }
     $mail->isHTML(true);
     $mail->CharSet = 'UTF-8';
     $mail->Subject = "$subjectType — HealthO Pro";
@@ -63,6 +73,7 @@ try {
     $rows[] = ['Email', '<a href="mailto:' . $h($email) . '" style="color:#0096B7;text-decoration:none;font-weight:600;">' . $h($email) . '</a>'];
     $rows[] = ['Mobile Number', '<a href="tel:' . $h(preg_replace('/[^0-9+]/', '', $phone)) . '" style="color:#0096B7;text-decoration:none;font-weight:600;">' . $h($phone) . '</a>'];
     if ($orgType !== '')  $rows[] = ['Organization / Type', $h($orgType)];
+    if ($category !== '') $rows[] = ['Type of Message', $h($category)];
     if ($interest !== '') $rows[] = ['Interested In / Position', $h($interest)];
     if ($resume !== '')   $rows[] = ['Resume / CV', '<a href="' . $h($resume) . '" style="color:#0096B7;text-decoration:none;font-weight:600;">View / Download</a>'];
     $rows[] = ['Location', $h($location) . ' <span style="color:#94a3b8;font-size:11px;">(auto-detected)</span>'];
@@ -137,6 +148,7 @@ HTML;
     $plain .= "Email: $email\n";
     $plain .= "Mobile Number: $phone\n";
     if ($orgType !== '')  $plain .= "Organization / Type: $orgType\n";
+    if ($category !== '') $plain .= "Type of Message: $category\n";
     if ($interest !== '') $plain .= "Interested In / Position: $interest\n";
     if ($resume !== '')   $plain .= "Resume / CV: $resume\n";
     $plain .= "Location (auto-detected): $location\n";
