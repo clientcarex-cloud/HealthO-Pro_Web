@@ -152,6 +152,20 @@
                 var months = (cycle === 'year') ? 12 : 6;
                 var billedAmount = total * months;
                 
+                // Update the big numbers at the top
+                var yearAmtEl = card.querySelector('[data-year] .amt a') || card.querySelector('[data-year] .amt');
+                var halfAmtEl = card.querySelector('[data-half] .amt a') || card.querySelector('[data-half] .amt');
+                var yearStrikeEl = card.querySelector('[data-year] span[style*="line-through"]');
+                var halfStrikeEl = card.querySelector('[data-half] span[style*="line-through"]');
+                
+                var priceYear = parseInt(card.getAttribute('data-price-year'), 10);
+                var priceHalf = parseInt(card.getAttribute('data-price-half'), 10);
+                
+                if (yearAmtEl && priceYear) yearAmtEl.textContent = (effectiveUsers * priceYear).toLocaleString('en-IN');
+                if (halfAmtEl && priceHalf) halfAmtEl.textContent = (effectiveUsers * priceHalf).toLocaleString('en-IN');
+                if (yearStrikeEl && priceHalf) yearStrikeEl.textContent = '₹' + (effectiveUsers * priceHalf).toLocaleString('en-IN');
+                // Note: half usually doesn't have a strike-through, but just in case
+                
                 if (baseEl) baseEl.textContent = subtotal.toLocaleString('en-IN');
                 if (gstEl) gstEl.textContent = gst.toLocaleString('en-IN');
                 if (totalEl) totalEl.textContent = total.toLocaleString('en-IN');
