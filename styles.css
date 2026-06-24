@@ -375,6 +375,7 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 .country:hover { transform: translateY(-5px); box-shadow: var(--e3); border-color: var(--cyan-light); }
 .country .flag { font-size: var(--text-3xl); line-height: 1; flex: none; display: inline-flex; }
 .country .flag .flag-png { width: 38px; height: auto; display: block; border-radius: 4px; box-shadow: 0 1px 3px rgba(15, 27, 51, .22); }
+.presence-grid--compact .country .flag .flag-png { width: 28px; border-radius: 3px; }
 .country > span:last-child { flex: 1; }
 .country .cn { display: block; font-weight: 700; color: var(--ink); font-size: var(--text-base); line-height: 1.2; margin-bottom: 2px; }
 .country .cr { display: block; font-size: var(--text-sm); color: var(--text-mute); line-height: 1.2; }
