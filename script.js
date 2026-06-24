@@ -103,16 +103,41 @@
 
         /* ---------- Real-time Pricing Calculator ---------- */
         var currentBillingCycle = 'year';
+        
+        var globalUserSlider = document.getElementById('globalUserSlider');
+        var globalUserCountDisplay = document.getElementById('globalUserCountDisplay');
+        var recommendedPlanDisplay = document.getElementById('recommendedPlanDisplay');
+        
+        var updateRecommendedPlan = function(users) {
+            if (!recommendedPlanDisplay) return;
+            if (users <= 10) {
+                recommendedPlanDisplay.innerHTML = 'Startup Plan<div style="font-size:0.75rem; color:var(--text-soft); font-weight:500; margin-top:2px;">Suitable for small setups</div>';
+            } else if (users <= 25) {
+                recommendedPlanDisplay.innerHTML = 'Business Plan<div style="font-size:0.75rem; color:var(--text-soft); font-weight:500; margin-top:2px;">Suitable for growing organizations</div>';
+            } else {
+                recommendedPlanDisplay.innerHTML = 'Corporate Plan<div style="font-size:0.75rem; color:var(--text-soft); font-weight:500; margin-top:2px;">Suitable for large enterprises</div>';
+            }
+        };
+
         var recalculatePrices = function(cycle) {
             currentBillingCycle = cycle;
-            document.querySelectorAll('.user-select').forEach(function(select) {
-                var card = select.closest('.price-card');
-                if (!card) return;
+            var users = globalUserSlider ? parseInt(globalUserSlider.value, 10) : 10;
+            
+            if (globalUserCountDisplay) {
+                globalUserCountDisplay.textContent = users + (users === 50 ? '+' : '');
+            }
+            updateRecommendedPlan(users);
+            
+            document.querySelectorAll('.price-card').forEach(function(card) {
+                // Determine base users
+                var baseUsers = parseInt(card.getAttribute('data-base') || 5, 10);
+                var effectiveUsers = Math.max(users, baseUsers); // Cannot be less than base
                 
-                var users = parseInt(select.value, 10);
-                var pricePerUser = parseInt(select.getAttribute('data-price-' + cycle), 10);
+                var pricePerUserStr = card.getAttribute('data-price-' + cycle);
+                if (!pricePerUserStr) return; // Maybe a RIS card without standard pricing
+                var pricePerUser = parseInt(pricePerUserStr, 10);
                 
-                var subtotal = users * pricePerUser;
+                var subtotal = effectiveUsers * pricePerUser;
                 var gst = Math.round(subtotal * 0.18);
                 var total = subtotal + gst;
                 
@@ -134,8 +159,8 @@
                 if (freqEl) freqEl.textContent = (cycle === 'year') ? 'Annually' : 'Every 6 Months';
                 
                 if (cycle === 'year') {
-                    var priceHalf = parseInt(select.getAttribute('data-price-half'), 10);
-                    var totalIfHalf = (users * priceHalf) * 1.18;
+                    var priceHalf = parseInt(card.getAttribute('data-price-half'), 10);
+                    var totalIfHalf = (effectiveUsers * priceHalf) * 1.18;
                     var yearlyCostIfHalf = Math.round(totalIfHalf * 12);
                     var savings = yearlyCostIfHalf - billedAmount;
                     
@@ -145,14 +170,15 @@
                     }
                 } else {
                     if (savingsRow) savingsRow.style.display = 'none';
-                }            });
+                }
+            });
         };
 
-        document.querySelectorAll('.user-select').forEach(function(select) {
-            select.addEventListener('change', function() {
+        if (globalUserSlider) {
+            globalUserSlider.addEventListener('input', function() {
                 recalculatePrices(currentBillingCycle);
             });
-        });
+        }
 
         var setBilling = function (cycle) {
             recalculatePrices(cycle);
