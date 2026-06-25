@@ -219,11 +219,10 @@
         function buildPlanCalc(cur) {
             return ''
                 + '<div class="plan-calc" style="background:var(--bg-sec); border:1px solid var(--line); padding:16px; border-radius:8px; margin-bottom:24px; font-size:0.95rem;">'
-                +   '<div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-soft);"><span>Subtotal</span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-base">0</span> <span style="font-size:0.85rem;">/ mo</span></span></div>'
-                +   '<div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text-soft);"><span>GST (18%)</span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-gst">0</span> <span style="font-size:0.85rem;">/ mo</span></span></div>'
-                +   '<div style="display:flex; justify-content:space-between; margin-bottom:16px; color:var(--text-soft);"><span>Monthly Equivalent</span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-total">0</span> <span style="font-size:0.85rem;">/ mo</span></span></div>'
-                +   '<div style="background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">'
-                +     '<div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:0.9rem; font-weight:600; color:var(--navy);">Billed <span class="calc-billed-freq">Annually</span></span><span style="font-weight:800; font-size:1.15rem; color:var(--primary);">' + cur + ' <span class="calc-billed">0</span></span></div>'
+                +   '<div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-soft);"><span>Monthly Cost</span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-base">0</span> <span style="font-size:0.85rem;">/ mo</span></span></div>'
+                +   '<div style="background:#e8faed; border:1px solid #d1f4e0; border-radius:6px; padding:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display:flex; flex-direction:column; align-items:flex-end;">'
+                +     '<div style="font-weight:800; font-size:1.8rem; color:#149b82;">' + cur + '<span class="calc-billed">0</span></div>'
+                +     '<div style="font-size:0.95rem; font-weight:600; margin-top:2px;"><span style="color:#8a94a6;">' + cur + '<span class="calc-billed-base">0</span></span> <span style="color:#149b82;">+ 18% GST</span></div>'
                 +     '<div class="calc-savings-row" style="align-items:center; gap:6px; font-size:0.85rem; font-weight:700; color:#10b981; margin-top:8px; display:none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>You save ' + cur + ' <span class="calc-savings">0</span> a year</span></div>'
                 +   '</div>'
                 + '</div>';
@@ -432,15 +431,25 @@
                 var total = subtotal + gst;
                 var months = (currentBillingCycle === 'year') ? 12 : 6;
                 var billedAmount = total * months;
+                var billedBase = subtotal * months;
 
-                var setTxt = function (sel, val) {
+                var setTxt = function (sel, val, decimals) {
                     var el = card.querySelector(sel);
-                    if (el) el.textContent = val.toLocaleString('en-IN');
+                    if (el) {
+                        if (decimals) {
+                            el.textContent = val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        } else {
+                            el.textContent = val.toLocaleString('en-IN');
+                        }
+                    }
                 };
                 setTxt('.calc-base', subtotal);
                 setTxt('.calc-gst', gst);
                 setTxt('.calc-total', total);
-                setTxt('.calc-billed', billedAmount);
+                // The billed values should show decimals (e.g. .20, .00) to match the reference image style
+                var billedExact = (subtotal * months) * 1.18;
+                setTxt('.calc-billed', billedExact, true);
+                setTxt('.calc-billed-base', billedBase, true);
 
                 var freqEl = card.querySelector('.calc-billed-freq');
                 if (freqEl) freqEl.textContent = (currentBillingCycle === 'year') ? 'Annually' : 'Every 6 Months';
