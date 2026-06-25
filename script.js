@@ -446,10 +446,9 @@
                 setTxt('.calc-base', subtotal);
                 setTxt('.calc-gst', gst);
                 setTxt('.calc-total', total);
-                // The billed values should show decimals (e.g. .20, .00) to match the reference image style
-                var billedExact = (subtotal * months) * 1.18;
-                setTxt('.calc-billed', billedExact, true);
-                setTxt('.calc-billed-base', billedBase, true);
+                var billedExact = Math.round((subtotal * months) * 1.18);
+                setTxt('.calc-billed', billedExact, false);
+                setTxt('.calc-billed-base', billedBase, false);
 
                 var freqEl = card.querySelector('.calc-billed-freq');
                 if (freqEl) freqEl.textContent = (currentBillingCycle === 'year') ? 'Annually' : 'Every 6 Months';
