@@ -203,6 +203,136 @@
             counters.forEach(function (c) { cio.observe(c); });
         }
 
+        /* ---------- Dynamic pricing plans (served by the secure /plans proxy) ----------
+           Pricing is configured only in the SaaS admin. plans.php fetches it server-side
+           (the API key never reaches the browser) and returns plans grouped by HIMS/LIMS/CIMS.
+           We rebuild the same .price-card markup the calculator already binds to, so the
+           billing toggle, user scaler, GST and savings keep working untouched. */
+        var PLAN_CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>';
+
+        function planEsc(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+
+        function buildPlanCalc(cur) {
+            return ''
+                + '<div class="plan-calc" style="background:var(--bg-sec); border:1px solid var(--line); padding:16px; border-radius:8px; margin-bottom:24px; font-size:0.95rem;">'
+                +   '<div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-soft);"><span>Subtotal</span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-base">0</span> <span style="font-size:0.85rem;">/ mo</span></span></div>'
+                +   '<div style="display:flex; justify-content:space-between; margin-bottom:12px; color:var(--text-soft);"><span>GST (18%)</span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-gst">0</span> <span style="font-size:0.85rem;">/ mo</span></span></div>'
+                +   '<div style="display:flex; justify-content:space-between; margin-bottom:16px; color:var(--text-soft);"><span>Monthly Equivalent</span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-total">0</span> <span style="font-size:0.85rem;">/ mo</span></span></div>'
+                +   '<div style="background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">'
+                +     '<div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:0.9rem; font-weight:600; color:var(--navy);">Billed <span class="calc-billed-freq">Annually</span></span><span style="font-weight:800; font-size:1.15rem; color:var(--primary);">' + cur + ' <span class="calc-billed">0</span></span></div>'
+                +     '<div class="calc-savings-row" style="align-items:center; gap:6px; font-size:0.85rem; font-weight:700; color:#10b981; margin-top:8px; display:none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>You save ' + cur + ' <span class="calc-savings">0</span> a year</span></div>'
+                +   '</div>'
+                + '</div>';
+        }
+
+        function buildPlanCard(group, plan, cur) {
+            var tierKey = String(plan.tier || 'plan').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            var id = 'plan-' + group + '-' + (tierKey || 'plan');
+            var py = plan.price_year, ph = plan.price_half;
+            var strike = (ph != null && py != null && Number(ph) > Number(py))
+                ? '<span style="font-size:1.1rem; color:var(--text-soft); text-decoration:line-through; margin-right:8px;">' + cur + planEsc(ph) + '</span>' : '';
+            var featuredCls = plan.featured ? ' featured' : '';
+            var btnCls = plan.featured ? 'btn-primary' : 'btn-outline';
+            var signupYear = plan.signup_year || plan.signup_half || 'contact';
+            var signupHalf = plan.signup_half || plan.signup_year || 'contact';
+            var features = (plan.features || []).map(function (f) {
+                return '<li><span class="ck">' + PLAN_CHECK_SVG + '</span><span>' + planEsc(f) + '</span></li>';
+            }).join('');
+
+            return ''
+                + '<div id="' + id + '" class="price-card' + featuredCls + '">'
+                +   '<div class="plan-name">' + planEsc(plan.tier) + '</div>'
+                +   '<div class="plan-desc">' + planEsc(plan.desc) + '</div>'
+                +   '<div class="plan-price" style="margin-bottom:10px; display:flex; flex-direction:column; align-items:flex-start;">'
+                +     '<div data-year>' + strike + '<span class="cur">' + cur + '</span><span class="amt">' + planEsc(py) + '</span><span class="per">/ user / mo</span></div>'
+                +     '<div data-half style="display:none;"><span class="cur">' + cur + '</span><span class="amt">' + planEsc(ph) + '</span><span class="per">/ user / mo</span></div>'
+                +   '</div>'
+                +   '<div class="plan-users" style="margin-top:15px; margin-bottom:15px;">'
+                +     '<select class="user-select" data-base="' + planEsc(plan.base_users || 1) + '" data-price-year="' + planEsc(py) + '" data-price-half="' + planEsc(ph) + '"></select>'
+                +   '</div>'
+                +   buildPlanCalc(cur)
+                +   '<ul class="checks">' + features + '</ul>'
+                +   '<a href="' + planEsc(signupYear) + '" class="btn ' + btnCls + ' btn-block plan-signup" data-signup-year="' + planEsc(signupYear) + '" data-signup-half="' + planEsc(signupHalf) + '">⚡ Sign Up Now</a>'
+                +   '<button type="button" class="plan-share" data-share="' + planEsc(signupYear) + '" data-share-year="' + planEsc(signupYear) + '" data-share-half="' + planEsc(signupHalf) + '" style="margin-top:10px; width:100%; background:none; border:none; cursor:pointer; color:var(--cyan-dark); font-weight:700; font-size:0.85rem; display:inline-flex; align-items:center; justify-content:center; gap:6px;">'
+                +     '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>'
+                +     '<span class="plan-share-text">Share plan link</span>'
+                +   '</button>'
+                + '</div>';
+        }
+
+        function planMessageHtml(msg) {
+            return '<div style="grid-column:1/-1; padding:32px; text-align:center; border:1px dashed var(--line); border-radius:12px; color:var(--text-soft);">'
+                + '<p style="margin-bottom:14px;">' + planEsc(msg) + '</p>'
+                + '<a href="contact" class="btn btn-primary">Contact Sales</a></div>';
+        }
+
+        function renderDynamicPlans(done) {
+            var mounts = document.querySelectorAll('.dynamic-plans[data-group]');
+            if (!mounts.length) { if (done) done(); return; }
+
+            mounts.forEach(function (m) {
+                m.innerHTML = '<div style="grid-column:1/-1; padding:40px; text-align:center; color:var(--text-soft);">Loading plans…</div>';
+            });
+            var finish = function () { if (done) done(); };
+
+            fetch('plans', { headers: { 'Accept': 'application/json' } })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    var groups = (data && data.groups) || {};
+                    var cur = (data && data.currency) || '₹';
+                    mounts.forEach(function (m) {
+                        var gk = m.getAttribute('data-group');
+                        var g = groups[gk];
+                        if (!g || !g.plans || !g.plans.length) {
+                            m.innerHTML = planMessageHtml('Plans for this product are being updated. Please check back shortly or contact our team.');
+                            return;
+                        }
+                        var cards = g.plans.map(function (p) { return buildPlanCard(gk, p, cur); }).join('');
+                        m.innerHTML = '<div class="grid grid-3">' + cards + '</div>';
+                    });
+                    finish();
+                })
+                .catch(function () {
+                    mounts.forEach(function (m) {
+                        m.innerHTML = planMessageHtml('We couldn’t load live pricing right now. Please refresh or contact our team for a quote.');
+                    });
+                    finish();
+                });
+        }
+
+        // Copy a plan's share link to the clipboard (event delegation, bound once).
+        document.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest ? e.target.closest('.plan-share') : null;
+            if (!btn) return;
+            e.preventDefault();
+            var url = btn.getAttribute('data-share') || '';
+            if (!url) return;
+            var label = btn.querySelector('.plan-share-text');
+            var flash = function () {
+                if (!label) return;
+                var prev = label.getAttribute('data-label') || label.textContent;
+                label.setAttribute('data-label', prev);
+                label.textContent = 'Link copied!';
+                setTimeout(function () { label.textContent = prev; }, 1800);
+            };
+            var fallback = function () {
+                try {
+                    var ta = document.createElement('textarea');
+                    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                    document.body.appendChild(ta); ta.select();
+                    document.execCommand('copy'); document.body.removeChild(ta);
+                } catch (err) {}
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(flash, function () { fallback(); flash(); });
+            } else { fallback(); flash(); }
+        });
+
+        function initPricing() {
         /* ---------- Pricing: billing toggle ---------- */
         var billBtns = document.querySelectorAll('.billing-toggle button');
 
@@ -341,6 +471,15 @@
             document.querySelectorAll('[data-year]').forEach(function (el) {
                 el.style.display = (cycle === 'year') ? '' : 'none';
             });
+            // Point Sign Up + Share at the package matching the active billing cycle
+            document.querySelectorAll('.plan-signup').forEach(function (a) {
+                var u = a.getAttribute('data-signup-' + cycle);
+                if (u) a.setAttribute('href', u);
+            });
+            document.querySelectorAll('.plan-share').forEach(function (b) {
+                var u = b.getAttribute('data-share-' + cycle);
+                if (u) b.setAttribute('data-share', u);
+            });
             recalculate();
         };
         billBtns.forEach(function (b) {
@@ -389,6 +528,10 @@
                 }
             }
         }
+        } // end initPricing
+
+        // Build cards from the secure proxy first, then wire up the pricing interactions.
+        renderDynamicPlans(initPricing);
 
         /* ---------- FAQ accordion ---------- */
         document.querySelectorAll('.faq-q').forEach(function (q) {
