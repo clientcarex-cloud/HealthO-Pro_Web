@@ -264,9 +264,12 @@
                 + '</div>';
         }
 
-        function planMessageHtml(msg) {
-            return '<div style="grid-column:1/-1; padding:32px; text-align:center; border:1px dashed var(--line); border-radius:12px; color:var(--text-soft);">'
-                + '<p style="margin-bottom:14px;">' + planEsc(msg) + '</p>'
+        // Visible diagnostic box: show the REAL reason a panel is empty instead of blank space.
+        function planErrorHtml(title, detail) {
+            return '<div style="grid-column:1/-1; padding:26px; text-align:left; border:1px solid #f1b0b7; background:#fff5f5; border-radius:12px; color:#842029;">'
+                + '<p style="font-weight:800; margin:0 0 8px; font-size:1rem;">⚠ ' + planEsc(title) + '</p>'
+                + (detail ? '<pre style="white-space:pre-wrap; word-break:break-word; font-size:.8rem; line-height:1.5; background:#fff; border:1px solid #f1d0d4; border-radius:8px; padding:10px 12px; margin:0 0 14px; color:#6a1a21; max-height:200px; overflow:auto;">' + planEsc(detail) + '</pre>' : '')
+                + '<button type="button" class="btn btn-outline plan-retry" style="margin-right:10px;">Retry</button>'
                 + '<a href="contact" class="btn btn-primary">Contact Sales</a></div>';
         }
 
@@ -278,17 +281,51 @@
                 m.innerHTML = '<div style="grid-column:1/-1; padding:40px; text-align:center; color:var(--text-soft);">Loading plans…</div>';
             });
             var finish = function () { if (done) done(); };
+            var fail = function (title, detail) {
+                if (window.console && console.error) console.error('[pricing] ' + title + (detail ? '\n' + detail : ''));
+                mounts.forEach(function (m) { m.innerHTML = planErrorHtml(title, detail); });
+                finish();
+            };
 
-            fetch('plans.php', { headers: { 'Accept': 'application/json' } })
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    var groups = (data && data.groups) || {};
-                    var cur = (data && data.currency) || '₹';
+            var httpStatus = 0, ctype = '';
+            fetch('plans.php?ts=' + Date.now(), { headers: { 'Accept': 'application/json' } })
+                .then(function (r) {
+                    httpStatus = r.status;
+                    ctype = (r.headers && r.headers.get) ? (r.headers.get('content-type') || '') : '';
+                    return r.text().then(function (body) { return { ok: r.ok, body: body }; });
+                })
+                .then(function (res) {
+                    var data;
+                    try { data = JSON.parse(res.body); }
+                    catch (e) {
+                        return fail(
+                            'Pricing service did not return JSON (HTTP ' + httpStatus + ').',
+                            'plans.php is likely not deployed at the site root, or the URL is being handled by the CRM / a 404 page.\n'
+                            + 'Content-Type: ' + (ctype || 'n/a') + '\n'
+                            + 'Response starts with:\n' + String(res.body).slice(0, 300)
+                        );
+                    }
+                    if (!res.ok || !data || data.ok === false) {
+                        return fail(
+                            'Pricing service returned an error (HTTP ' + httpStatus + ').',
+                            'error: ' + ((data && data.error) ? data.error : 'unknown') + '\n\n'
+                            + 'If this says "Invalid credential" → the SaaS API is rejecting the key (Authorization header stripped, or token/permission mismatch).\n'
+                            + 'If this says "API not configured" → the .env (API key/URL) is missing on the server.\n'
+                            + 'If this says "Unable to load plans" → plans.php could not reach https://healtho.pro/saas/api/plans.'
+                        );
+                    }
+                    var groups = data.groups || {};
+                    var cur = data.currency || '₹';
                     mounts.forEach(function (m) {
                         var gk = m.getAttribute('data-group');
                         var g = groups[gk];
                         if (!g || !g.plans || !g.plans.length) {
-                            m.innerHTML = planMessageHtml('Plans for this product are being updated. Please check back shortly or contact our team.');
+                            m.innerHTML = planErrorHtml(
+                                'No “' + String(gk).toUpperCase() + '” plans returned by the API.',
+                                'The API responded OK, but no active, public package is assigned to the "' + gk + '" plan group\n'
+                                + '(with a yearly + 6-month variant). Configure it in the SaaS admin → Pricing Plans.\n'
+                                + 'Groups received from API: ' + (Object.keys(groups).join(', ') || '(none)')
+                            );
                             return;
                         }
                         var cards = g.plans.map(function (p) { return buildPlanCard(gk, p, cur); }).join('');
@@ -296,13 +333,22 @@
                     });
                     finish();
                 })
-                .catch(function () {
-                    mounts.forEach(function (m) {
-                        m.innerHTML = planMessageHtml('We couldn’t load live pricing right now. Please refresh or contact our team for a quote.');
-                    });
-                    finish();
+                .catch(function (e) {
+                    fail(
+                        'Could not reach the pricing service.',
+                        'fetch(plans.php) failed: ' + ((e && e.message) ? e.message : String(e)) + '\n'
+                        + 'Possible causes: blocked by Content-Security-Policy (connect-src), a network/CORS error, or plans.php missing.'
+                    );
                 });
         }
+
+        // Retry button inside the diagnostic box — reload to re-run the full pricing init cleanly.
+        document.addEventListener('click', function (e) {
+            var rb = e.target && e.target.closest ? e.target.closest('.plan-retry') : null;
+            if (!rb) return;
+            e.preventDefault();
+            location.reload();
+        });
 
         // Copy a plan's share link to the clipboard (event delegation, bound once).
         document.addEventListener('click', function (e) {

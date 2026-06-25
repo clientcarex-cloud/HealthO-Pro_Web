@@ -165,9 +165,12 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
     $buckets = [];
 
     foreach ($plans as $pkg) {
-        $status_val = $pkg['status'] ?? 'active';
+        // Package status is stored as '1' (active) / '0' (inactive); the API docs' "active"
+        // string is only illustrative. Accept both forms.
+        $status_val = (string) ($pkg['status'] ?? '1');
+        $is_active  = ($status_val === '1' || strtolower($status_val) === 'active');
         $is_private = !empty($pkg['is_private']) && (string) $pkg['is_private'] !== '0';
-        if ($status_val !== 'active' || $is_private) {
+        if (!$is_active || $is_private) {
             continue;
         }
 
@@ -204,11 +207,22 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
             $price    = (float) ($pkg['price'] ?? 0);
             $per_user = $base > 0 ? $price / $base : $price;
         }
+        // The unit price is charged per billing cycle; cards show a per-user-per-MONTH rate,
+        // so normalise by the cycle length (e.g. a yearly ₹4788/user -> ₹399/user/mo).
+        if ($months > 0) {
+            $per_user = $per_user / $months;
+        }
 
         // Feature list from the package's enabled modules, using friendly names where available.
         $features = [];
         foreach ((array) ($pkg['modules'] ?? []) as $m) {
-            $features[] = $modulesMap[$m] ?? ho_prettify($m);
+            if ($m === '' || $m === null) {
+                continue; // skip empty module ids
+            }
+            $label = $modulesMap[$m] ?? ho_prettify($m);
+            if ($label !== '') {
+                $features[] = $label;
+            }
         }
 
         if (!isset($buckets[$group_key][$tier_key])) {
