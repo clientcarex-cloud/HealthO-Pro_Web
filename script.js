@@ -279,7 +279,7 @@
             });
             var finish = function () { if (done) done(); };
 
-            fetch('plans', { headers: { 'Accept': 'application/json' } })
+            fetch('plans.php', { headers: { 'Accept': 'application/json' } })
                 .then(function (r) { return r.json(); })
                 .then(function (data) {
                     var groups = (data && data.groups) || {};
