@@ -238,8 +238,14 @@
             var btnCls = plan.featured ? 'btn-primary' : 'btn-outline';
             var signupYear = plan.signup_year || plan.signup_half || 'contact';
             var signupHalf = plan.signup_half || plan.signup_year || 'contact';
+            // Features may be plain strings (legacy) or objects {name, desc} from the
+            // improved plans API. Show the namesake name; attach the description as a
+            // tooltip when present. Order and visibility are already handled by the API.
             var features = (plan.features || []).map(function (f) {
-                return '<li><span class="ck">' + PLAN_CHECK_SVG + '</span><span>' + planEsc(f) + '</span></li>';
+                var name = (f && typeof f === 'object') ? (f.name || '') : f;
+                var desc = (f && typeof f === 'object') ? (f.desc || '') : '';
+                var titleAttr = desc ? ' title="' + planEsc(desc) + '"' : '';
+                return '<li' + titleAttr + '><span class="ck">' + PLAN_CHECK_SVG + '</span><span>' + planEsc(name) + '</span></li>';
             }).join('');
 
             return ''

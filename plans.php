@@ -213,15 +213,34 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
             $per_user = $per_user / $months;
         }
 
-        // Feature list from the package's enabled modules, using friendly names where available.
+        // Feature list for the card. Prefer the API's display-ready "features" array:
+        // it already uses the public/namesake name instead of the technical module id,
+        // is sorted by the admin's order, and has hidden modules removed. Each item may
+        // carry a description (shown as a tooltip on the site). Fall back to mapping raw
+        // module ids when talking to an older API that has no "features" field.
         $features = [];
-        foreach ((array) ($pkg['modules'] ?? []) as $m) {
-            if ($m === '' || $m === null) {
-                continue; // skip empty module ids
+        if (!empty($pkg['features']) && is_array($pkg['features'])) {
+            foreach ($pkg['features'] as $f) {
+                if (is_array($f)) {
+                    $name = trim((string) ($f['name'] ?? ''));
+                    $desc = trim((string) ($f['description'] ?? ''));
+                } else {
+                    $name = trim((string) $f);
+                    $desc = '';
+                }
+                if ($name !== '') {
+                    $features[] = $desc !== '' ? ['name' => $name, 'desc' => $desc] : ['name' => $name];
+                }
             }
-            $label = $modulesMap[$m] ?? ho_prettify($m);
-            if ($label !== '') {
-                $features[] = $label;
+        } else {
+            foreach ((array) ($pkg['modules'] ?? []) as $m) {
+                if ($m === '' || $m === null) {
+                    continue; // skip empty module ids
+                }
+                $label = $modulesMap[$m] ?? ho_prettify($m);
+                if ($label !== '') {
+                    $features[] = ['name' => $label];
+                }
             }
         }
 
