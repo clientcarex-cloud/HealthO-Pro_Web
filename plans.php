@@ -213,23 +213,18 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
             $per_user = $per_user / $months;
         }
 
-        // Feature list for the card. Prefer the API's display-ready "features" array:
-        // it already uses the public/namesake name instead of the technical module id,
-        // is sorted by the admin's order, and has hidden modules removed. Each item may
-        // carry a description (shown as a tooltip on the site). Fall back to mapping raw
-        // module ids when talking to an older API that has no "features" field.
+        // Feature list for the card, as a flat array of label STRINGS (kept as strings
+        // so any version of the front-end renders them — emitting objects can show up
+        // as "[object Object]" on an older cached script). Prefer the API's display-ready
+        // "features" array: it already uses the public/namesake name instead of the
+        // technical module id, is sorted by the admin's order, and has hidden modules
+        // removed. Fall back to mapping raw module ids for an older API with no "features".
         $features = [];
         if (!empty($pkg['features']) && is_array($pkg['features'])) {
             foreach ($pkg['features'] as $f) {
-                if (is_array($f)) {
-                    $name = trim((string) ($f['name'] ?? ''));
-                    $desc = trim((string) ($f['description'] ?? ''));
-                } else {
-                    $name = trim((string) $f);
-                    $desc = '';
-                }
-                if ($name !== '') {
-                    $features[] = $desc !== '' ? ['name' => $name, 'desc' => $desc] : ['name' => $name];
+                $label = is_array($f) ? trim((string) ($f['name'] ?? '')) : trim((string) $f);
+                if ($label !== '') {
+                    $features[] = $label;
                 }
             }
         } else {
@@ -239,7 +234,7 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
                 }
                 $label = $modulesMap[$m] ?? ho_prettify($m);
                 if ($label !== '') {
-                    $features[] = ['name' => $label];
+                    $features[] = $label;
                 }
             }
         }
