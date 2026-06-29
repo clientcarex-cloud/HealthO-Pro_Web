@@ -231,13 +231,17 @@
         function buildPlanCard(group, plan, cur) {
             var tierKey = String(plan.tier || 'plan').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
             var id = 'plan-' + group + '-' + (tierKey || 'plan');
-            var py = plan.price_year, ph = plan.price_half;
-            var strike = (ph != null && py != null && Number(ph) > Number(py))
-                ? '<span style="font-size:1.1rem; color:var(--text-soft); text-decoration:line-through; margin-right:8px;">' + cur + planEsc(ph) + '</span>' : '';
+            var py = plan.price_year, ph = plan.price_half, pq = plan.price_quarter;
+            // In the default (yearly) view, strike through the highest available rate
+            // (quarterly, else half-yearly) to show the saving versus shorter cycles.
+            var origForYear = (pq != null) ? pq : ph;
+            var strike = (origForYear != null && py != null && Number(origForYear) > Number(py))
+                ? '<span style="font-size:1.1rem; color:var(--text-soft); text-decoration:line-through; margin-right:8px;">' + cur + planEsc(origForYear) + '</span>' : '';
             var featuredCls = plan.featured ? ' featured' : '';
             var btnCls = plan.featured ? 'btn-primary' : 'btn-outline';
-            var signupYear = plan.signup_year || plan.signup_half || 'contact';
-            var signupHalf = plan.signup_half || plan.signup_year || 'contact';
+            var signupYear = plan.signup_year || plan.signup_half || plan.signup_quarter || 'contact';
+            var signupHalf = plan.signup_half || plan.signup_year || plan.signup_quarter || 'contact';
+            var signupQuarter = plan.signup_quarter || plan.signup_half || plan.signup_year || 'contact';
             // Features may be plain strings (legacy) or objects {name, desc} from the
             // improved plans API. Show the namesake name; attach the description as a
             // tooltip when present. Order and visibility are already handled by the API.
@@ -255,14 +259,15 @@
                 +   '<div class="plan-price" style="margin-bottom:10px; display:flex; flex-direction:column; align-items:flex-start;">'
                 +     '<div data-year>' + strike + '<span class="cur">' + cur + '</span><span class="amt">' + planEsc(py) + '</span><span class="per">/ user / mo</span></div>'
                 +     '<div data-half style="display:none;"><span class="cur">' + cur + '</span><span class="amt">' + planEsc(ph) + '</span><span class="per">/ user / mo</span></div>'
+                +     '<div data-quarter style="display:none;"><span class="cur">' + cur + '</span><span class="amt">' + planEsc(pq) + '</span><span class="per">/ user / mo</span></div>'
                 +   '</div>'
                 +   '<div class="plan-users" style="margin-top:15px; margin-bottom:15px;">'
-                +     '<select class="user-select" data-base="' + planEsc(plan.base_users || 1) + '" data-price-year="' + planEsc(py) + '" data-price-half="' + planEsc(ph) + '"></select>'
+                +     '<select class="user-select" data-base="' + planEsc(plan.base_users || 1) + '" data-price-year="' + planEsc(py) + '" data-price-half="' + planEsc(ph) + '" data-price-quarter="' + planEsc(pq) + '"></select>'
                 +   '</div>'
                 +   buildPlanCalc(cur)
                 +   '<ul class="checks">' + features + '</ul>'
-                +   '<a href="' + planEsc(signupYear) + '" class="btn ' + btnCls + ' btn-block plan-signup" data-signup-year="' + planEsc(signupYear) + '" data-signup-half="' + planEsc(signupHalf) + '">⚡ Sign Up Now</a>'
-                +   '<button type="button" class="plan-share" data-share="' + planEsc(signupYear) + '" data-share-year="' + planEsc(signupYear) + '" data-share-half="' + planEsc(signupHalf) + '" style="margin-top:10px; width:100%; background:none; border:none; cursor:pointer; color:var(--cyan-dark); font-weight:700; font-size:0.85rem; display:inline-flex; align-items:center; justify-content:center; gap:6px;">'
+                +   '<a href="' + planEsc(signupYear) + '" class="btn ' + btnCls + ' btn-block plan-signup" data-signup-year="' + planEsc(signupYear) + '" data-signup-half="' + planEsc(signupHalf) + '" data-signup-quarter="' + planEsc(signupQuarter) + '">⚡ Sign Up Now</a>'
+                +   '<button type="button" class="plan-share" data-share="' + planEsc(signupYear) + '" data-share-year="' + planEsc(signupYear) + '" data-share-half="' + planEsc(signupHalf) + '" data-share-quarter="' + planEsc(signupQuarter) + '" style="margin-top:10px; width:100%; background:none; border:none; cursor:pointer; color:var(--cyan-dark); font-weight:700; font-size:0.85rem; display:inline-flex; align-items:center; justify-content:center; gap:6px;">'
                 +     '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>'
                 +     '<span class="plan-share-text">Share plan link</span>'
                 +   '</button>'
@@ -435,7 +440,8 @@
                 var subtotal = users * pricePerUser;
                 var gst = Math.round(subtotal * 0.18);
                 var total = subtotal + gst;
-                var months = (currentBillingCycle === 'year') ? 12 : 6;
+                var CYCLE_MONTHS = { year: 12, half: 6, quarter: 4 };
+                var months = CYCLE_MONTHS[currentBillingCycle] || 12;
                 var billedAmount = total * months;
                 var billedBase = subtotal * months;
 
@@ -458,17 +464,23 @@
                 setTxt('.calc-billed-base', billedBase, true);
 
                 var freqEl = card.querySelector('.calc-billed-freq');
-                if (freqEl) freqEl.textContent = (currentBillingCycle === 'year') ? 'Annually' : 'Every 6 Months';
+                var CYCLE_FREQ = { year: 'Annually', half: 'Every 6 Months', quarter: 'Every 4 Months' };
+                if (freqEl) freqEl.textContent = CYCLE_FREQ[currentBillingCycle] || 'Annually';
 
+                // Savings = how much the customer saves over a year versus paying the
+                // shortest-cycle (quarterly) per-user rate. Shown on the longer cycles only.
                 var savingsRow = card.querySelector('.calc-savings-row');
                 var savingsEl = card.querySelector('.calc-savings');
-                if (currentBillingCycle === 'year') {
-                    var priceHalf = parseInt(select.getAttribute('data-price-half'), 10);
-                    var yearlyCostIfHalf = Math.round((users * priceHalf) * 1.18 * 12);
-                    var savings = yearlyCostIfHalf - billedAmount;
-                    if (savingsRow) {
+                var priceQuarter = parseInt(select.getAttribute('data-price-quarter'), 10);
+                if (currentBillingCycle !== 'quarter' && !isNaN(priceQuarter)) {
+                    var yearlyCostAtQuarter = Math.round((users * priceQuarter) * 1.18 * 12);
+                    var yearlyCostAtCurrent = Math.round((users * pricePerUser) * 1.18 * 12);
+                    var savings = yearlyCostAtQuarter - yearlyCostAtCurrent;
+                    if (savingsRow && savings > 0) {
                         savingsRow.style.display = 'flex';
                         if (savingsEl) savingsEl.textContent = savings.toLocaleString('en-IN');
+                    } else if (savingsRow) {
+                        savingsRow.style.display = 'none';
                     }
                 } else if (savingsRow) {
                     savingsRow.style.display = 'none';
@@ -526,11 +538,10 @@
         var setBilling = function (cycle) {
             currentBillingCycle = cycle;
             billBtns.forEach(function (b) { b.classList.toggle('active', b.dataset.cycle === cycle); });
-            document.querySelectorAll('[data-half]').forEach(function (el) {
-                el.style.display = (cycle === 'half') ? '' : 'none';
-            });
-            document.querySelectorAll('[data-year]').forEach(function (el) {
-                el.style.display = (cycle === 'year') ? '' : 'none';
+            ['year', 'half', 'quarter'].forEach(function (c) {
+                document.querySelectorAll('[data-' + c + ']').forEach(function (el) {
+                    el.style.display = (cycle === c) ? '' : 'none';
+                });
             });
             // Point Sign Up + Share at the package matching the active billing cycle
             document.querySelectorAll('.plan-signup').forEach(function (a) {
@@ -564,11 +575,11 @@
         /* ---------- Handle hash on load for pricing plans & tabs ---------- */
         if (window.location.hash) {
             var fullHash = window.location.hash.substring(1);
-            var billingMatch = fullHash.match(/-(year|half)$/);
+            var billingMatch = fullHash.match(/-(year|half|quarter)$/);
             if (billingMatch) {
                 setBilling(billingMatch[1]);
             }
-            var hash = fullHash.replace(/-(year|half)$/, '');
+            var hash = fullHash.replace(/-(year|half|quarter)$/, '');
             var productMatch = hash.match(/-(hims|lims|cims|ris)/);
             if (productMatch) {
                 var tabToActivate = document.querySelector('.product-tab[data-product="' + productMatch[1] + '"]');
@@ -721,10 +732,10 @@
             a.addEventListener('click', function (e) {
                 var href = a.getAttribute('href');
                 var targetId = href;
-                var billingMatch = href.match(/-(year|half)$/);
+                var billingMatch = href.match(/-(year|half|quarter)$/);
                 if (billingMatch) {
                     setBilling(billingMatch[1]);
-                    targetId = href.replace(/-(year|half)$/, '');
+                    targetId = href.replace(/-(year|half|quarter)$/, '');
                 }
                 var el = document.querySelector(targetId);
                 if (el) { 

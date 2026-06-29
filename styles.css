@@ -380,7 +380,8 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 .country .cn { display: block; font-weight: 700; color: var(--ink); font-size: var(--text-base); line-height: 1.2; margin-bottom: 2px; }
 .country .cr { display: block; font-size: var(--text-sm); color: var(--text-mute); line-height: 1.2; }
 /* ---------- Pricing ---------- */
-.billing-toggle { display: inline-flex; align-items: center; gap: 6px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-pill); padding: 6px; box-shadow: var(--e1); margin: 0 auto; }
+.billing-toggle { display: inline-flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-pill); padding: 6px; box-shadow: var(--e1); margin: 0 auto; }
+@media (max-width: 560px) { .billing-toggle button { padding: 9px 16px; font-size: var(--text-sm); } .save-badge { margin-left: 5px; padding: 2px 6px; } }
 .billing-toggle button { padding: 11px 26px; border-radius: var(--r-pill); font-weight: 700; font-size: var(--text-base); color: var(--text-soft); transition: all .25s; position: relative; }
 .billing-toggle button.active { background: var(--grad-brand); color: #fff; box-shadow: var(--e-navy); }
 .save-badge { font-size: var(--text-xs); font-weight: 700; background: var(--green-tint); color: var(--green-dark); padding: 2px 8px; border-radius: var(--r-pill); margin-left: 7px; }

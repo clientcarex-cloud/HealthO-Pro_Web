@@ -130,10 +130,17 @@ function ho_tier_key($name, $group_label)
 {
     $s = ' ' . strtolower((string) $name) . ' ';
     $s = str_replace(strtolower($group_label), ' ', $s);
+    // Period qualifiers are stripped so the same tier billed on different invoice
+    // periods (e.g. "Startup", "Startup Half", "Startup Quaterly") collapses to one
+    // card whose Quarterly/Half-Yearly/Yearly prices come from each variant.
+    // Multi-word phrases are listed before the single words they contain.
     $remove = [
         'yearly', 'annually', 'annual', 'per year', 'six months', 'six month',
         '6 months', '6 month', '6-month', 'half yearly', 'half-yearly',
-        'semi annual', 'semi-annual', 'semiannual', 'monthly', 'quarterly',
+        'semi annual', 'semi-annual', 'semiannual', 'monthly',
+        'four months', 'four month', '4 months', '4 month', '4-month',
+        'three months', 'three month', '3 months', '3 month', '3-month',
+        'quarterly', 'quaterly', 'quarter', 'quater', 'half',
         'plan', '(', ')', '/', '-',
     ];
     foreach ($remove as $r) {
@@ -182,11 +189,13 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
         $meta   = (array) ($pkg['metadata'] ?? []);
         $months = ho_period_months($meta['invoice'] ?? []);
         if ($months >= 12) {
-            $bk = 'year';
+            $bk = 'year';        // Yearly (12 months)
         } elseif ($months >= 5 && $months <= 7) {
-            $bk = 'half';
+            $bk = 'half';        // Half-Yearly (6 months)
+        } elseif ($months >= 3 && $months <= 4) {
+            $bk = 'quarter';     // Quarterly (4 months)
         } else {
-            continue; // only the yearly + 6-month tabs are supported on the site
+            continue; // only the quarterly / half-yearly / yearly tabs are supported on the site
         }
 
         $group_label = strtoupper($group_key);
@@ -246,12 +255,15 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
                 'base_users'  => $base,
                 'features'    => [],
                 'priority'    => 0,
-                'price_year'  => null,
-                'price_half'  => null,
-                'slug_year'   => null,
-                'slug_half'   => null,
-                'signup_year' => null,
-                'signup_half' => null,
+                'price_year'    => null,
+                'price_half'    => null,
+                'price_quarter' => null,
+                'slug_year'     => null,
+                'slug_half'     => null,
+                'slug_quarter'  => null,
+                'signup_year'    => null,
+                'signup_half'    => null,
+                'signup_quarter' => null,
             ];
         }
         $card = &$buckets[$group_key][$tier_key];
@@ -279,17 +291,22 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
 
         $cards = array_values($buckets[$gk]);
 
-        // Fill a missing billing period from the other so the toggle never shows blanks.
+        // Fill any missing billing period from whichever one exists so no tab shows blanks.
+        // Preference order for the source: yearly, then half-yearly, then quarterly.
         foreach ($cards as &$c) {
-            if ($c['price_year'] === null) {
-                $c['price_year']  = $c['price_half'];
-                $c['slug_year']   = $c['slug_half'];
-                $c['signup_year'] = $c['signup_half'];
+            $fallback = 'year';
+            foreach (['year', 'half', 'quarter'] as $bk) {
+                if ($c['price_' . $bk] !== null) {
+                    $fallback = $bk;
+                    break;
+                }
             }
-            if ($c['price_half'] === null) {
-                $c['price_half']  = $c['price_year'];
-                $c['slug_half']   = $c['slug_year'];
-                $c['signup_half'] = $c['signup_year'];
+            foreach (['year', 'half', 'quarter'] as $bk) {
+                if ($c['price_' . $bk] === null) {
+                    $c['price_' . $bk]  = $c['price_' . $fallback];
+                    $c['slug_' . $bk]   = $c['slug_' . $fallback];
+                    $c['signup_' . $bk] = $c['signup_' . $fallback];
+                }
             }
         }
         unset($c);
