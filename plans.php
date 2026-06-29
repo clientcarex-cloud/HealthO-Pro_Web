@@ -216,11 +216,10 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
             $price    = (float) ($pkg['price'] ?? 0);
             $per_user = $base > 0 ? $price / $base : $price;
         }
-        // The unit price is charged per billing cycle; cards show a per-user-per-MONTH rate,
-        // so normalise by the cycle length (e.g. a yearly ₹4788/user -> ₹399/user/mo).
-        if ($months > 0) {
-            $per_user = $per_user / $months;
-        }
+        // $per_user is the price charged per USER for the WHOLE billing cycle (the figure
+        // set in the SaaS admin, e.g. ₹12000/user/year, ₹6000/user/6-months, ₹4000/user/quarter).
+        // It is kept as-is so each tab shows that tier's real per-cycle price; the front-end
+        // derives the monthly-equivalent and billed totals from it.
 
         // Feature list for the card, as a flat array of label STRINGS (kept as strings
         // so any version of the front-end renders them — emitting objects can show up

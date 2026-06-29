@@ -257,9 +257,9 @@
                 +   '<div class="plan-name">' + planEsc(plan.tier) + '</div>'
                 +   '<div class="plan-desc">' + planEsc(plan.desc) + '</div>'
                 +   '<div class="plan-price" style="margin-bottom:10px; display:flex; flex-direction:column; align-items:flex-start;">'
-                +     '<div data-year>' + strike + '<span class="cur">' + cur + '</span><span class="amt">' + planEsc(py) + '</span><span class="per">/ user / mo</span></div>'
-                +     '<div data-half style="display:none;"><span class="cur">' + cur + '</span><span class="amt">' + planEsc(ph) + '</span><span class="per">/ user / mo</span></div>'
-                +     '<div data-quarter style="display:none;"><span class="cur">' + cur + '</span><span class="amt">' + planEsc(pq) + '</span><span class="per">/ user / mo</span></div>'
+                +     '<div data-year>' + strike + '<span class="cur">' + cur + '</span><span class="amt">' + planEsc(py) + '</span><span class="per">/ user / yr</span></div>'
+                +     '<div data-half style="display:none;"><span class="cur">' + cur + '</span><span class="amt">' + planEsc(ph) + '</span><span class="per">/ user / 6 mo</span></div>'
+                +     '<div data-quarter style="display:none;"><span class="cur">' + cur + '</span><span class="amt">' + planEsc(pq) + '</span><span class="per">/ user / 4 mo</span></div>'
                 +   '</div>'
                 +   '<div class="plan-users" style="margin-top:15px; margin-bottom:15px;">'
                 +     '<select class="user-select" data-base="' + planEsc(plan.base_users || 1) + '" data-price-year="' + planEsc(py) + '" data-price-half="' + planEsc(ph) + '" data-price-quarter="' + planEsc(pq) + '"></select>'
@@ -437,13 +437,13 @@
                 var users = Math.max(globalUsers, base);
                 var pricePerUser = parseInt(select.getAttribute('data-price-' + currentBillingCycle), 10);
 
-                var subtotal = users * pricePerUser;
-                var gst = Math.round(subtotal * 0.18);
-                var total = subtotal + gst;
+                // pricePerUser is the price per user for the WHOLE billing cycle.
                 var CYCLE_MONTHS = { year: 12, half: 6, quarter: 4 };
                 var months = CYCLE_MONTHS[currentBillingCycle] || 12;
-                var billedAmount = total * months;
-                var billedBase = subtotal * months;
+                var cycleBase = users * pricePerUser;          // pre-GST, billed once per cycle
+                var gst = Math.round(cycleBase * 0.18);
+                var cycleTotal = cycleBase + gst;              // incl GST, billed once per cycle
+                var monthly = cycleBase / months;              // monthly-equivalent (pre-GST)
 
                 var setTxt = function (sel, val, decimals) {
                     var el = card.querySelector(sel);
@@ -455,13 +455,12 @@
                         }
                     }
                 };
-                setTxt('.calc-base', subtotal);
+                setTxt('.calc-base', Math.round(monthly));
                 setTxt('.calc-gst', gst);
-                setTxt('.calc-total', total);
-                // The billed values should show decimals (e.g. .20, .00) to match the reference image style
-                var billedExact = (subtotal * months) * 1.18;
-                setTxt('.calc-billed', billedExact, true);
-                setTxt('.calc-billed-base', billedBase, true);
+                setTxt('.calc-total', Math.round(cycleTotal));
+                // The billed values show decimals (e.g. .20, .00) to match the reference image style
+                setTxt('.calc-billed', cycleBase * 1.18, true);
+                setTxt('.calc-billed-base', cycleBase, true);
 
                 var freqEl = card.querySelector('.calc-billed-freq');
                 var CYCLE_FREQ = { year: 'Annually', half: 'Every 6 Months', quarter: 'Every 4 Months' };
@@ -473,8 +472,9 @@
                 var savingsEl = card.querySelector('.calc-savings');
                 var priceQuarter = parseInt(select.getAttribute('data-price-quarter'), 10);
                 if (currentBillingCycle !== 'quarter' && !isNaN(priceQuarter)) {
-                    var yearlyCostAtQuarter = Math.round((users * priceQuarter) * 1.18 * 12);
-                    var yearlyCostAtCurrent = Math.round((users * pricePerUser) * 1.18 * 12);
+                    // Annualise each cycle's per-user price, then compare to the quarterly baseline.
+                    var yearlyCostAtQuarter = Math.round((users * priceQuarter) * (12 / 4) * 1.18);
+                    var yearlyCostAtCurrent = Math.round((users * pricePerUser) * (12 / months) * 1.18);
                     var savings = yearlyCostAtQuarter - yearlyCostAtCurrent;
                     if (savingsRow && savings > 0) {
                         savingsRow.style.display = 'flex';
