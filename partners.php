@@ -93,6 +93,11 @@ function ho_emit(array $payload, $status = 200)
     exit;
 }
 
+// When included by partners-debug.php, expose only the functions above.
+if (defined('HO_PARTNERS_LIB_ONLY')) {
+    return;
+}
+
 /* --------------------------------------------------------------- config */
 
 $env     = ho_load_env(__DIR__ . '/.env');
