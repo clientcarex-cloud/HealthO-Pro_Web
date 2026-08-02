@@ -331,9 +331,6 @@
                     + COUPON_SVG + '<span class="offer-coupon-lbl">Code</span>'
                     + '<span class="offer-copy-text">' + planEsc(offer.coupon_code) + '</span></button>' : '';
 
-            var cta = offer.cta_text
-                ? '<a class="offer-cta" href="' + planEsc(offer.cta_url || 'contact') + '">' + planEsc(offer.cta_text) + '</a>' : '';
-
             var countdown = (offer.show_countdown && offer.ends_ts) ? buildCountdown(offer.ends_ts) : '';
 
             return ''
@@ -349,7 +346,7 @@
                 +   '</div>'
                 +   '<div class="offer-side">'
                 +     (countdown ? '<div class="offer-side-row">' + countdown + '</div>' : '')
-                +     ((coupon || cta) ? '<div class="offer-side-row">' + coupon + cta + '</div>' : '')
+                +     (coupon ? '<div class="offer-side-row">' + coupon + '</div>' : '')
                 +   '</div>'
                 + '</div>';
         }
@@ -454,19 +451,25 @@
             var py = plan.price_year, ph = plan.price_half, pq = plan.price_quarter;
             var offer = plan.offer || null;
 
-            // A cycle is "on sale" when the SaaS discounted its per-user price.
+            // A cycle is "on sale" when the SaaS attached an offer to that cycle. A percentage
+            // offer already discounted the per-user price (so the card can strike the list
+            // rate); a flat offer is a fixed amount off the cycle total, applied by the
+            // calculator — exactly how the invoice applies it.
             var listOf = { year: plan.list_year, half: plan.list_half, quarter: plan.list_quarter };
             var priceOf = { year: py, half: ph, quarter: pq };
+            var offerIdOf = { year: plan.offer_year, half: plan.offer_half, quarter: plan.offer_quarter };
+            var isFlat = !!(offer && offer.discount_type === 'flat');
+            var flatAmount = isFlat ? Number(offer.discount_value || 0) : 0;
             var onSale = {};
             ['year', 'half', 'quarter'].forEach(function (c) {
-                onSale[c] = !!(offer && listOf[c] != null && priceOf[c] != null && Number(listOf[c]) > Number(priceOf[c]));
+                onSale[c] = !!(offer && offerIdOf[c] != null);
             });
 
             // Struck-through reference price. During a sale it is this cycle's own list
             // price; otherwise it falls back to the highest (shortest-cycle) rate, which is
             // how the page has always shown the yearly saving.
             var strikeFor = function (cycle) {
-                if (onSale[cycle]) {
+                if (onSale[cycle] && !isFlat && listOf[cycle] != null && Number(listOf[cycle]) > Number(priceOf[cycle])) {
                     var pct = Math.round((1 - Number(priceOf[cycle]) / Number(listOf[cycle])) * 100);
                     return '<span class="plan-was">' + cur + planNum(listOf[cycle]) + '</span>'
                         + (pct > 0 ? '<span class="plan-off" data-plan-off>Save ' + pct + '%</span>' : '');
@@ -520,7 +523,8 @@
                 +       ' data-list-half="' + planEsc(plan.list_half != null ? plan.list_half : ph) + '"'
                 +       ' data-list-quarter="' + planEsc(plan.list_quarter != null ? plan.list_quarter : pq) + '"'
                 +       ' data-native-year="' + (plan.native_year ? 1 : 0) + '" data-native-half="' + (plan.native_half ? 1 : 0) + '" data-native-quarter="' + (plan.native_quarter ? 1 : 0) + '"'
-                +       ' data-sale-year="' + (onSale.year ? 1 : 0) + '" data-sale-half="' + (onSale.half ? 1 : 0) + '" data-sale-quarter="' + (onSale.quarter ? 1 : 0) + '"></select>'
+                +       ' data-sale-year="' + (onSale.year ? 1 : 0) + '" data-sale-half="' + (onSale.half ? 1 : 0) + '" data-sale-quarter="' + (onSale.quarter ? 1 : 0) + '"'
+                +       ' data-flat-off="' + planEsc(flatAmount) + '"></select>'
                 +   '</div>'
                 +   buildPlanCalc(cur)
                 +   offerCoupon
@@ -703,13 +707,22 @@
                 var users = Math.max(globalUsers, base);
                 var pricePerUser = parseInt(select.getAttribute('data-price-' + currentBillingCycle), 10);
 
-                // Sale offer: the per-user price is already discounted, so the saving is
-                // simply the gap to the list price for the active cycle.
+                // Sale offer. A percentage offer already moved the per-user price, so its
+                // saving is the gap to the list rate; a flat offer comes off the cycle total
+                // once — the same way the SaaS discounts the invoice.
                 var listPerUser = parseInt(select.getAttribute('data-list-' + currentBillingCycle), 10);
                 var onSale = select.getAttribute('data-sale-' + currentBillingCycle) === '1';
                 card.classList.toggle('has-offer', onSale);
+
+                // pricePerUser is the price per user for the WHOLE billing cycle.
+                var CYCLE_MONTHS = { year: 12, half: 6, quarter: 4 };
+                var months = CYCLE_MONTHS[currentBillingCycle] || 12;
+                var cycleBase = users * pricePerUser;          // pre-GST, billed once per cycle
+                var flatOff = onSale ? Math.min(parseFloat(select.getAttribute('data-flat-off')) || 0, cycleBase) : 0;
+                cycleBase = cycleBase - flatOff;
+
                 if (onSale && !isNaN(listPerUser)) {
-                    var offerSaving = (listPerUser - pricePerUser) * users;
+                    var offerSaving = ((listPerUser - pricePerUser) * users) + flatOff;
                     var savingEl2 = card.querySelector('.calc-offer-saving');
                     if (savingEl2) savingEl2.textContent = Math.round(offerSaving).toLocaleString('en-IN');
                     var offerLabel = card.querySelector('.calc-offer-label');
@@ -717,10 +730,6 @@
                     if (offerLabel && tagEl) offerLabel.textContent = tagEl.textContent;
                 }
 
-                // pricePerUser is the price per user for the WHOLE billing cycle.
-                var CYCLE_MONTHS = { year: 12, half: 6, quarter: 4 };
-                var months = CYCLE_MONTHS[currentBillingCycle] || 12;
-                var cycleBase = users * pricePerUser;          // pre-GST, billed once per cycle
                 var gst = Math.round(cycleBase * 0.18);
                 var cycleTotal = cycleBase + gst;              // incl GST, billed once per cycle
                 var monthly = cycleBase / months;              // monthly-equivalent (pre-GST)
@@ -761,7 +770,7 @@
                     if (annual > baselineAnnual) baselineAnnual = annual;
                 });
 
-                var currentAnnual = pricePerUser * (12 / months);
+                var currentAnnual = (pricePerUser - (users > 0 ? flatOff / users : 0)) * (12 / months);
                 var savings = Math.round((baselineAnnual - currentAnnual) * users * 1.18);
 
                 if (savingsRow) {

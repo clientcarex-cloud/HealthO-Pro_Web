@@ -209,8 +209,6 @@ function ho_offer_view(array $offer)
         'discount_value' => (float) ($offer['discount_value'] ?? 0),
         'discount_label' => (string) ($offer['discount_label'] ?? ''),
         'coupon_code'    => (string) ($offer['coupon_code'] ?? ''),
-        'cta_text'       => (string) ($offer['cta_text'] ?? ''),
-        'cta_url'        => (string) ($offer['cta_url'] ?? ''),
         'urgency_note'   => (string) ($offer['urgency_note'] ?? ''),
         'seats_total'    => isset($offer['seats_total']) ? $offer['seats_total'] : null,
         'seats_left'     => isset($offer['seats_left']) ? $offer['seats_left'] : null,
@@ -364,12 +362,19 @@ function ho_build_plans(array $plans, array $modulesMap, $currency, array $offer
         // A running sale offer discounts the per-user price of THIS package (the SaaS has
         // already checked the offer's group/plan/cycle scope), while the untouched list
         // price is kept so the card can strike it through.
+        // A PERCENTAGE offer scales the per-user price, exactly as the SaaS scales the
+        // invoice. A FLAT offer is a fixed amount off the invoice total, so it must NOT be
+        // subtracted from the per-user rate (that would multiply it by the seat count and
+        // promise a bigger discount than billing gives); the calculator takes it off the
+        // cycle total instead.
         $offer = (isset($pkg['offer']) && is_array($pkg['offer'])) ? $pkg['offer'] : null;
         if ($offer !== null && !empty($offer['id'])) {
             $offer_view = ho_offer_view($offer);
             $offers_seen[(int) $offer['id']] = $offer_view;
             $card['offer_' . $bk] = (int) $offer['id'];
-            $card['price_' . $bk] = (int) round(ho_offer_apply($offer, $per_user));
+            $card['price_' . $bk] = ($offer_view['discount_type'] === 'flat')
+                ? (int) round($per_user)
+                : (int) round(ho_offer_apply($offer, $per_user));
         } else {
             $card['price_' . $bk] = (int) round($per_user);
         }
