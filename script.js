@@ -176,6 +176,18 @@
             reveals.forEach(function (el) { el.classList.add('in'); });
         }
 
+        /* ---------- Sticky pricing control bar: condense once it docks under the nav ---------- */
+        var pricingBar = document.getElementById('pricingBar');
+        if (pricingBar) {
+            var navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10) || 76;
+            var syncBar = function () {
+                pricingBar.classList.toggle('stuck', pricingBar.getBoundingClientRect().top <= navH + 1);
+            };
+            window.addEventListener('scroll', syncBar, { passive: true });
+            window.addEventListener('resize', syncBar);
+            syncBar();
+        }
+
         /* ---------- Animated counters ---------- */
         var counters = document.querySelectorAll('[data-count]');
         var animate = function (el) {
