@@ -398,66 +398,100 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 .price-panel { display: none; }
 .price-panel.active { display: block; animation: fadeUp .5s var(--ease); }
 
-/* ---------- Smart pricing control bar (product + team size + billing in one sticky row) ---------- */
+/* ---------- Smart pricing control bar ----------
+   Product, team size and billing cycle live in one sticky row of three
+   equal-height pills, so nothing has to be scrolled back to. */
 .section--bar { padding-top: 0; }
 .pricing-bar {
+    --pb-h: 44px;
     position: sticky; top: var(--nav-h); z-index: 880;
-    margin-bottom: 40px; padding: 14px 0;
-    background: rgba(255, 255, 255, .88);
-    -webkit-backdrop-filter: saturate(170%) blur(14px);
-    backdrop-filter: saturate(170%) blur(14px);
+    margin-bottom: 44px; padding: 16px 0;
+    background: rgba(255, 255, 255, .82);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    backdrop-filter: saturate(180%) blur(16px);
     border-bottom: 1px solid transparent;
-    transition: padding .25s var(--ease), box-shadow .25s, border-color .25s;
+    transition: padding .28s var(--ease), box-shadow .28s, border-color .28s, background .28s;
 }
-.pricing-bar.stuck { padding: 9px 0; border-bottom-color: var(--line); box-shadow: 0 10px 26px rgba(6, 11, 25, .07); }
-.pb-inner { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.pb-div { width: 1px; height: 26px; background: var(--line); flex: none; }
+.pricing-bar.stuck {
+    --pb-h: 40px;
+    padding: 9px 0; background: rgba(255, 255, 255, .96);
+    border-bottom-color: var(--line); box-shadow: 0 10px 28px rgba(6, 11, 25, .07);
+}
+.pb-inner { display: flex; align-items: center; justify-content: space-between; gap: 10px 12px; flex-wrap: wrap; }
+.pb-div { display: none; }
 
-/* Product segment */
-.pricing-bar .product-tabs { margin: 0; gap: 3px; padding: 4px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--r-pill); flex-wrap: nowrap; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+/* The three groups share one pill shell so the row reads as a single control */
+.pricing-bar .product-tabs,
+.pricing-bar .billing-toggle,
+.pb-users {
+    display: flex; align-items: center; margin: 0; flex: none;
+    height: var(--pb-h); border-radius: var(--r-pill);
+    background: var(--bg-soft); border: 1px solid var(--line); box-shadow: none;
+    transition: height .28s var(--ease);
+}
+
+/* Product */
+.pricing-bar .product-tabs { gap: 2px; padding: 0 4px; flex-wrap: nowrap; max-width: 100%; overflow-x: auto; scrollbar-width: none; justify-content: flex-start; }
 .pricing-bar .product-tabs::-webkit-scrollbar { display: none; }
-.pricing-bar .product-tab { padding: 8px 15px; font-size: var(--text-sm); gap: 7px; background: transparent; border-color: transparent; box-shadow: none; white-space: nowrap; }
+.pricing-bar .product-tab { height: calc(var(--pb-h) - 10px); padding: 0 15px; gap: 7px; font-size: var(--text-sm); background: transparent; border-color: transparent; box-shadow: none; white-space: nowrap; }
 .pricing-bar .product-tab svg { width: 16px; height: 16px; }
+.pricing-bar .product-tab:not(.active):hover { background: rgba(255, 255, 255, .9); color: var(--navy); border-color: transparent; }
 .pricing-bar .product-tab.active { background: var(--grad-cyan); color: #fff; box-shadow: var(--e-cyan); }
 
-/* Team size */
-.pb-users { display: flex; align-items: center; gap: 12px; flex: 1 1 210px; min-width: 190px; }
-.pricing-bar .user-scaler-count { padding: 3px; gap: 2px; background: var(--bg-soft); flex: none; }
-.pricing-bar .us-step { width: 28px; height: 28px; font-size: 1.1rem; }
-.pricing-bar .user-scaler-count input { width: 40px; font-size: 1.05rem; }
-.pricing-bar .us-unit { font-size: var(--text-sm); font-weight: 600; color: var(--text-soft); padding-right: 4px; }
-.pricing-bar .user-range { height: 6px; flex: 1 1 auto; min-width: 90px; }
+/* Team size — stepper and slider inside one continuous pill */
+.pb-users { flex: 1 1 260px; min-width: 225px; max-width: 420px; gap: 12px; padding: 0 18px 0 5px; }
+.pricing-bar .user-scaler-count { height: auto; padding: 0; gap: 2px; background: none; border: none; border-radius: 0; flex: none; }
+.pricing-bar .us-step { width: 30px; height: 30px; font-size: 1.15rem; background: var(--white); }
+.pricing-bar .user-scaler-count input { width: 42px; font-size: 1.05rem; }
+.pricing-bar .us-unit { font-size: var(--text-sm); font-weight: 600; color: var(--text-soft); }
+.pricing-bar .user-range { height: 6px; flex: 1 1 auto; min-width: 70px; }
 .pricing-bar .user-range::-webkit-slider-thumb { width: 20px; height: 20px; border-width: 3px; }
 .pricing-bar .user-range::-moz-range-thumb { width: 20px; height: 20px; border-width: 3px; }
 
-/* Billing cycle segment */
-.pricing-bar .billing-toggle { padding: 4px; gap: 3px; background: var(--bg-soft); box-shadow: none; flex-wrap: nowrap; margin: 0; flex: none; }
-.pricing-bar .billing-toggle button { padding: 8px 16px; font-size: var(--text-sm); white-space: nowrap; }
+/* Billing cycle */
+.pricing-bar .billing-toggle { gap: 2px; padding: 0 4px; flex-wrap: nowrap; }
+.pricing-bar .billing-toggle button { height: calc(var(--pb-h) - 10px); padding: 0 16px; font-size: var(--text-sm); white-space: nowrap; }
+.pricing-bar .billing-toggle button:not(.active):hover { background: rgba(255, 255, 255, .9); color: var(--navy); }
 
-/* Secondary row — presets + recommendation, collapses when the bar sticks */
-.pb-sub { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 12px; max-height: 90px; opacity: 1; overflow: hidden; transition: max-height .3s var(--ease), opacity .2s, margin-top .3s var(--ease); }
+/* Secondary row — presets + recommendation, collapses once the bar docks */
+.pb-sub { display: flex; align-items: center; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; margin-top: 12px; max-height: 100px; opacity: 1; overflow: hidden; transition: max-height .3s var(--ease), opacity .2s, margin-top .3s var(--ease); }
 .pricing-bar.stuck .pb-sub { max-height: 0; opacity: 0; margin-top: 0; }
 .pricing-bar .user-scaler-presets { margin-top: 0; gap: 6px; }
-.pricing-bar .user-scaler-presets button { padding: 6px 13px; font-size: var(--text-xs); }
-.pricing-bar .user-scaler-rec { margin-top: 0; padding-top: 0; border-top: none; font-size: var(--text-sm); }
-.pricing-bar .user-scaler-rec svg { width: 16px; height: 16px; }
+.pricing-bar .user-scaler-presets button { padding: 7px 14px; font-size: var(--text-xs); background: var(--white); }
+.pricing-bar .user-scaler-rec { margin-top: 0; padding: 6px 14px; border-top: none; font-size: var(--text-sm); background: #FFF9EC; border: 1px solid #F7E3B5; border-radius: var(--r-pill); }
+.pricing-bar .user-scaler-rec svg { width: 15px; height: 15px; }
 
-@media (max-width: 1100px) {
-    .pb-div { display: none; }
-    .pb-products { flex: 1 1 100%; }
-    .pb-users { flex: 1 1 200px; }
+/* Keyboard focus stays visible on every control in the bar */
+.pricing-bar a:focus-visible,
+.pricing-bar button:focus-visible,
+.pricing-bar input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+@media (max-width: 1120px) {
+    .pricing-bar .pb-products { flex: 1 1 100%; }
+    .pricing-bar .pb-users { flex: 1 1 300px; max-width: none; }
+    .pricing-bar .pb-cycle { flex: 0 1 auto; }
+}
+@media (max-width: 860px) {
+    .pricing-bar .pb-users { flex: 1 1 100%; }
+    .pricing-bar .pb-cycle { flex: 1 1 100%; justify-content: space-between; }
+    .pricing-bar .billing-toggle button { flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: center; }
 }
 @media (max-width: 680px) {
-    .pricing-bar { padding: 10px 0; }
-    .pricing-bar.stuck { padding: 7px 0; }
-    .pb-inner { gap: 9px; }
-    .pricing-bar .product-tab { padding: 7px 12px; }
-    .pricing-bar .billing-toggle { flex: 1 1 100%; justify-content: space-between; }
-    .pricing-bar .billing-toggle button { padding: 8px 10px; font-size: var(--text-xs); }
+    .pricing-bar { --pb-h: 42px; padding: 11px 0; }
+    .pricing-bar.stuck { --pb-h: 38px; padding: 8px 0; }
+    .pb-inner { gap: 8px; }
+    /* Drop the tab icons so all four products fit without a hidden scroll */
+    .pricing-bar .product-tabs { justify-content: space-between; }
+    .pricing-bar .product-tab { padding: 0 12px; }
+    .pricing-bar .product-tab svg { display: none; }
+    .pricing-bar .billing-toggle button { padding: 0 8px; font-size: var(--text-xs); }
     .pricing-bar .save-badge { margin-left: 5px; padding: 2px 6px; }
+    .pb-users { padding-right: 14px; }
+    /* Presets + recommendation stack here — leave room so nothing clips */
+    .pb-sub { margin-top: 10px; max-height: 200px; }
+    .pricing-bar .user-scaler-presets { flex: 1 1 100%; }
+    .pricing-bar .user-scaler-presets button { flex: 1 1 calc(50% - 4px); }
     .pricing-bar .user-scaler-rec { flex: 1 1 100%; }
-    /* Presets + recommendation stack on small screens — give them room so nothing clips */
-    .pb-sub { margin-top: 10px; max-height: 190px; }
 }
 
 .price-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 34px 30px; box-shadow: var(--e1); display: flex; flex-direction: column; transition: transform .35s var(--ease), box-shadow .35s; position: relative; }
