@@ -228,11 +228,201 @@
             });
         }
 
+        /* ---------- Sale offers (SaaS admin ▸ SaaS ▸ Sale Offer) ----------
+           An offer is a live, time-boxed discount. plans.php already returns the
+           discounted per-user price in price_* and the untouched list price in list_*,
+           so the calculator needs no special casing — the offer layer only adds the
+           urgency furniture: banner, countdowns, ribbons and the strike-through. */
+        var OFFERS = {
+            list: [],          // banner-eligible offers, strongest first
+            skewMs: 0,         // server clock - browser clock, so countdowns can't be faked/skewed
+            reloading: false
+        };
+
+        // Accent palette per theme name (mirrors the choices in the SaaS admin).
+        var OFFER_THEMES = {
+            amber:  ['#F59E0B', '#EF4444'],
+            red:    ['#EF4444', '#B91C1C'],
+            green:  ['#10B981', '#047857'],
+            cyan:   ['#00B4D8', '#0369A1'],
+            navy:   ['#1E3D7B', '#0C1F45'],
+            purple: ['#7C3AED', '#4C1D95']
+        };
+
+        function offerNow() { return Date.now() + OFFERS.skewMs; }
+
+        // Remaining time as parts, or null once the offer has ended.
+        function offerRemaining(endsTs) {
+            var ms = (Number(endsTs) * 1000) - offerNow();
+            if (!(ms > 0)) return null;
+            return {
+                d: Math.floor(ms / 86400000),
+                h: Math.floor(ms / 3600000) % 24,
+                m: Math.floor(ms / 60000) % 60,
+                s: Math.floor(ms / 1000) % 60
+            };
+        }
+
+        function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+        // The offer that should headline a given product tab: group-specific beats
+        // site-wide, then the admin's priority order (plans.php sorts by priority).
+        function offerForGroup(groupKey) {
+            var scoped = null, global = null;
+            OFFERS.list.forEach(function (o) {
+                var keys = o.group_keys || [];
+                if (keys.length) {
+                    if (!scoped && keys.indexOf(groupKey) !== -1) scoped = o;
+                } else if (!global) {
+                    global = o;
+                }
+            });
+            return scoped || global;
+        }
+
+        var COUPON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a2 2 0 0 1 2-2V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v3a2 2 0 0 1 0 4v3a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-3a2 2 0 0 1-2-2Z"/><path d="M13 5v14" stroke-dasharray="2 3"/></svg>';
+        var CLOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+        var FIRE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2s5 4.5 5 9a5 5 0 0 1-10 0c0-1.6.6-2.9 1.3-3.9C8.9 8.6 9.6 9.4 10 10c0-2.7 2-6.4 2-8Z"/><path d="M7 17a5 5 0 0 0 10 0"/></svg>';
+
+        function buildCountdown(endsTs, dark) {
+            if (!endsTs) return '';
+            return ''
+                + '<div class="offer-countdown" data-offer-ends="' + planEsc(endsTs) + '">'
+                +   '<span class="offer-countdown-lbl">Ends in</span>'
+                +   '<div class="oc-unit"><b data-oc="d">00</b><span>Days</span></div>'
+                +   '<div class="oc-unit"><b data-oc="h">00</b><span>Hrs</span></div>'
+                +   '<div class="oc-unit"><b data-oc="m">00</b><span>Min</span></div>'
+                +   '<div class="oc-unit oc-sec"><b data-oc="s">00</b><span>Sec</span></div>'
+                + '</div>';
+        }
+
+        function buildOfferBanner(offer) {
+            var theme = OFFER_THEMES[offer.theme] || OFFER_THEMES.amber;
+            var style = '--ob-1:' + theme[0] + '; --ob-2:' + theme[1] + ';';
+
+            var meter = '';
+            if (offer.seats_total && offer.seats_left !== null && offer.seats_left !== undefined) {
+                var total = Number(offer.seats_total), left = Math.max(0, Number(offer.seats_left));
+                var taken = Math.max(0, Math.min(100, Math.round(((total - left) / total) * 100)));
+                meter = '<div class="offer-meter">'
+                    + '<div class="offer-meter-bar"><div class="offer-meter-fill" style="width:' + taken + '%;"></div></div>'
+                    + '<div class="offer-meter-txt">' + taken + '% claimed — only ' + left + ' of ' + total + ' slots left</div>'
+                    + '</div>';
+            }
+
+            var note = offer.urgency_note
+                ? '<div class="offer-note">' + FIRE_SVG + '<span>' + planEsc(offer.urgency_note) + '</span></div>' : '';
+
+            var coupon = offer.coupon_code
+                ? '<button type="button" class="offer-coupon offer-copy" data-code="' + planEsc(offer.coupon_code) + '">'
+                    + COUPON_SVG + '<span class="offer-coupon-lbl">Code</span>'
+                    + '<span class="offer-copy-text">' + planEsc(offer.coupon_code) + '</span></button>' : '';
+
+            var cta = offer.cta_text
+                ? '<a class="offer-cta" href="' + planEsc(offer.cta_url || 'contact') + '">' + planEsc(offer.cta_text) + '</a>' : '';
+
+            var countdown = (offer.show_countdown && offer.ends_ts) ? buildCountdown(offer.ends_ts) : '';
+
+            return ''
+                + '<div class="offer-banner" style="' + style + '" data-offer-id="' + planEsc(offer.id) + '">'
+                +   '<div class="offer-main">'
+                +     '<span class="offer-badge"><span class="offer-dot"></span>' + planEsc(offer.badge || 'Limited Time') + '</span>'
+                +     (offer.discount_label ? '<span class="offer-save">' + planEsc(offer.discount_label) + '</span>' : '')
+                +     (offer.headline ? '<div class="offer-headline">' + planEsc(offer.headline) + '</div>' : '')
+                +     (offer.subtext ? '<div class="offer-sub">' + planEsc(offer.subtext) + '</div>' : '')
+                +     note
+                +     meter
+                +   '</div>'
+                +   '<div class="offer-side">' + countdown + coupon + cta + '</div>'
+                + '</div>';
+        }
+
+        // Show the banner belonging to the product tab currently in view.
+        function renderOfferBanner(groupKey) {
+            var mount = document.getElementById('offerBanner');
+            if (!mount) return;
+            var offer = OFFERS.list.length ? offerForGroup(groupKey) : null;
+            if (!offer || (offer.ends_ts && !offerRemaining(offer.ends_ts))) {
+                mount.innerHTML = '';
+                return;
+            }
+            mount.innerHTML = buildOfferBanner(offer);
+            tickOfferCountdowns();
+        }
+
+        // One timer drives every countdown on the page (banner + cards).
+        function tickOfferCountdowns() {
+            var expired = false;
+
+            document.querySelectorAll('.offer-countdown[data-offer-ends]').forEach(function (el) {
+                var r = offerRemaining(el.getAttribute('data-offer-ends'));
+                if (!r) { expired = true; return; }
+                var set = function (k, v) {
+                    var n = el.querySelector('[data-oc="' + k + '"]');
+                    if (n) n.textContent = v;
+                };
+                set('d', pad2(r.d)); set('h', pad2(r.h)); set('m', pad2(r.m)); set('s', pad2(r.s));
+            });
+
+            document.querySelectorAll('.plan-offer-ends[data-offer-ends]').forEach(function (el) {
+                var r = offerRemaining(el.getAttribute('data-offer-ends'));
+                var txt = el.querySelector('b');
+                if (!r) { expired = true; if (txt) txt.textContent = 'ended'; return; }
+                if (!txt) return;
+                txt.textContent = r.d > 0
+                    ? (r.d + 'd ' + pad2(r.h) + 'h ' + pad2(r.m) + 'm')
+                    : (pad2(r.h) + ':' + pad2(r.m) + ':' + pad2(r.s));
+            });
+
+            // An offer that runs out while the page is open must not keep selling:
+            // pull fresh pricing once (list prices come back automatically).
+            if (expired && !OFFERS.reloading) {
+                OFFERS.reloading = true;
+                setTimeout(function () { location.reload(); }, 1500);
+            }
+        }
+        setInterval(tickOfferCountdowns, 1000);
+
+        // Copy a coupon code (banner chip and per-card chip share this handler).
+        document.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest ? e.target.closest('.offer-copy') : null;
+            if (!btn) return;
+            e.preventDefault();
+            var code = btn.getAttribute('data-code') || '';
+            var label = btn.querySelector('.offer-copy-text');
+            var flash = function () {
+                if (!label) return;
+                var prev = label.getAttribute('data-code-label') || label.textContent;
+                label.setAttribute('data-code-label', prev);
+                label.textContent = 'Copied!';
+                setTimeout(function () { label.textContent = prev; }, 1600);
+            };
+            var fallback = function () {
+                try {
+                    var ta = document.createElement('textarea');
+                    ta.value = code; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                    document.body.appendChild(ta); ta.select();
+                    document.execCommand('copy'); document.body.removeChild(ta);
+                } catch (err) {}
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(flash, function () { fallback(); flash(); });
+            } else { fallback(); flash(); }
+        });
+
+        // Prices are rendered with Indian digit grouping so the headline figure and the
+        // struck-through list price read as one set (₹12,000 next to ₹9,000, not ₹9000).
+        function planNum(v) {
+            var n = Number(v);
+            return isNaN(n) ? planEsc(v) : planEsc(n.toLocaleString('en-IN'));
+        }
+
         function buildPlanCalc(cur) {
             return ''
                 + '<div class="plan-calc" style="background:var(--bg-sec); border:1px solid var(--line); padding:16px; border-radius:8px; margin-bottom:24px; font-size:0.95rem;">'
                 +   '<div style="display:flex; justify-content:space-between; margin-bottom:6px; color:var(--text-soft);"><span>Per User &times; <span class="calc-users">1</span></span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-per-user">0</span> <span style="font-size:0.85rem;">/ user / mo</span></span></div>'
                 +   '<div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-soft);"><span>Monthly Cost</span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-base">0</span> <span style="font-size:0.85rem;">/ mo</span></span></div>'
+                +   '<div class="calc-offer-row"><span class="calc-offer-label">Sale discount</span><span>&minus; ' + cur + '<span class="calc-offer-saving">0</span></span></div>'
                 +   '<div style="background:#e8faed; border:1px solid #d1f4e0; border-radius:6px; padding:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display:flex; flex-direction:column; align-items:flex-end;">'
                 +     '<div style="font-weight:800; font-size:1.8rem; color:#149b82;">' + cur + '<span class="calc-billed">0</span></div>'
                 +     '<div style="font-size:0.95rem; font-weight:600; margin-top:2px;"><span style="color:#8a94a6;">' + cur + '<span class="calc-billed-base">0</span></span> <span style="color:#149b82;">+ 18% GST</span></div>'
@@ -245,11 +435,41 @@
             var tierKey = String(plan.tier || 'plan').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
             var id = 'plan-' + group + '-' + (tierKey || 'plan');
             var py = plan.price_year, ph = plan.price_half, pq = plan.price_quarter;
-            // In the default (yearly) view, strike through the highest available rate
-            // (quarterly, else half-yearly) to show the saving versus shorter cycles.
-            var origForYear = (pq != null) ? pq : ph;
-            var strike = (origForYear != null && py != null && Number(origForYear) > Number(py))
-                ? '<span style="font-size:1.1rem; color:var(--text-soft); text-decoration:line-through; margin-right:8px;">' + cur + planEsc(origForYear) + '</span>' : '';
+            var offer = plan.offer || null;
+
+            // A cycle is "on sale" when the SaaS discounted its per-user price.
+            var listOf = { year: plan.list_year, half: plan.list_half, quarter: plan.list_quarter };
+            var priceOf = { year: py, half: ph, quarter: pq };
+            var onSale = {};
+            ['year', 'half', 'quarter'].forEach(function (c) {
+                onSale[c] = !!(offer && listOf[c] != null && priceOf[c] != null && Number(listOf[c]) > Number(priceOf[c]));
+            });
+
+            // Struck-through reference price. During a sale it is this cycle's own list
+            // price; otherwise it falls back to the highest (shortest-cycle) rate, which is
+            // how the page has always shown the yearly saving.
+            var strikeFor = function (cycle) {
+                if (onSale[cycle]) {
+                    var pct = Math.round((1 - Number(priceOf[cycle]) / Number(listOf[cycle])) * 100);
+                    return '<span class="plan-was">' + cur + planNum(listOf[cycle]) + '</span>'
+                        + (pct > 0 ? '<span class="plan-off" data-plan-off>Save ' + pct + '%</span>' : '');
+                }
+                if (cycle !== 'year') return '';
+                var origForYear = (pq != null) ? pq : ph;
+                return (origForYear != null && py != null && Number(origForYear) > Number(py))
+                    ? '<span style="font-size:1.1rem; color:var(--text-soft); text-decoration:line-through; margin-right:8px;">' + cur + planNum(origForYear) + '</span>' : '';
+            };
+            var strike = strikeFor('year');
+
+            var offerAccent = offer ? (OFFER_THEMES[offer.theme] || OFFER_THEMES.amber)[1] : '';
+            var offerTag = offer
+                ? '<span class="plan-offer-tag">' + planEsc(offer.discount_label || 'Sale') + '</span>' : '';
+            var offerEnds = (offer && offer.ends_ts)
+                ? '<div class="plan-offer-ends" data-offer-ends="' + planEsc(offer.ends_ts) + '">' + CLOCK_SVG
+                    + '<span>Offer ends in <b>—</b></span></div>' : '';
+            var offerCoupon = (offer && offer.coupon_code)
+                ? '<button type="button" class="plan-coupon offer-copy" data-code="' + planEsc(offer.coupon_code) + '">'
+                    + COUPON_SVG + '<span>Use code <span class="offer-copy-text">' + planEsc(offer.coupon_code) + '</span></span></button>' : '';
             var featuredCls = plan.featured ? ' featured' : '';
             var btnCls = plan.featured ? 'btn-primary' : 'btn-outline';
             var signupYear = plan.signup_year || plan.signup_half || plan.signup_quarter || 'contact';
@@ -266,18 +486,26 @@
             }).join('');
 
             return ''
-                + '<div id="' + id + '" class="price-card' + featuredCls + '">'
+                + '<div id="' + id + '" class="price-card' + featuredCls + '"'
+                +   (offerAccent ? ' style="--of-accent:' + offerAccent + ';"' : '') + '>'
+                +   offerTag
                 +   '<div class="plan-name">' + planEsc(plan.tier) + '</div>'
                 +   '<div class="plan-desc">' + planEsc(plan.desc) + '</div>'
                 +   '<div class="plan-price" style="margin-bottom:10px; display:flex; flex-direction:column; align-items:flex-start;">'
-                +     '<div data-year>' + strike + '<span class="cur">' + cur + '</span><span class="amt">' + planEsc(py) + '</span><span class="per">/ user / yr</span></div>'
-                +     '<div data-half style="display:none;"><span class="cur">' + cur + '</span><span class="amt">' + planEsc(ph) + '</span><span class="per">/ user / 6 mo</span></div>'
-                +     '<div data-quarter style="display:none;"><span class="cur">' + cur + '</span><span class="amt">' + planEsc(pq) + '</span><span class="per">/ user / 4 mo</span></div>'
+                +     '<div data-year>' + strike + '<span class="cur">' + cur + '</span><span class="amt">' + planNum(py) + '</span><span class="per">/ user / yr</span></div>'
+                +     '<div data-half style="display:none;">' + strikeFor('half') + '<span class="cur">' + cur + '</span><span class="amt">' + planNum(ph) + '</span><span class="per">/ user / 6 mo</span></div>'
+                +     '<div data-quarter style="display:none;">' + strikeFor('quarter') + '<span class="cur">' + cur + '</span><span class="amt">' + planNum(pq) + '</span><span class="per">/ user / 4 mo</span></div>'
                 +   '</div>'
+                +   offerEnds
                 +   '<div class="plan-users" style="margin-top:15px; margin-bottom:15px;">'
-                +     '<select class="user-select" data-base="' + planEsc(plan.base_users || 1) + '" data-price-year="' + planEsc(py) + '" data-price-half="' + planEsc(ph) + '" data-price-quarter="' + planEsc(pq) + '"></select>'
+                +     '<select class="user-select" data-base="' + planEsc(plan.base_users || 1) + '" data-price-year="' + planEsc(py) + '" data-price-half="' + planEsc(ph) + '" data-price-quarter="' + planEsc(pq) + '"'
+                +       ' data-list-year="' + planEsc(plan.list_year != null ? plan.list_year : py) + '"'
+                +       ' data-list-half="' + planEsc(plan.list_half != null ? plan.list_half : ph) + '"'
+                +       ' data-list-quarter="' + planEsc(plan.list_quarter != null ? plan.list_quarter : pq) + '"'
+                +       ' data-sale-year="' + (onSale.year ? 1 : 0) + '" data-sale-half="' + (onSale.half ? 1 : 0) + '" data-sale-quarter="' + (onSale.quarter ? 1 : 0) + '"></select>'
                 +   '</div>'
                 +   buildPlanCalc(cur)
+                +   offerCoupon
                 +   '<ul class="checks">' + features + '</ul>'
                 +   '<a href="' + planEsc(signupYear) + '" class="btn ' + btnCls + ' btn-block plan-signup" data-signup-year="' + planEsc(signupYear) + '" data-signup-half="' + planEsc(signupHalf) + '" data-signup-quarter="' + planEsc(signupQuarter) + '">⚡ Sign Up Now</a>'
                 +   '<button type="button" class="plan-share" data-share="' + planEsc(signupYear) + '" data-share-year="' + planEsc(signupYear) + '" data-share-half="' + planEsc(signupHalf) + '" data-share-quarter="' + planEsc(signupQuarter) + '" style="margin-top:10px; width:100%; background:none; border:none; cursor:pointer; color:var(--cyan-dark); font-weight:700; font-size:0.85rem; display:inline-flex; align-items:center; justify-content:center; gap:6px;">'
@@ -339,6 +567,13 @@
                     }
                     var groups = data.groups || {};
                     var cur = data.currency || '₹';
+
+                    // Sale offers: trust the SERVER clock for every countdown.
+                    OFFERS.list = (data.offers || []).filter(function (o) {
+                        return !o.ends_ts || (Number(o.ends_ts) * 1000) > (data.now_ts ? Number(data.now_ts) * 1000 : Date.now());
+                    });
+                    OFFERS.skewMs = data.now_ts ? (Number(data.now_ts) * 1000 - Date.now()) : 0;
+
                     mounts.forEach(function (m) {
                         var gk = m.getAttribute('data-group');
                         var g = groups[gk];
@@ -449,6 +684,20 @@
                 var base = parseInt(select.getAttribute('data-base'), 10) || 1;
                 var users = Math.max(globalUsers, base);
                 var pricePerUser = parseInt(select.getAttribute('data-price-' + currentBillingCycle), 10);
+
+                // Sale offer: the per-user price is already discounted, so the saving is
+                // simply the gap to the list price for the active cycle.
+                var listPerUser = parseInt(select.getAttribute('data-list-' + currentBillingCycle), 10);
+                var onSale = select.getAttribute('data-sale-' + currentBillingCycle) === '1';
+                card.classList.toggle('has-offer', onSale);
+                if (onSale && !isNaN(listPerUser)) {
+                    var offerSaving = (listPerUser - pricePerUser) * users;
+                    var savingEl2 = card.querySelector('.calc-offer-saving');
+                    if (savingEl2) savingEl2.textContent = Math.round(offerSaving).toLocaleString('en-IN');
+                    var offerLabel = card.querySelector('.calc-offer-label');
+                    var tagEl = card.querySelector('.plan-offer-tag');
+                    if (offerLabel && tagEl) offerLabel.textContent = tagEl.textContent;
+                }
 
                 // pricePerUser is the price per user for the WHOLE billing cycle.
                 var CYCLE_MONTHS = { year: 12, half: 6, quarter: 4 };
@@ -578,8 +827,13 @@
                 document.querySelectorAll('.price-panel').forEach(function (p) { p.classList.remove('active'); });
                 var panel = document.getElementById('panel-' + tab.dataset.product);
                 if (panel) panel.classList.add('active');
+                renderOfferBanner(tab.dataset.product);
             });
         });
+
+        // Banner for the tab that is active on load.
+        var activeTab = document.querySelector('.product-tab.active');
+        renderOfferBanner(activeTab ? activeTab.dataset.product : 'hims');
 
         /* ---------- Handle hash on load for pricing plans & tabs ---------- */
         if (window.location.hash) {

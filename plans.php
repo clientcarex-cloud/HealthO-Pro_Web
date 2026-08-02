@@ -157,6 +157,76 @@ function ho_emit(array $payload)
     exit;
 }
 
+/* ------------------------------------------------------------------- offers */
+
+/**
+ * Price after a sale offer is applied.
+ *
+ * The SaaS sends the offer definition (percent or flat) rather than a finished price so
+ * the same discount can be applied to the per-user figure the cards actually display.
+ *
+ * @param array $offer  Offer payload from the SaaS API
+ * @param float $amount List price
+ * @return float
+ */
+function ho_offer_apply(array $offer, $amount)
+{
+    $amount = (float) $amount;
+    if ($amount <= 0) {
+        return 0.0;
+    }
+
+    $value  = (float) ($offer['discount_value'] ?? 0);
+    $saving = (($offer['discount_type'] ?? 'percent') === 'flat') ? $value : $amount * ($value / 100);
+    $saving = max(0.0, min($amount, $saving));
+
+    return $amount - $saving;
+}
+
+/**
+ * Trim a SaaS offer payload down to what the pricing page renders, and translate its
+ * plan groups into the website's product keys (hims/lims/cims).
+ *
+ * @param array $offer
+ * @return array
+ */
+function ho_offer_view(array $offer)
+{
+    $group_keys = [];
+    foreach ((array) ($offer['groups'] ?? []) as $group_name) {
+        $key = ho_group_key($group_name);
+        if ($key !== null) {
+            $group_keys[] = $key;
+        }
+    }
+
+    return [
+        'id'             => (int) ($offer['id'] ?? 0),
+        'badge'          => (string) ($offer['badge'] ?? 'Limited Time'),
+        'headline'       => (string) ($offer['headline'] ?? ''),
+        'subtext'        => (string) ($offer['subtext'] ?? ''),
+        'discount_type'  => (string) ($offer['discount_type'] ?? 'percent'),
+        'discount_value' => (float) ($offer['discount_value'] ?? 0),
+        'discount_label' => (string) ($offer['discount_label'] ?? ''),
+        'coupon_code'    => (string) ($offer['coupon_code'] ?? ''),
+        'cta_text'       => (string) ($offer['cta_text'] ?? ''),
+        'cta_url'        => (string) ($offer['cta_url'] ?? ''),
+        'urgency_note'   => (string) ($offer['urgency_note'] ?? ''),
+        'seats_total'    => isset($offer['seats_total']) ? $offer['seats_total'] : null,
+        'seats_left'     => isset($offer['seats_left']) ? $offer['seats_left'] : null,
+        'show_banner'    => !empty($offer['show_banner']),
+        'show_countdown' => !empty($offer['show_countdown']),
+        'theme'          => (string) ($offer['theme'] ?? 'amber'),
+        'priority'       => (int) ($offer['priority'] ?? 0),
+        'applies_to'     => (string) ($offer['applies_to'] ?? 'all'),
+        'cycles'         => array_values((array) ($offer['cycles'] ?? [])),
+        'group_keys'     => array_values(array_unique($group_keys)),
+        'starts_ts'      => isset($offer['starts_ts']) ? (int) $offer['starts_ts'] : null,
+        'ends_ts'        => isset($offer['ends_ts']) ? (int) $offer['ends_ts'] : null,
+        'ends_at'        => $offer['ends_at'] ?? null,
+    ];
+}
+
 /**
  * Pure transform: SaaS package list (+ module name map) -> pricing view-model.
  * Kept IO-free so it can be unit-tested in isolation.
@@ -164,12 +234,22 @@ function ho_emit(array $payload)
  * @param array  $plans       Decoded /saas/api/plans response (list of packages)
  * @param array  $modulesMap  system_name => friendly label
  * @param string $currency    Currency symbol
- * @return array              Payload with ok/currency/generated_at/groups
+ * @param array  $offersFeed  Optional decoded /saas/api/offers response
+ * @return array              Payload with ok/currency/generated_at/groups/offers
  */
-function ho_build_plans(array $plans, array $modulesMap, $currency)
+function ho_build_plans(array $plans, array $modulesMap, $currency, array $offersFeed = [])
 {
     // groupKey => tierKey => card scaffold
     $buckets = [];
+
+    // Every sale offer seen, keyed by id: from the dedicated offers feed (which can also
+    // announce promotions that discount nothing) and from the per-package offer objects.
+    $offers_seen = [];
+    foreach ((array) ($offersFeed['offers'] ?? []) as $o) {
+        if (is_array($o) && !empty($o['id'])) {
+            $offers_seen[(int) $o['id']] = ho_offer_view($o);
+        }
+    }
 
     foreach ($plans as $pkg) {
         // Package status is stored as '1' (active) / '0' (inactive); the API docs' "active"
@@ -257,6 +337,15 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
                 'price_year'    => null,
                 'price_half'    => null,
                 'price_quarter' => null,
+                // Undiscounted per-user price of each cycle (equals price_* when no offer runs)
+                'list_year'     => null,
+                'list_half'     => null,
+                'list_quarter'  => null,
+                // Offer id applied to each cycle, or null
+                'offer_year'    => null,
+                'offer_half'    => null,
+                'offer_quarter' => null,
+                'offer'         => null,
                 'slug_year'     => null,
                 'slug_half'     => null,
                 'slug_quarter'  => null,
@@ -267,7 +356,19 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
         }
         $card = &$buckets[$group_key][$tier_key];
 
-        $card['price_' . $bk]  = (int) round($per_user);
+        // A running sale offer discounts the per-user price of THIS package (the SaaS has
+        // already checked the offer's group/plan/cycle scope), while the untouched list
+        // price is kept so the card can strike it through.
+        $offer = (isset($pkg['offer']) && is_array($pkg['offer'])) ? $pkg['offer'] : null;
+        if ($offer !== null && !empty($offer['id'])) {
+            $offer_view = ho_offer_view($offer);
+            $offers_seen[(int) $offer['id']] = $offer_view;
+            $card['offer_' . $bk] = (int) $offer['id'];
+            $card['price_' . $bk] = (int) round(ho_offer_apply($offer, $per_user));
+        } else {
+            $card['price_' . $bk] = (int) round($per_user);
+        }
+        $card['list_' . $bk]   = (int) round($per_user);
         $card['slug_' . $bk]   = $pkg['slug'] ?? null;
         $card['signup_' . $bk] = $pkg['signup_url'] ?? null;
 
@@ -303,8 +404,19 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
             foreach (['year', 'half', 'quarter'] as $bk) {
                 if ($c['price_' . $bk] === null) {
                     $c['price_' . $bk]  = $c['price_' . $fallback];
+                    $c['list_' . $bk]   = $c['list_' . $fallback];
+                    $c['offer_' . $bk]  = $c['offer_' . $fallback];
                     $c['slug_' . $bk]   = $c['slug_' . $fallback];
                     $c['signup_' . $bk] = $c['signup_' . $fallback];
+                }
+            }
+
+            // Card-level offer: the yearly one wins, else whichever cycle carries one.
+            foreach (['year', 'half', 'quarter'] as $bk) {
+                $oid = $c['offer_' . $bk];
+                if ($oid !== null && isset($offers_seen[$oid])) {
+                    $c['offer'] = $offers_seen[$oid];
+                    break;
                 }
             }
         }
@@ -326,11 +438,39 @@ function ho_build_plans(array $plans, array $modulesMap, $currency)
         ];
     }
 
+    // Banner offers, strongest first. The front-end picks the one matching the active
+    // product tab (an offer with no group_keys applies to every product).
+    $banner_offers = [];
+    foreach ($offers_seen as $offer_view) {
+        if (!empty($offer_view['show_banner'])) {
+            $banner_offers[] = $offer_view;
+        }
+    }
+    usort($banner_offers, function ($a, $b) {
+        return ($b['priority'] ?? 0) <=> ($a['priority'] ?? 0);
+    });
+
+    // Earliest moment the payload stops being accurate (an offer ending), so a cached
+    // response is not served past the end of a sale.
+    $next_change_ts = null;
+    foreach ($offers_seen as $offer_view) {
+        if (!empty($offer_view['ends_ts'])) {
+            $next_change_ts = $next_change_ts === null
+                ? (int) $offer_view['ends_ts']
+                : min($next_change_ts, (int) $offer_view['ends_ts']);
+        }
+    }
+
     return [
-        'ok'           => true,
-        'currency'     => $currency,
-        'generated_at' => gmdate('c'),
-        'groups'       => empty($groups) ? new stdClass() : $groups,
+        'ok'             => true,
+        'currency'       => $currency,
+        'generated_at'   => gmdate('c'),
+        // Server clock, re-stamped on every response (even cached ones) so countdowns
+        // stay correct on browsers with a skewed clock.
+        'now_ts'         => time(),
+        'next_change_ts' => $next_change_ts,
+        'offers'         => $banner_offers,
+        'groups'         => empty($groups) ? new stdClass() : $groups,
     ];
 }
 
@@ -348,6 +488,10 @@ $modulesUrl = $env['HEALTHO_MODULES_URL'] ?? '';
 $currency   = $env['HEALTHO_CURRENCY']    ?? '₹';
 $ttl        = (int) ($env['HEALTHO_PLANS_CACHE_TTL'] ?? 600);
 
+// Sale offers endpoint. Defaults to the plans URL with the trailing segment swapped, so
+// no new .env entry is needed; set HEALTHO_OFFERS_URL to override.
+$offersUrl = $env['HEALTHO_OFFERS_URL'] ?? preg_replace('~/plans/?$~', '/offers', $apiUrl);
+
 if ($apiUrl === '' || $apiKey === '') {
     http_response_code(500);
     ho_emit(['ok' => false, 'error' => 'API not configured', 'groups' => new stdClass()]);
@@ -356,10 +500,89 @@ if ($apiUrl === '' || $apiKey === '') {
 $cacheFile = sys_get_temp_dir() . '/healtho_plans_' . md5($apiUrl . '|' . $apiKey) . '.json';
 $force     = isset($_GET['refresh']);
 
+/**
+ * Echo a cached response, re-stamping the server clock and refusing it once a sale
+ * inside it has ended. Returns false when the cache must be rebuilt.
+ *
+ * @param string $file
+ * @param bool   $strip_expired When true (last-resort fallback while the API is down),
+ *                              expired offers are removed and list pricing restored
+ *                              instead of rejecting the cache outright.
+ * @return bool
+ */
+function ho_emit_cached($file, $strip_expired = false)
+{
+    $raw = @file_get_contents($file);
+    if ($raw === false || $raw === '') {
+        return false;
+    }
+
+    $data = json_decode($raw, true);
+    if (!is_array($data)) {
+        return false;
+    }
+
+    // A cached payload must not outlive the offer it advertises.
+    $now = time();
+    if (!empty($data['next_change_ts']) && (int) $data['next_change_ts'] <= $now) {
+        if (!$strip_expired) {
+            return false;
+        }
+        $data = ho_strip_expired_offers($data, $now);
+    }
+
+    $data['now_ts'] = $now;
+    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
+/**
+ * Remove offers that have ended from a payload and roll the affected cards back to
+ * their list prices.
+ *
+ * @param array $data
+ * @param int   $now
+ * @return array
+ */
+function ho_strip_expired_offers(array $data, $now)
+{
+    $expired = [];
+    foreach ((array) ($data['offers'] ?? []) as $offer) {
+        if (!empty($offer['ends_ts']) && (int) $offer['ends_ts'] <= $now) {
+            $expired[(int) $offer['id']] = true;
+        }
+    }
+
+    $data['offers'] = array_values(array_filter((array) ($data['offers'] ?? []), function ($offer) use ($now) {
+        return empty($offer['ends_ts']) || (int) $offer['ends_ts'] > $now;
+    }));
+
+    foreach ((array) ($data['groups'] ?? []) as $gk => $group) {
+        foreach ((array) ($group['plans'] ?? []) as $i => $card) {
+            foreach (['year', 'half', 'quarter'] as $bk) {
+                $oid = $card['offer_' . $bk] ?? null;
+                if ($oid !== null && isset($expired[(int) $oid])) {
+                    $card['offer_' . $bk] = null;
+                    if (isset($card['list_' . $bk])) {
+                        $card['price_' . $bk] = $card['list_' . $bk];
+                    }
+                }
+            }
+            if (!empty($card['offer']['ends_ts']) && (int) $card['offer']['ends_ts'] <= $now) {
+                $card['offer'] = null;
+            }
+            $data['groups'][$gk]['plans'][$i] = $card;
+        }
+    }
+
+    $data['next_change_ts'] = null;
+
+    return $data;
+}
+
 // Serve fresh cache without hitting the API.
 if (!$force && is_readable($cacheFile) && (time() - filemtime($cacheFile) < $ttl)) {
-    echo file_get_contents($cacheFile);
-    exit;
+    ho_emit_cached($cacheFile);
 }
 
 /* ------------------------------------------------------------------ fetch API */
@@ -371,8 +594,7 @@ list($plans, $status, $error) = ho_get_json($apiUrl, $authHeader);
 // On upstream failure, fall back to stale cache if we have one.
 if (!is_array($plans) || (isset($plans['error']))) {
     if (is_readable($cacheFile)) {
-        echo file_get_contents($cacheFile);
-        exit;
+        ho_emit_cached($cacheFile, true);
     }
     http_response_code(502);
     ho_emit([
@@ -393,9 +615,20 @@ if ($modulesUrl !== '') {
     }
 }
 
+// Sale offers (best-effort). Each package already carries the offer that discounts it,
+// so a failure here — including an API key without the "offers" permission — only costs
+// the announcement banner for promotions that discount nothing.
+$offersFeed = [];
+if ($offersUrl !== '' && $offersUrl !== $apiUrl) {
+    list($offersResponse, , ) = ho_get_json($offersUrl, $authHeader);
+    if (is_array($offersResponse) && !empty($offersResponse['offers'])) {
+        $offersFeed = $offersResponse;
+    }
+}
+
 /* --------------------------------------------------------------- transform */
 
-$out     = ho_build_plans($plans, $modulesMap, $currency);
+$out     = ho_build_plans($plans, $modulesMap, $currency, $offersFeed);
 $encoded = json_encode($out, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 // Best-effort cache write (ignore failures on read-only filesystems).
