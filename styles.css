@@ -816,7 +816,11 @@ body.demo-open { overflow: hidden; }
    ========================================================================== */
 
 .offer-mount:empty { display: none; }
-.offer-mount { margin-bottom: 26px; }
+/* The pricing section sets padding-top:0 so the sticky bar tucks under the hero; the
+   banner needs its own breathing room. Padding (not margin) so it cannot collapse out
+   of the section and leave a band of the wrong background above it. */
+.offer-mount { padding-top: 34px; margin-bottom: 26px; }
+@media (max-width: 860px) { .offer-mount { padding-top: 24px; } }
 
 /* ---------- Announcement banner ---------- */
 .offer-banner {
