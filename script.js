@@ -458,24 +458,18 @@
                 var cycleTotal = cycleBase + gst;              // incl GST, billed once per cycle
                 var monthly = cycleBase / months;              // monthly-equivalent (pre-GST)
 
-                var setTxt = function (sel, val, decimals) {
+                var setTxt = function (sel, val) {
                     var el = card.querySelector(sel);
-                    if (el) {
-                        if (decimals) {
-                            el.textContent = val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                        } else {
-                            el.textContent = val.toLocaleString('en-IN');
-                        }
-                    }
+                    if (el) el.textContent = val.toLocaleString('en-IN');
                 };
                 setTxt('.calc-users', users);
                 setTxt('.calc-per-user', Math.round(pricePerUser / months));
                 setTxt('.calc-base', Math.round(monthly));
                 setTxt('.calc-gst', gst);
                 setTxt('.calc-total', Math.round(cycleTotal));
-                // The billed values show decimals (e.g. .20, .00) to match the reference image style
-                setTxt('.calc-billed', cycleBase * 1.18, true);
-                setTxt('.calc-billed-base', cycleBase, true);
+                // Billed amounts are shown as whole rupees — cycleTotal already rounds the GST
+                setTxt('.calc-billed', cycleTotal);
+                setTxt('.calc-billed-base', cycleBase);
 
                 var freqEl = card.querySelector('.calc-billed-freq');
                 var CYCLE_FREQ = { year: 'Annually', half: 'Every 6 Months', quarter: 'Every 4 Months' };
