@@ -239,15 +239,26 @@
             reloading: false
         };
 
-        // Accent palette per theme name (mirrors the choices in the SaaS admin).
+        // Accent palette per theme name (mirrors the choices in the SaaS admin). Every piece
+        // of offer furniture — banner gradient, card border, ribbon, coupon, savings row —
+        // is derived from ONE entry, so an offer never mixes two accent colours.
+        //   g1/g2 = banner gradient · solid = ribbon & borders · tint/ink = soft chips
         var OFFER_THEMES = {
-            amber:  ['#F59E0B', '#EF4444'],
-            red:    ['#EF4444', '#B91C1C'],
-            green:  ['#10B981', '#047857'],
-            cyan:   ['#00B4D8', '#0369A1'],
-            navy:   ['#1E3D7B', '#0C1F45'],
-            purple: ['#7C3AED', '#4C1D95']
+            amber:  { g1: '#F59E0B', g2: '#EA580C', solid: '#D97706', tint: '#FEF3C7', ink: '#92400E', rgb: '217,119,6' },
+            red:    { g1: '#EF4444', g2: '#B91C1C', solid: '#DC2626', tint: '#FEE2E2', ink: '#B91C1C', rgb: '220,38,38' },
+            green:  { g1: '#10B981', g2: '#047857', solid: '#059669', tint: '#D1FAE5', ink: '#047857', rgb: '5,150,105' },
+            cyan:   { g1: '#00B4D8', g2: '#0369A1', solid: '#0284C7', tint: '#E0F2FE', ink: '#075985', rgb: '2,132,199' },
+            navy:   { g1: '#1E3D7B', g2: '#0C1F45', solid: '#1E3D7B', tint: '#E7ECF7', ink: '#122B5C', rgb: '30,61,123' },
+            purple: { g1: '#7C3AED', g2: '#4C1D95', solid: '#7C3AED', tint: '#EDE9FE', ink: '#5B21B6', rgb: '124,58,237' }
         };
+
+        function offerTheme(name) { return OFFER_THEMES[name] || OFFER_THEMES.amber; }
+
+        // The CSS custom properties every offer element reads.
+        function offerThemeVars(t) {
+            return '--of-accent:' + t.solid + '; --of-tint:' + t.tint + '; --of-ink:' + t.ink
+                + '; --of-glow:rgba(' + t.rgb + ',.28); --of-line:rgba(' + t.rgb + ',.35);';
+        }
 
         function offerNow() { return Date.now() + OFFERS.skewMs; }
 
@@ -297,16 +308,18 @@
         }
 
         function buildOfferBanner(offer) {
-            var theme = OFFER_THEMES[offer.theme] || OFFER_THEMES.amber;
-            var style = '--ob-1:' + theme[0] + '; --ob-2:' + theme[1] + ';';
+            var t = offerTheme(offer.theme);
+            var style = '--ob-1:' + t.g1 + '; --ob-2:' + t.g2 + '; --ob-ink:' + t.ink + ';';
 
+            // Scarcity meter. The caption stays short because the urgency note beside it
+            // already carries the message — no "12 slots left" twice.
             var meter = '';
             if (offer.seats_total && offer.seats_left !== null && offer.seats_left !== undefined) {
                 var total = Number(offer.seats_total), left = Math.max(0, Number(offer.seats_left));
-                var taken = Math.max(0, Math.min(100, Math.round(((total - left) / total) * 100)));
+                var taken = total > 0 ? Math.max(0, Math.min(100, Math.round(((total - left) / total) * 100))) : 0;
                 meter = '<div class="offer-meter">'
+                    + '<div class="offer-meter-head"><span>' + taken + '% claimed</span><span>' + left + ' of ' + total + ' left</span></div>'
                     + '<div class="offer-meter-bar"><div class="offer-meter-fill" style="width:' + taken + '%;"></div></div>'
-                    + '<div class="offer-meter-txt">' + taken + '% claimed — only ' + left + ' of ' + total + ' slots left</div>'
                     + '</div>';
             }
 
@@ -326,14 +339,18 @@
             return ''
                 + '<div class="offer-banner" style="' + style + '" data-offer-id="' + planEsc(offer.id) + '">'
                 +   '<div class="offer-main">'
-                +     '<span class="offer-badge"><span class="offer-dot"></span>' + planEsc(offer.badge || 'Limited Time') + '</span>'
-                +     (offer.discount_label ? '<span class="offer-save">' + planEsc(offer.discount_label) + '</span>' : '')
+                +     '<div class="offer-tags">'
+                +       '<span class="offer-badge"><span class="offer-dot"></span>' + planEsc(offer.badge || 'Limited Time') + '</span>'
+                +       (offer.discount_label ? '<span class="offer-save">' + planEsc(offer.discount_label) + '</span>' : '')
+                +     '</div>'
                 +     (offer.headline ? '<div class="offer-headline">' + planEsc(offer.headline) + '</div>' : '')
                 +     (offer.subtext ? '<div class="offer-sub">' + planEsc(offer.subtext) + '</div>' : '')
-                +     note
-                +     meter
+                +     ((note || meter) ? '<div class="offer-facts">' + note + meter + '</div>' : '')
                 +   '</div>'
-                +   '<div class="offer-side">' + countdown + coupon + cta + '</div>'
+                +   '<div class="offer-side">'
+                +     (countdown ? '<div class="offer-side-row">' + countdown + '</div>' : '')
+                +     ((coupon || cta) ? '<div class="offer-side-row">' + coupon + cta + '</div>' : '')
+                +   '</div>'
                 + '</div>';
         }
 
@@ -426,7 +443,7 @@
                 +   '<div style="background:#e8faed; border:1px solid #d1f4e0; border-radius:6px; padding:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display:flex; flex-direction:column; align-items:flex-end;">'
                 +     '<div style="font-weight:800; font-size:1.8rem; color:#149b82;">' + cur + '<span class="calc-billed">0</span></div>'
                 +     '<div style="font-size:0.95rem; font-weight:600; margin-top:2px;"><span style="color:#8a94a6;">' + cur + '<span class="calc-billed-base">0</span></span> <span style="color:#149b82;">+ 18% GST</span></div>'
-                +     '<div class="calc-savings-row" style="align-items:center; gap:6px; font-size:0.85rem; font-weight:700; color:#10b981; margin-top:8px; display:none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>You save ' + cur + ' <span class="calc-savings">0</span> a year</span></div>'
+                +     '<div class="calc-savings-row" style="align-items:flex-start; gap:7px; width:100%; text-align:left; border-top:1px dashed rgba(20,155,130,.3); padding-top:9px; font-size:0.85rem; font-weight:700; color:#10b981; margin-top:10px; display:none;"><svg viewBox="0 0 24 24" width="14" height="14" style="margin-top:2px; flex:none;" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>You save ' + cur + ' <span class="calc-savings">0</span> a year<span class="calc-savings-note"></span></span></div>'
                 +   '</div>'
                 + '</div>';
         }
@@ -461,7 +478,7 @@
             };
             var strike = strikeFor('year');
 
-            var offerAccent = offer ? (OFFER_THEMES[offer.theme] || OFFER_THEMES.amber)[1] : '';
+            var offerStyle = offer ? offerThemeVars(offerTheme(offer.theme)) : '';
             var offerTag = offer
                 ? '<span class="plan-offer-tag">' + planEsc(offer.discount_label || 'Sale') + '</span>' : '';
             var offerEnds = (offer && offer.ends_ts)
@@ -487,21 +504,22 @@
 
             return ''
                 + '<div id="' + id + '" class="price-card' + featuredCls + '"'
-                +   (offerAccent ? ' style="--of-accent:' + offerAccent + ';"' : '') + '>'
+                +   (offerStyle ? ' style="' + offerStyle + '"' : '') + '>'
                 +   offerTag
                 +   '<div class="plan-name">' + planEsc(plan.tier) + '</div>'
                 +   '<div class="plan-desc">' + planEsc(plan.desc) + '</div>'
-                +   '<div class="plan-price" style="margin-bottom:10px; display:flex; flex-direction:column; align-items:flex-start;">'
+                +   '<div class="plan-price" style="display:flex; flex-direction:column; align-items:flex-start;">'
                 +     '<div data-year>' + strike + '<span class="cur">' + cur + '</span><span class="amt">' + planNum(py) + '</span><span class="per">/ user / yr</span></div>'
                 +     '<div data-half style="display:none;">' + strikeFor('half') + '<span class="cur">' + cur + '</span><span class="amt">' + planNum(ph) + '</span><span class="per">/ user / 6 mo</span></div>'
                 +     '<div data-quarter style="display:none;">' + strikeFor('quarter') + '<span class="cur">' + cur + '</span><span class="amt">' + planNum(pq) + '</span><span class="per">/ user / 4 mo</span></div>'
                 +   '</div>'
                 +   offerEnds
-                +   '<div class="plan-users" style="margin-top:15px; margin-bottom:15px;">'
+                +   '<div class="plan-users">'
                 +     '<select class="user-select" data-base="' + planEsc(plan.base_users || 1) + '" data-price-year="' + planEsc(py) + '" data-price-half="' + planEsc(ph) + '" data-price-quarter="' + planEsc(pq) + '"'
                 +       ' data-list-year="' + planEsc(plan.list_year != null ? plan.list_year : py) + '"'
                 +       ' data-list-half="' + planEsc(plan.list_half != null ? plan.list_half : ph) + '"'
                 +       ' data-list-quarter="' + planEsc(plan.list_quarter != null ? plan.list_quarter : pq) + '"'
+                +       ' data-native-year="' + (plan.native_year ? 1 : 0) + '" data-native-half="' + (plan.native_half ? 1 : 0) + '" data-native-quarter="' + (plan.native_quarter ? 1 : 0) + '"'
                 +       ' data-sale-year="' + (onSale.year ? 1 : 0) + '" data-sale-half="' + (onSale.half ? 1 : 0) + '" data-sale-quarter="' + (onSale.quarter ? 1 : 0) + '"></select>'
                 +   '</div>'
                 +   buildPlanCalc(cur)
@@ -724,24 +742,36 @@
                 var CYCLE_FREQ = { year: 'Annually', half: 'Every 6 Months', quarter: 'Every 4 Months' };
                 if (freqEl) freqEl.textContent = CYCLE_FREQ[currentBillingCycle] || 'Annually';
 
-                // Savings = how much the customer saves over a year versus paying the
-                // shortest-cycle (quarterly) per-user rate. Shown on the longer cycles only.
+                // "You save X a year" — the real, total annual saving versus the worst deal
+                // this plan offers: the dearest annualised LIST rate among the billing cycles
+                // the plan actually sells (a cycle copied from another one is not a real
+                // alternative, so it is skipped). That single baseline covers both sources of
+                // saving — a longer billing cycle and a running sale — so the row keeps
+                // working for plans that have no separate quarterly package.
                 var savingsRow = card.querySelector('.calc-savings-row');
                 var savingsEl = card.querySelector('.calc-savings');
-                var priceQuarter = parseInt(select.getAttribute('data-price-quarter'), 10);
-                if (currentBillingCycle !== 'quarter' && !isNaN(priceQuarter)) {
-                    // Annualise each cycle's per-user price, then compare to the quarterly baseline.
-                    var yearlyCostAtQuarter = Math.round((users * priceQuarter) * (12 / 4) * 1.18);
-                    var yearlyCostAtCurrent = Math.round((users * pricePerUser) * (12 / months) * 1.18);
-                    var savings = yearlyCostAtQuarter - yearlyCostAtCurrent;
-                    if (savingsRow && savings > 0) {
+                var savingsNote = card.querySelector('.calc-savings-note');
+
+                var baselineAnnual = 0;
+                ['quarter', 'half', 'year'].forEach(function (c) {
+                    if (select.getAttribute('data-native-' + c) !== '1') return;
+                    var listC = parseInt(select.getAttribute('data-list-' + c), 10);
+                    if (isNaN(listC)) return;
+                    var annual = listC * (12 / (CYCLE_MONTHS[c] || 12));
+                    if (annual > baselineAnnual) baselineAnnual = annual;
+                });
+
+                var currentAnnual = pricePerUser * (12 / months);
+                var savings = Math.round((baselineAnnual - currentAnnual) * users * 1.18);
+
+                if (savingsRow) {
+                    if (baselineAnnual > 0 && savings > 0) {
                         savingsRow.style.display = 'flex';
                         if (savingsEl) savingsEl.textContent = savings.toLocaleString('en-IN');
-                    } else if (savingsRow) {
+                        if (savingsNote) savingsNote.textContent = onSale ? ' with this offer' : '';
+                    } else {
                         savingsRow.style.display = 'none';
                     }
-                } else if (savingsRow) {
-                    savingsRow.style.display = 'none';
                 }
 
                 // Per-plan user readout + minimum-seats note
@@ -793,6 +823,58 @@
             b.addEventListener('click', function () { syncUsers(b.dataset.users, 'preset'); });
         });
 
+        /* ---------- "Save X%" badges on the billing toggle ----------
+           Computed from the plans actually on screen instead of a hardcoded number: for
+           each cycle, compare its annualised LIST price against the dearest alternative
+           cycle the same plan really sells. The badge disappears when there is nothing
+           genuine to claim. */
+        var CYCLE_MONTHS_STATIC = { year: 12, half: 6, quarter: 4 };
+
+        var updateCycleBadges = function () {
+            var panel = document.querySelector('.price-panel.active');
+            var selects = panel ? panel.querySelectorAll('.user-select') : [];
+            if (!selects.length) return; // no plans on this tab (e.g. RIS) — leave as-is
+
+            ['year', 'half', 'quarter'].forEach(function (cycle) {
+                var btn = document.querySelector('.billing-toggle button[data-cycle="' + cycle + '"]');
+                if (!btn) return;
+                var badge = btn.querySelector('.save-badge');
+
+                var pcts = [];
+                selects.forEach(function (sel) {
+                    if (sel.getAttribute('data-native-' + cycle) !== '1') return;
+                    var mine = parseInt(sel.getAttribute('data-list-' + cycle), 10);
+                    if (isNaN(mine)) return;
+                    mine = mine * (12 / CYCLE_MONTHS_STATIC[cycle]);
+
+                    var baseline = 0;
+                    ['quarter', 'half', 'year'].forEach(function (c) {
+                        if (c === cycle || sel.getAttribute('data-native-' + c) !== '1') return;
+                        var lp = parseInt(sel.getAttribute('data-list-' + c), 10);
+                        if (isNaN(lp)) return;
+                        var annual = lp * (12 / CYCLE_MONTHS_STATIC[c]);
+                        if (annual > baseline) baseline = annual;
+                    });
+
+                    if (!baseline) return;
+                    var pct = Math.round((1 - mine / baseline) * 100);
+                    if (pct > 0) pcts.push(pct);
+                });
+
+                if (!pcts.length) {
+                    if (badge) badge.remove();
+                    return;
+                }
+                var min = Math.min.apply(null, pcts), max = Math.max.apply(null, pcts);
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'save-badge';
+                    btn.appendChild(badge);
+                }
+                badge.textContent = (min === max ? 'Save ' : 'Save up to ') + max + '%';
+            });
+        };
+
         var setBilling = function (cycle) {
             currentBillingCycle = cycle;
             billBtns.forEach(function (b) { b.classList.toggle('active', b.dataset.cycle === cycle); });
@@ -828,12 +910,14 @@
                 var panel = document.getElementById('panel-' + tab.dataset.product);
                 if (panel) panel.classList.add('active');
                 renderOfferBanner(tab.dataset.product);
+                updateCycleBadges();
             });
         });
 
-        // Banner for the tab that is active on load.
+        // Banner + cycle badges for the tab that is active on load.
         var activeTab = document.querySelector('.product-tab.active');
         renderOfferBanner(activeTab ? activeTab.dataset.product : 'hims');
+        updateCycleBadges();
 
         /* ---------- Handle hash on load for pricing plans & tabs ---------- */
         if (window.location.hash) {

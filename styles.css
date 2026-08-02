@@ -806,85 +806,99 @@ body.demo-open { overflow: hidden; }
     .demo-modal__dialog { padding: 30px 22px; }
 }
 
+
 /* ==========================================================================
    SALE OFFERS — limited-time promotions on the pricing page
-   Driven by the SaaS admin (SaaS ▸ Sale Offer). Every colour comes from the
-   offer's own accent theme via the --ob-* custom properties set inline.
+   Driven by the SaaS admin (SaaS ▸ Sale Offer). Every colour here comes from the
+   offer's own accent theme through custom properties set inline by script.js —
+   --ob-* on the banner, --of-* on a discounted plan card — so an offer never
+   mixes two accents (a green sale can't leave red chips behind).
    ========================================================================== */
 
 .offer-mount:empty { display: none; }
+.offer-mount { margin-bottom: 26px; }
 
 /* ---------- Announcement banner ---------- */
 .offer-banner {
     --ob-1: #F59E0B;
-    --ob-2: #EF4444;
+    --ob-2: #EA580C;
+    --ob-ink: #92400E;
     position: relative; overflow: hidden;
-    display: flex; align-items: center; justify-content: space-between; gap: 22px; flex-wrap: wrap;
-    padding: 20px 26px; margin-bottom: 22px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px 36px; flex-wrap: wrap;
+    padding: 24px 30px;
     border-radius: var(--r-lg); color: #fff;
     background: linear-gradient(118deg, var(--ob-1) 0%, var(--ob-2) 100%);
-    box-shadow: 0 14px 34px rgba(15, 27, 51, .18);
+    box-shadow: 0 14px 34px rgba(15, 27, 51, .16);
     animation: offerIn .5s var(--ease) both;
 }
 /* Slow diagonal sheen — motion that reads as "live", not as a flashing ad. */
 .offer-banner::after {
     content: ""; position: absolute; inset: 0 auto 0 -60%; width: 45%;
-    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .28), transparent);
-    transform: skewX(-18deg); animation: offerSheen 5.5s ease-in-out infinite;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .22), transparent);
+    transform: skewX(-18deg); animation: offerSheen 6s ease-in-out infinite;
     pointer-events: none;
 }
 .offer-banner > * { position: relative; z-index: 1; }
-.offer-main { flex: 1 1 320px; min-width: 260px; }
-.offer-side { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.offer-main { flex: 1 1 380px; min-width: 250px; }
+.offer-side { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.offer-side-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
 
+.offer-tags { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
 .offer-badge {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: rgba(255, 255, 255, .2); border: 1px solid rgba(255, 255, 255, .3);
-    border-radius: var(--r-pill); padding: 4px 12px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255, 255, 255, .18); border: 1px solid rgba(255, 255, 255, .32);
+    border-radius: var(--r-pill); padding: 5px 14px;
     font-size: var(--text-xs); font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
 }
 .offer-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: offerPulse 1.6s ease-in-out infinite; }
 .offer-save {
-    display: inline-block; margin-left: 8px; padding: 4px 12px; border-radius: var(--r-pill);
-    background: #fff; color: #B91C1C; font-size: var(--text-xs); font-weight: 800; letter-spacing: .04em;
+    padding: 5px 14px; border-radius: var(--r-pill);
+    background: #fff; color: var(--ob-ink);
+    font-size: var(--text-xs); font-weight: 800; letter-spacing: .05em; white-space: nowrap;
 }
-.offer-headline { font-size: clamp(1.1rem, 2.4vw, 1.6rem); font-weight: 800; line-height: 1.25; margin-top: 10px; }
-.offer-sub { font-size: var(--text-sm); opacity: .93; margin-top: 4px; }
-.offer-note { display: inline-flex; align-items: center; gap: 7px; font-size: var(--text-sm); font-weight: 700; margin-top: 10px; }
-.offer-note svg { width: 15px; height: 15px; flex: none; }
+.offer-headline { font-size: clamp(1.15rem, 2.3vw, 1.6rem); font-weight: 800; line-height: 1.22; }
+.offer-sub { font-size: var(--text-sm); line-height: 1.55; opacity: .93; margin-top: 6px; max-width: 62ch; }
 
-/* Scarcity meter */
-.offer-meter { margin-top: 12px; max-width: 320px; }
-.offer-meter-bar { height: 7px; border-radius: var(--r-pill); background: rgba(0, 0, 0, .22); overflow: hidden; }
+/* Urgency note + scarcity meter sit on one row so the banner stays compact. */
+.offer-facts { display: flex; align-items: center; gap: 14px 26px; flex-wrap: wrap; margin-top: 14px; }
+.offer-note { display: inline-flex; align-items: center; gap: 8px; font-size: var(--text-sm); font-weight: 700; }
+.offer-note svg { width: 16px; height: 16px; flex: none; }
+
+.offer-meter { min-width: 210px; max-width: 280px; flex: 0 1 auto; }
+.offer-meter-head {
+    display: flex; justify-content: space-between; gap: 14px;
+    font-size: var(--text-xs); font-weight: 700; letter-spacing: .02em; opacity: .92; margin-bottom: 6px;
+}
+.offer-meter-bar { height: 6px; border-radius: var(--r-pill); background: rgba(0, 0, 0, .22); overflow: hidden; }
 .offer-meter-fill { height: 100%; border-radius: var(--r-pill); background: #fff; transition: width .6s var(--ease); }
-.offer-meter-txt { font-size: var(--text-xs); font-weight: 700; opacity: .92; margin-top: 5px; }
 
 /* Countdown */
 .offer-countdown { display: flex; align-items: center; gap: 8px; }
-.offer-countdown-lbl { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; opacity: .85; margin-right: 2px; }
+.offer-countdown-lbl { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .1em; opacity: .85; margin-right: 4px; }
 .oc-unit {
-    min-width: 58px; padding: 8px 8px 6px; text-align: center;
-    background: rgba(0, 0, 0, .2); border: 1px solid rgba(255, 255, 255, .18); border-radius: 12px;
+    min-width: 58px; padding: 9px 8px 7px; text-align: center;
+    background: rgba(0, 0, 0, .18); border: 1px solid rgba(255, 255, 255, .18); border-radius: 12px;
 }
 .oc-unit b { display: block; font-size: 1.4rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
-.oc-unit span { display: block; font-size: .6rem; text-transform: uppercase; letter-spacing: .09em; opacity: .85; margin-top: 4px; }
+.oc-unit span { display: block; font-size: .6rem; text-transform: uppercase; letter-spacing: .09em; opacity: .85; margin-top: 5px; }
 .oc-unit.oc-sec b { animation: offerTick 1s steps(1, end) infinite; }
 
 /* Coupon chip (click to copy) */
 .offer-coupon {
     display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
     background: rgba(255, 255, 255, .14); border: 1.5px dashed rgba(255, 255, 255, .65);
-    border-radius: var(--r-pill); padding: 9px 16px; color: #fff;
+    border-radius: var(--r-pill); padding: 10px 18px; color: #fff;
     font-weight: 800; letter-spacing: .05em; transition: background .2s, transform .2s;
 }
 .offer-coupon:hover { background: rgba(255, 255, 255, .24); transform: translateY(-1px); }
 .offer-coupon svg { width: 15px; height: 15px; }
-.offer-coupon-lbl { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; opacity: .85; }
+.offer-coupon-lbl { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; opacity: .8; }
 
 .offer-cta {
     display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
-    background: #fff; color: var(--navy); font-weight: 800;
-    padding: 12px 22px; border-radius: var(--r-pill); box-shadow: var(--e2);
+    background: #fff; color: var(--ob-ink); font-weight: 800;
+    padding: 12px 24px; border-radius: var(--r-pill); box-shadow: var(--e2);
     transition: transform .2s, box-shadow .2s;
 }
 .offer-cta:hover { transform: translateY(-2px); box-shadow: var(--e3); }
@@ -894,63 +908,92 @@ body.demo-open { overflow: hidden; }
 @keyframes offerPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(.7); } }
 @keyframes offerTick { 0%, 60% { opacity: 1; } 61%, 100% { opacity: .82; } }
 
+@media (max-width: 1080px) {
+    .offer-side { flex: 1 1 100%; align-items: flex-start; }
+    .offer-side-row { justify-content: flex-start; }
+}
 @media (max-width: 860px) {
-    .offer-banner { padding: 18px; gap: 16px; }
-    .offer-side { width: 100%; justify-content: space-between; }
+    .offer-banner { padding: 20px; gap: 16px; }
     .oc-unit { min-width: 52px; }
+    .offer-meter { max-width: 420px; width: 100%; }
 }
 @media (max-width: 520px) {
     .offer-countdown-lbl { display: none; }
-    .oc-unit { min-width: 46px; padding: 6px 4px 5px; }
+    .offer-countdown { gap: 6px; }
+    .oc-unit { min-width: 0; flex: 1 1 0; padding: 7px 4px 6px; }
     .oc-unit b { font-size: 1.15rem; }
-    .offer-cta { width: 100%; justify-content: center; }
+    .offer-side-row { width: 100%; }
+    .offer-coupon, .offer-cta { flex: 1 1 auto; justify-content: center; }
 }
 
 /* ---------- Offer treatment on a plan card ---------- */
-.price-card.has-offer { --of-accent: #EF4444; border-color: var(--of-accent); box-shadow: 0 10px 28px rgba(239, 68, 68, .16); }
+.price-card.has-offer {
+    --of-accent: #D97706; --of-tint: #FEF3C7; --of-ink: #92400E;
+    --of-glow: rgba(217, 119, 6, .28); --of-line: rgba(217, 119, 6, .35);
+    border-color: var(--of-accent);
+    box-shadow: 0 10px 28px var(--of-glow);
+}
+/* Extra head-room so the floating badges never crowd the plan name. */
+.price-card.has-offer,
+.price-card.featured,
+.price-card.recommended { padding-top: 40px; }
+
 .plan-offer-tag {
-    position: absolute; top: -13px; right: 16px; z-index: 2;
-    background: var(--of-accent, #EF4444); color: #fff;
-    font-size: var(--text-xs); font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
-    padding: 6px 14px; border-radius: var(--r-pill); box-shadow: 0 6px 16px rgba(239, 68, 68, .35);
-    display: none;
+    position: absolute; top: -13px; right: 18px; z-index: 2;
+    background: var(--of-accent); color: #fff;
+    font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+    padding: 6px 13px; border-radius: var(--r-pill); box-shadow: 0 6px 16px var(--of-glow);
+    white-space: nowrap; display: none;
 }
 .price-card.has-offer .plan-offer-tag { display: block; }
-/* The "Most Popular" / "Recommended" pill is centred — nudge it left of the offer tag. */
+/* The "Most Popular" / "Recommended" pill is centred by default — left-align it and
+   shrink both pills when a sale tag shares the top edge, so they never collide. */
 .price-card.has-offer.featured::before,
-.price-card.has-offer.recommended::before { left: 24px; transform: none; }
-
-.plan-was { font-size: 1.15rem; color: var(--text-mute); text-decoration: line-through; margin-right: 9px; font-weight: 600; }
-.plan-off {
-    display: inline-block; margin-left: 9px; padding: 3px 9px; border-radius: var(--r-pill);
-    background: #FEE2E2; color: #B91C1C; font-size: var(--text-xs); font-weight: 800; letter-spacing: .03em;
-    vertical-align: middle;
+.price-card.has-offer.recommended::before {
+    left: 18px; transform: none;
+    font-size: 10px; padding: 6px 13px;
+    max-width: calc(100% - 130px); overflow: hidden; text-overflow: ellipsis;
 }
+
+.plan-was { font-size: 1.1rem; color: var(--text-mute); text-decoration: line-through; margin-right: 10px; font-weight: 600; }
+.plan-off {
+    display: inline-block; margin-left: 10px; padding: 3px 10px; border-radius: var(--r-pill);
+    background: var(--of-tint, #FEF3C7); color: var(--of-ink, #92400E);
+    font-size: var(--text-xs); font-weight: 800; letter-spacing: .03em; vertical-align: middle;
+}
+.plan-price { margin-bottom: 0; }
 .plan-offer-ends {
-    display: none; align-items: center; gap: 7px; margin: 2px 0 12px;
-    font-size: var(--text-sm); font-weight: 700; color: #DC2626;
+    display: none; align-items: center; gap: 7px; margin-top: 10px;
+    font-size: var(--text-sm); font-weight: 700; color: var(--of-ink, #92400E);
 }
 .price-card.has-offer .plan-offer-ends { display: inline-flex; }
 .plan-offer-ends svg { width: 15px; height: 15px; flex: none; }
 .plan-offer-ends b { font-variant-numeric: tabular-nums; }
 
+.plan-users { margin-top: 18px; margin-bottom: 16px; }
+
 .plan-coupon {
     display: none; align-items: center; justify-content: center; gap: 8px; width: 100%;
-    margin-bottom: 14px; padding: 9px 12px; cursor: pointer;
-    border: 1.5px dashed var(--of-accent, #EF4444); border-radius: var(--r-sm);
-    background: #FFF7F7; color: #B91C1C; font-weight: 800; letter-spacing: .04em; font-size: var(--text-sm);
+    margin-bottom: 18px; padding: 10px 12px; cursor: pointer;
+    border: 1.5px dashed var(--of-line, #FCD34D); border-radius: var(--r-sm);
+    background: var(--of-tint, #FEF3C7); color: var(--of-ink, #92400E);
+    font-weight: 800; letter-spacing: .04em; font-size: var(--text-sm);
+    transition: filter .2s;
 }
 .price-card.has-offer .plan-coupon { display: flex; }
-.plan-coupon:hover { background: #FEE2E2; }
+.plan-coupon:hover { filter: brightness(.96); }
+.plan-coupon svg { width: 15px; height: 15px; flex: none; }
 
 /* Offer saving line inside the per-card calculator */
 .calc-offer-row {
-    display: none; align-items: center; justify-content: space-between; gap: 8px;
-    margin: -4px 0 10px; padding: 7px 10px; border-radius: 6px;
-    background: #FEF2F2; border: 1px solid #FECACA; color: #B91C1C;
-    font-size: .85rem; font-weight: 700;
+    display: none; align-items: center; justify-content: space-between; gap: 10px;
+    margin: 0 0 10px; padding: 8px 11px; border-radius: 6px;
+    background: var(--of-tint, #FEF3C7); border: 1px solid var(--of-line, #FCD34D);
+    border-left: 4px solid var(--of-accent, #D97706);
+    color: var(--of-ink, #92400E); font-size: .85rem; font-weight: 700;
 }
 .price-card.has-offer .calc-offer-row { display: flex; }
+.calc-offer-label { text-transform: uppercase; letter-spacing: .04em; font-size: .78rem; }
 
 @media (prefers-reduced-motion: reduce) {
     .offer-banner, .offer-banner::after, .offer-dot, .oc-unit.oc-sec b { animation: none; }

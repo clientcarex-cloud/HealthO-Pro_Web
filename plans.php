@@ -346,6 +346,11 @@ function ho_build_plans(array $plans, array $modulesMap, $currency, array $offer
                 'offer_half'    => null,
                 'offer_quarter' => null,
                 'offer'         => null,
+                // True when the cycle has its own package (false = copied from another cycle,
+                // so it must not be used as a "you save vs shorter cycle" baseline).
+                'native_year'    => false,
+                'native_half'    => false,
+                'native_quarter' => false,
                 'slug_year'     => null,
                 'slug_half'     => null,
                 'slug_quarter'  => null,
@@ -369,6 +374,7 @@ function ho_build_plans(array $plans, array $modulesMap, $currency, array $offer
             $card['price_' . $bk] = (int) round($per_user);
         }
         $card['list_' . $bk]   = (int) round($per_user);
+        $card['native_' . $bk] = true;
         $card['slug_' . $bk]   = $pkg['slug'] ?? null;
         $card['signup_' . $bk] = $pkg['signup_url'] ?? null;
 
