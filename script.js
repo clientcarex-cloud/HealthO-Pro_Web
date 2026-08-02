@@ -219,6 +219,7 @@
         function buildPlanCalc(cur) {
             return ''
                 + '<div class="plan-calc" style="background:var(--bg-sec); border:1px solid var(--line); padding:16px; border-radius:8px; margin-bottom:24px; font-size:0.95rem;">'
+                +   '<div style="display:flex; justify-content:space-between; margin-bottom:6px; color:var(--text-soft);"><span>Per User &times; <span class="calc-users">1</span></span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-per-user">0</span> <span style="font-size:0.85rem;">/ user / mo</span></span></div>'
                 +   '<div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-soft);"><span>Monthly Cost</span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-base">0</span> <span style="font-size:0.85rem;">/ mo</span></span></div>'
                 +   '<div style="background:#e8faed; border:1px solid #d1f4e0; border-radius:6px; padding:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display:flex; flex-direction:column; align-items:flex-end;">'
                 +     '<div style="font-weight:800; font-size:1.8rem; color:#149b82;">' + cur + '<span class="calc-billed">0</span></div>'
@@ -455,6 +456,8 @@
                         }
                     }
                 };
+                setTxt('.calc-users', users);
+                setTxt('.calc-per-user', Math.round(pricePerUser / months));
                 setTxt('.calc-base', Math.round(monthly));
                 setTxt('.calc-gst', gst);
                 setTxt('.calc-total', Math.round(cycleTotal));
