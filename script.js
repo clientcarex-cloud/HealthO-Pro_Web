@@ -411,7 +411,7 @@
         var numInput = document.getElementById('globalUsers');
         var presetBtns = document.querySelectorAll('.user-scaler-presets button');
         var recText = document.querySelector('.user-scaler-rec-text');
-        var SLIDER_MIN = 1, SLIDER_MAX = 100;
+        var SLIDER_MIN = 5, SLIDER_MAX = 100;
         var TIER_NAMES = { startup: 'Startup', business: 'Business', corporate: 'Corporate' };
 
         // Volume → recommended plan tier
