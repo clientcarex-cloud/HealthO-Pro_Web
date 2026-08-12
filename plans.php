@@ -404,6 +404,9 @@ function ho_build_plans(array $plans, array $modulesMap, $currency, array $offer
 
         // Fill any missing billing period from whichever one exists so no tab shows blanks.
         // Preference order for the source: yearly, then half-yearly, then quarterly.
+        // These copies are placeholders only: `native_<cycle>` stays false for them and the
+        // front-end never sells a non-native cycle — it hides that card, and hides the cycle
+        // button entirely once no plan on the panel has its own active package for it.
         foreach ($cards as &$c) {
             $fallback = 'year';
             foreach (['year', 'half', 'quarter'] as $bk) {

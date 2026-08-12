@@ -475,7 +475,10 @@
                         + (pct > 0 ? '<span class="plan-off" data-plan-off>Save ' + pct + '%</span>' : '');
                 }
                 if (cycle !== 'year') return '';
-                var origForYear = (pq != null) ? pq : ph;
+                // Only a cycle the plan really sells (its own active package) may be used as
+                // the struck-through "before" price — a price copied from another cycle is
+                // not an offer the customer could have taken.
+                var origForYear = plan.native_quarter ? pq : (plan.native_half ? ph : null);
                 return (origForYear != null && py != null && Number(origForYear) > Number(py))
                     ? '<span style="font-size:1.1rem; color:var(--text-soft); text-decoration:line-through; margin-right:8px;">' + cur + planNum(origForYear) + '</span>' : '';
             };
@@ -546,6 +549,47 @@
                 + '<a href="contact" class="btn btn-primary">Contact Sales</a></div>';
         }
 
+        /* A product whose group has no active, public plan in the SaaS is not advertised at
+           all: its tab and panel are taken off the page instead of showing an empty grid or
+           a developer diagnostic. On the single-product pages (hims/lims/cims) there is no
+           tab, so the whole pricing section goes. */
+        function hideProductGroup(gk, mount) {
+            if (window.console && console.warn) {
+                console.warn('[pricing] no active "' + gk + '" plans returned by the API — hiding that tab.');
+            }
+            var tab = document.querySelector('.product-tab[data-product="' + gk + '"]');
+            var panel = document.getElementById('panel-' + gk)
+                || (mount && mount.closest ? mount.closest('.price-panel') : null);
+            if (tab) {
+                tab.style.display = 'none';
+                tab.classList.remove('active');
+            }
+            if (panel) {
+                panel.classList.remove('active');
+                panel.style.display = 'none';
+            }
+            if (!tab && mount && mount.closest) {
+                var section = mount.closest('section');
+                if (section) section.style.display = 'none';
+            }
+            if (mount) mount.innerHTML = '';
+        }
+
+        // Keep one product selected once the empty ones have been hidden.
+        function ensureVisibleProductTab() {
+            var tabs = [].slice.call(document.querySelectorAll('.product-tab')).filter(function (t) {
+                return t.style.display !== 'none';
+            });
+            if (!tabs.length) return;
+            if (tabs.some(function (t) { return t.classList.contains('active'); })) return;
+
+            document.querySelectorAll('.product-tab').forEach(function (t) { t.classList.remove('active'); });
+            document.querySelectorAll('.price-panel').forEach(function (p) { p.classList.remove('active'); });
+            tabs[0].classList.add('active');
+            var panel = document.getElementById('panel-' + tabs[0].getAttribute('data-product'));
+            if (panel && panel.style.display !== 'none') panel.classList.add('active');
+        }
+
         function renderDynamicPlans(done) {
             var mounts = document.querySelectorAll('.dynamic-plans[data-group]');
             if (!mounts.length) { if (done) done(); return; }
@@ -599,18 +643,16 @@
                     mounts.forEach(function (m) {
                         var gk = m.getAttribute('data-group');
                         var g = groups[gk];
+                        // The API answered fine — a group with nothing in it simply has no
+                        // active plan right now, so the product is hidden (not diagnosed).
                         if (!g || !g.plans || !g.plans.length) {
-                            m.innerHTML = planErrorHtml(
-                                'No “' + String(gk).toUpperCase() + '” plans returned by the API.',
-                                'The API responded OK, but no active, public package is assigned to the "' + gk + '" plan group\n'
-                                + '(with a yearly + 6-month variant). Configure it in the SaaS admin → Pricing Plans.\n'
-                                + 'Groups received from API: ' + (Object.keys(groups).join(', ') || '(none)')
-                            );
+                            hideProductGroup(gk, m);
                             return;
                         }
                         var cards = g.plans.map(function (p) { return buildPlanCard(gk, p, cur); }).join('');
                         m.innerHTML = '<div class="grid grid-3">' + cards + '</div>';
                     });
+                    ensureVisibleProductTab();
                     finish();
                 })
                 .catch(function (e) {
@@ -892,6 +934,13 @@
                     el.style.display = (cycle === c) ? '' : 'none';
                 });
             });
+            // A plan that does not sell this cycle itself is taken off the grid for it: the
+            // page must never quote a price copied from a cycle the SaaS has deactivated.
+            document.querySelectorAll('.price-card').forEach(function (card) {
+                var sel = card.querySelector('.user-select');
+                if (!sel || !sel.hasAttribute('data-native-' + cycle)) return;
+                card.style.display = (sel.getAttribute('data-native-' + cycle) === '1') ? '' : 'none';
+            });
             // Point Sign Up + Share at the package matching the active billing cycle
             document.querySelectorAll('.plan-signup').forEach(function (a) {
                 var u = a.getAttribute('data-signup-' + cycle);
@@ -903,11 +952,50 @@
             });
             recalculate();
         };
+        /* ---------- Billing cycles that are actually sold ----------
+           A cycle button is shown only when at least one plan on the visible panel really
+           sells that cycle (it has its own active package in the SaaS). Deactivate every
+           quarterly package and the Quarterly tab disappears, instead of quoting a rate
+           copied over from another cycle. */
+        var cycleIsSold = function (panel, cycle) {
+            var selects = panel ? panel.querySelectorAll('.user-select') : [];
+            for (var i = 0; i < selects.length; i++) {
+                if (selects[i].getAttribute('data-native-' + cycle) === '1') return true;
+            }
+            return false;
+        };
+
+        var updateCycleOptions = function () {
+            if (!billBtns.length) return;
+            var toggle = document.querySelector('.billing-toggle');
+            var divider = toggle ? toggle.previousElementSibling : null;
+            var panel = document.querySelector('.price-panel.active');
+            var selects = panel ? panel.querySelectorAll('.user-select') : [];
+
+            var show = function (el, on) { if (el) el.style.display = on ? '' : 'none'; };
+
+            // Static panel (e.g. RIS pay-as-you-go): no packages to read, so the control is
+            // left exactly as the last plan-backed panel set it — never re-showing a cycle
+            // that nothing is sold on.
+            if (!selects.length) return;
+
+            var sold = ['year', 'half', 'quarter'].filter(function (c) { return cycleIsSold(panel, c); });
+            billBtns.forEach(function (b) { show(b, sold.indexOf(b.dataset.cycle) !== -1); });
+            // One remaining cycle is not a choice — drop the control (and its divider) too.
+            show(toggle, sold.length > 1);
+            if (divider && divider.classList.contains('pb-div')) show(divider, sold.length > 1);
+
+            if (sold.length && sold.indexOf(currentBillingCycle) === -1) {
+                setBilling(sold[0]); // ordered year → half → quarter, so the longest cycle wins
+            }
+        };
+
         billBtns.forEach(function (b) {
             b.addEventListener('click', function () { setBilling(b.dataset.cycle); });
         });
         if (slider) syncUsers(getGlobalUsers(), 'init');
         if (billBtns.length) setBilling('year');
+        updateCycleOptions();
 
         /* ---------- Pricing: product tabs ---------- */
         var prodTabs = document.querySelectorAll('.product-tab');
@@ -919,6 +1007,7 @@
                 var panel = document.getElementById('panel-' + tab.dataset.product);
                 if (panel) panel.classList.add('active');
                 renderOfferBanner(tab.dataset.product);
+                updateCycleOptions();
                 updateCycleBadges();
             });
         });
@@ -933,12 +1022,15 @@
             var fullHash = window.location.hash.substring(1);
             var billingMatch = fullHash.match(/-(year|half|quarter)$/);
             if (billingMatch) {
-                setBilling(billingMatch[1]);
+                // Only honour a cycle that is still on sale (its button is visible).
+                var linkedBtn = document.querySelector('.billing-toggle button[data-cycle="' + billingMatch[1] + '"]');
+                if (linkedBtn && linkedBtn.style.display !== 'none') setBilling(billingMatch[1]);
             }
             var hash = fullHash.replace(/-(year|half|quarter)$/, '');
             var productMatch = hash.match(/-(hims|lims|cims|ris)/);
             if (productMatch) {
                 var tabToActivate = document.querySelector('.product-tab[data-product="' + productMatch[1] + '"]');
+                if (tabToActivate && tabToActivate.style.display === 'none') tabToActivate = null; // product no longer sold
                 if (tabToActivate) {
                     tabToActivate.click();
                     if (hash.startsWith('plan-')) {
