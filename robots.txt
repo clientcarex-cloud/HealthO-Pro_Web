@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /PHPMailer/
-Disallow: /contact.php
+Disallow: /api/
+Disallow: /partials/
 
 Sitemap: https://healtho.pro/sitemap.xml

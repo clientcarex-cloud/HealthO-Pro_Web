@@ -4,60 +4,34 @@
 (function () {
     'use strict';
 
-    /* ---------- Preloader ---------- */
-    window.addEventListener('load', function () {
+    /* ---------- Preloader ----------
+       Dismissed as soon as the DOM is parsed. Waiting for 'load' would hold a
+       blank screen until every image and third-party tag had finished. */
+    var hidePreloader = function () {
         var pl = document.getElementById('preloader');
-        if (pl) setTimeout(function () { pl.classList.add('done'); }, 250);
-    });
+        if (pl) pl.classList.add('done');
+    };
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', hidePreloader);
+    } else {
+        hidePreloader();
+    }
 
     document.addEventListener('DOMContentLoaded', function () {
 
         /* ---------- Demo popup modal ----------
-           Injected before the geo + form-binding blocks below so its
-           [data-ajax] form is picked up automatically (validation, geo,
-           AJAX submit all reuse the shared handlers). */
+           The markup is rendered by partials/foot.php from the same lead_form()
+           the pages use, so its [data-ajax] form is picked up automatically
+           (validation, geo, AJAX submit all reuse the shared handlers). */
         (function () {
-            var modal = document.createElement('div');
-            modal.className = 'demo-modal';
-            modal.setAttribute('role', 'dialog');
-            modal.setAttribute('aria-modal', 'true');
-            modal.setAttribute('aria-label', 'Book a free demo');
-            modal.innerHTML =
-                '<div class="demo-modal__dialog">'
-                + '<button type="button" class="demo-modal__close" aria-label="Close">'
-                + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>'
-                + '</button>'
-                + '<div class="demo-modal__head"><div>'
-                + '<h3 class="h-card">Book a free demo</h3>'
-                + '<p>Fill in the form and our team will reach out shortly.</p>'
-                + '</div></div>'
-                + '<form data-ajax novalidate>'
-                + '<div class="form-status"></div>'
-                + '<input type="hidden" name="source" value="Demo popup">'
-                + '<div class="form-row">'
-                + '<div class="field"><label>Full Name <span class="req">*</span></label><input type="text" name="fullName" placeholder="Your name" required></div>'
-                + '<div class="field"><label>Email <span class="req">*</span></label><input type="email" name="email" placeholder="you@example.com" required><span class="err-msg">Enter a valid email.</span></div>'
-                + '</div>'
-                + '<div class="form-row">'
-                + '<div class="field"><label>Mobile Number <span class="req">*</span></label><input type="tel" name="phone" placeholder="+91 ..." required></div>'
-                + '<div class="field"><label>Organization Type</label><select name="orgType"><option value="">Select…</option><option>Hospital</option><option>Laboratory</option><option>Clinic</option><option>Radiology Center</option><option>Other</option></select></div>'
-                + '</div>'
-                + '<div class="field"><label>Interested In</label><select name="interest"><option value="">Select a solution…</option><option>HIMS</option><option>LIMS</option><option>CIMS</option><option>RIS / RIMS</option><option>Multiple / Not sure</option></select></div>'
-                + '<div class="field"><label>Message</label><textarea name="message" placeholder="Tell us about your requirements…"></textarea></div>'
-                + '<button type="submit" class="btn btn-primary btn-block btn-lg">Request Demo</button>'
-                + '<p class="form-note">By submitting, you agree to our <a href="privacy-policy" style="color:var(--cyan-dark);">Privacy Policy</a>.</p>'
-                + '</form>'
-                + '</div>';
-            document.body.appendChild(modal);
+            var modal = document.querySelector('.demo-modal');
+            if (!modal) return;
 
             var form = modal.querySelector('form');
             var interestSel = form.querySelector('select[name="interest"]');
             var statusEl = form.querySelector('.form-status');
             var lastFocused = null;
-
-            var PRODUCTS = { hims: 'HIMS', lims: 'LIMS', cims: 'CIMS', ris: 'RIS / RIMS' };
-            var pagePath = (location.pathname.split('/').pop() || '').replace('.html', '');
-            var pageInterest = PRODUCTS[pagePath] || '';
+            var pageInterest = modal.getAttribute('data-page-interest') || '';
 
             var setInterest = function (val) {
                 if (!val || !interestSel) return;
@@ -155,12 +129,6 @@
                     link.closest('.nav-item').classList.toggle('open');
                 }
             });
-        });
-
-        /* ---------- Active nav link by current page ---------- */
-        var path = location.pathname.split('/').pop() || '';
-        document.querySelectorAll('.nav-link[data-page]').forEach(function (l) {
-            if (l.getAttribute('data-page') === path) l.classList.add('active');
         });
 
         /* ---------- Scroll reveal ---------- */
@@ -605,7 +573,7 @@
             };
 
             var httpStatus = 0, ctype = '';
-            fetch('plans.php?ts=' + Date.now(), { headers: { 'Accept': 'application/json' } })
+            fetch('api/plans.php?ts=' + Date.now(), { headers: { 'Accept': 'application/json' } })
                 .then(function (r) {
                     httpStatus = r.status;
                     ctype = (r.headers && r.headers.get) ? (r.headers.get('content-type') || '') : '';
@@ -1145,7 +1113,7 @@
                 if (btn) { btn.disabled = true; btn.innerHTML = 'Sending…'; }
 
                 var data = new FormData(form);
-                fetch('contact.php', { method: 'POST', body: data })
+                fetch('api/contact.php', { method: 'POST', body: data })
                     .then(function (r) {
                         return r.json().catch(function () {
                             throw new Error('Invalid response from server.');

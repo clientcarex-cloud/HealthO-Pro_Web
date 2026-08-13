@@ -495,7 +495,7 @@ if (defined('HO_PLANS_LIB_ONLY')) {
 
 /* --------------------------------------------------------------- config/cache */
 
-$env        = ho_load_env(__DIR__ . '/.env');
+$env        = ho_load_env(__DIR__ . '/../.env');
 $apiUrl     = $env['HEALTHO_API_URL']     ?? '';
 $apiKey     = $env['HEALTHO_API_KEY']     ?? '';
 $modulesUrl = $env['HEALTHO_MODULES_URL'] ?? '';

@@ -1,18 +1,97 @@
 Options +FollowSymLinks -MultiViews
 RewriteEngine On
 
+# ==========================================================================
+#  Security
+# ==========================================================================
+
 # Block direct web access to dotfiles and secrets (.env, .git, etc.)
 RewriteRule (^|/)\.(?!well-known) - [F]
 <FilesMatch "^\.env">
     Require all denied
 </FilesMatch>
 
-# Internally add .html extension if the file exists
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}.html -f
-RewriteRule ^(.*)$ $1.html [L]
+# The shared includes are never requested directly.
+RewriteRule ^partials/ - [F]
+
+# ==========================================================================
+#  Clean URLs
+# ==========================================================================
+
+# The home page is "/", never "/index" or "/index.php".
+RewriteCond %{THE_REQUEST} "\s/+index(\.php|\.html)?[\s?]" [NC]
+RewriteRule ^ / [R=301,L]
+
+# Pages used to be .html; keep old links and search results alive.
+RewriteCond %{THE_REQUEST} "\s/+(.*)\.html[\s?]" [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# /pricing.php -> /pricing. Skip /api/, which is fetched with its extension
+# (and must not be redirected — a 301 would drop the POST body).
+RewriteCond %{THE_REQUEST} "\s/+(?!api/)(.*)\.php[\s?]" [NC]
+RewriteRule ^ /%1 [R=301,L]
 
 # Internally add .php extension if the file exists
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^(.*)$ $1.php [L]
+
+# ==========================================================================
+#  Compression
+# ==========================================================================
+
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/xml \
+        application/javascript application/json application/xml \
+        image/svg+xml application/rss+xml
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml \
+        application/javascript application/json application/xml \
+        image/svg+xml application/rss+xml
+</IfModule>
+
+# ==========================================================================
+#  Caching
+# ==========================================================================
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Fingerprinted by ?v= in the markup, so they can be cached hard.
+    ExpiresByType text/css                  "access plus 1 year"
+    ExpiresByType application/javascript    "access plus 1 year"
+
+    ExpiresByType image/webp                "access plus 1 year"
+    ExpiresByType image/png                 "access plus 1 year"
+    ExpiresByType image/jpeg                "access plus 1 year"
+    ExpiresByType image/svg+xml             "access plus 1 year"
+    ExpiresByType font/woff2                "access plus 1 year"
+
+    # HTML is generated per request — always revalidate.
+    ExpiresByType text/html                 "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|webp|png|jpe?g|svg|woff2?)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    <FilesMatch "\.(php|html)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ETags add nothing on top of Cache-Control here and break weak caching
+# behind some proxies.
+FileETag None
+<IfModule mod_headers.c>
+    Header unset ETag
+</IfModule>
+
+<IfModule mod_mime.c>
+    AddType image/webp .webp
+</IfModule>

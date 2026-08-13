@@ -51,7 +51,7 @@ echo '<h1 style="margin:0 0 4px;">Plans / Features debug</h1>';
 echo '<p style="color:#b91c1c;font-weight:600;margin:0 0 20px;">Temporary diagnostics — delete plans-debug.php when done.</p>';
 
 /* ------------------------------------------------ 1) Config */
-$env        = ho_load_env(__DIR__ . '/.env');
+$env        = ho_load_env(__DIR__ . '/../.env');
 $apiUrl     = $env['HEALTHO_API_URL']     ?? '';
 $apiKey     = $env['HEALTHO_API_KEY']     ?? '';
 $modulesUrl = $env['HEALTHO_MODULES_URL'] ?? '';

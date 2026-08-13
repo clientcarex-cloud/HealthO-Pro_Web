@@ -3,7 +3,7 @@
  * partners.php — secret-safe channel-partner proxy for the HealthO Pro marketing site.
  *
  * Mirrors plans.php: the browser fetches this same-origin endpoint ("/partners.php"
- * — note the explicit .php, since "/partners" resolves to partners.html), and PHP
+ * — note the explicit .php, since "/partners" is the marketing page), and PHP
  * calls the authenticated CCX Partners API on the SaaS master server-side using the
  * key stored in .env, so the key never reaches the client.
  *
@@ -100,7 +100,7 @@ if (defined('HO_PARTNERS_LIB_ONLY')) {
 
 /* --------------------------------------------------------------- config */
 
-$env     = ho_load_env(__DIR__ . '/.env');
+$env     = ho_load_env(__DIR__ . '/../.env');
 $apiBase = rtrim($env['CCX_PARTNERS_API_URL'] ?? '', '/'); // e.g. https://healtho.pro/ccx_partners_api
 $apiKey  = $env['CCX_PARTNERS_API_KEY'] ?? '';
 $ttl     = (int) ($env['CCX_PARTNERS_CACHE_TTL'] ?? 600);

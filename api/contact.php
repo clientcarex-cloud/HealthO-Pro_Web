@@ -2,9 +2,9 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'PHPMailer/Exception.php';
-require 'PHPMailer/PHPMailer.php';
-require 'PHPMailer/SMTP.php';
+require __DIR__ . '/../PHPMailer/Exception.php';
+require __DIR__ . '/../PHPMailer/PHPMailer.php';
+require __DIR__ . '/../PHPMailer/SMTP.php';
 
 header('Content-Type: application/json');
 
@@ -105,6 +105,7 @@ try {
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 28px rgba(15,27,51,.10);">
         <!-- Logo -->
         <tr><td align="center" style="padding:30px 30px 22px;background:#ffffff;">
+          <!-- PNG, not WebP: Outlook and older mail clients cannot render WebP. -->
           <img src="https://healtho.pro/assets/images/logo.png" alt="HealthO Pro — Empowering Healthcare Providers" width="200" style="display:block;border:0;outline:none;width:200px;max-width:62%;height:auto;">
         </td></tr>
         <!-- Accent strip -->

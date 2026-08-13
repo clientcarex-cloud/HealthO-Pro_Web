@@ -100,7 +100,7 @@ echo '<h1 style="margin:0 0 4px;">Channel Partners debug</h1>';
 echo '<p style="color:#b91c1c;font-weight:600;margin:0 0 20px;">Temporary diagnostics — delete partners-debug.php when done.</p>';
 
 /* ------------------------------------------------ 1) Config */
-$env     = ho_load_env(__DIR__ . '/.env');
+$env     = ho_load_env(__DIR__ . '/../.env');
 $apiBase = rtrim($env['CCX_PARTNERS_API_URL'] ?? '', '/');
 $apiKey  = $env['CCX_PARTNERS_API_KEY'] ?? '';
 $ttl     = (int) ($env['CCX_PARTNERS_CACHE_TTL'] ?? 600);
