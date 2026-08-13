@@ -305,8 +305,12 @@ function ho_build_plans(array $plans, array $modulesMap, $currency, array $offer
         // "features" array: it already uses the public/namesake name instead of the
         // technical module id, is sorted by the admin's order, and has hidden modules
         // removed. Fall back to mapping raw module ids for an older API with no "features".
+        // NOTE: the fallback is keyed on the "features" KEY being absent, not on it being
+        // empty. A plan may legitimately return an empty list (all modules hidden, or the
+        // plan set to show only custom features) and must then show nothing — falling back
+        // to the raw module ids would put back exactly what the admin hid.
         $features = [];
-        if (!empty($pkg['features']) && is_array($pkg['features'])) {
+        if (array_key_exists('features', $pkg) && is_array($pkg['features'])) {
             foreach ($pkg['features'] as $f) {
                 $label = is_array($f) ? trim((string) ($f['name'] ?? '')) : trim((string) $f);
                 if ($label !== '') {
@@ -383,13 +387,18 @@ function ho_build_plans(array $plans, array $modulesMap, $currency, array $offer
         $card['slug_' . $bk]   = $pkg['slug'] ?? null;
         $card['signup_' . $bk] = $pkg['signup_url'] ?? null;
 
-        // Shared fields: prefer the yearly package, otherwise take whatever is first.
-        if ($bk === 'year' || $card['desc'] === '') {
-            $card['desc']       = (string) ($pkg['description'] ?? $card['desc']);
-            $card['base_users'] = $base;
-            $card['features']   = $features;
-            $card['priority']   = (int) ($meta['priority'] ?? 0);
-            $card['tier']       = ucwords($tier_key);
+        // Shared fields: the yearly package wins, otherwise the first cycle seen fills
+        // them in. Tracked with an explicit source marker rather than "description is
+        // still empty" — a tier whose yearly package has no description would otherwise
+        // let a 6-month/quarterly package overwrite the yearly feature list.
+        $shared_src = $card['_shared_src'] ?? '';
+        if ($bk === 'year' || $shared_src === '') {
+            $card['desc']         = (string) ($pkg['description'] ?? $card['desc']);
+            $card['base_users']   = $base;
+            $card['features']     = $features;
+            $card['priority']     = (int) ($meta['priority'] ?? 0);
+            $card['tier']         = ucwords($tier_key);
+            $card['_shared_src']  = ($bk === 'year') ? 'year' : 'other';
         }
         unset($card);
     }
@@ -401,6 +410,12 @@ function ho_build_plans(array $plans, array $modulesMap, $currency, array $offer
         }
 
         $cards = array_values($buckets[$gk]);
+
+        // Internal bookkeeping key, never part of the payload.
+        foreach ($cards as &$c) {
+            unset($c['_shared_src']);
+        }
+        unset($c);
 
         // Fill any missing billing period from whichever one exists so no tab shows blanks.
         // Preference order for the source: yearly, then half-yearly, then quarterly.
