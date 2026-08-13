@@ -472,8 +472,11 @@
             var features = (plan.features || []).map(function (f) {
                 var name = (f && typeof f === 'object') ? (f.name || '') : f;
                 var desc = (f && typeof f === 'object') ? (f.desc || '') : '';
+                // A custom feature the admin marked with *asterisks* in Smart Plans.
+                var hi = !!(f && typeof f === 'object' && f.highlight);
                 var titleAttr = desc ? ' title="' + planEsc(desc) + '"' : '';
-                return '<li' + titleAttr + '><span class="ck">' + PLAN_CHECK_SVG + '</span><span>' + planEsc(name) + '</span></li>';
+                var cls = hi ? ' class="feat-hi"' : '';
+                return '<li' + cls + titleAttr + '><span class="ck">' + PLAN_CHECK_SVG + '</span><span>' + planEsc(name) + '</span></li>';
             }).join('');
 
             return ''

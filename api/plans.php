@@ -313,9 +313,14 @@ function ho_build_plans(array $plans, array $modulesMap, $currency, array $offer
         if (array_key_exists('features', $pkg) && is_array($pkg['features'])) {
             foreach ($pkg['features'] as $f) {
                 $label = is_array($f) ? trim((string) ($f['name'] ?? '')) : trim((string) $f);
-                if ($label !== '') {
-                    $features[] = $label;
+                if ($label === '') {
+                    continue;
                 }
+                // A highlighted line is emitted as an object so the card can emphasise
+                // it; everything else stays a plain string.
+                $features[] = (is_array($f) && !empty($f['highlight']))
+                    ? ['name' => $label, 'highlight' => true]
+                    : $label;
             }
         } else {
             foreach ((array) ($pkg['modules'] ?? []) as $m) {
