@@ -989,6 +989,44 @@ body.demo-open { overflow: hidden; }
 .plan-coupon:hover { filter: brightness(.96); }
 .plan-coupon svg { width: 15px; height: 15px; flex: none; }
 
+/* ---- Per-card money box: plain-language sum, one price, GST as fine print ---- */
+.plan-calc {
+    background: var(--bg-sec); border: 1px solid var(--line);
+    padding: 14px; border-radius: 10px; margin-bottom: 24px;
+}
+.calc-row {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+    font-size: 1rem; color: var(--text); padding: 7px 2px;
+}
+.calc-row b { font-weight: 800; color: var(--navy); }
+.calc-row-note { font-size: .8rem; color: var(--text-soft); font-weight: 600; }
+.calc-row-sum { border-top: 1px dashed var(--line); margin-top: 2px; }
+.calc-row-sum .calc-row-label { color: var(--text-soft); }
+.calc-row-value { font-size: 1.05rem; white-space: nowrap; }
+
+.calc-pay {
+    margin-top: 10px; padding: 14px 12px; text-align: center;
+    background: #e8faed; border: 1px solid #d1f4e0; border-radius: 8px;
+}
+.calc-pay-label {
+    font-size: .78rem; font-weight: 800; letter-spacing: .08em;
+    text-transform: uppercase; color: #0f7a66;
+}
+.calc-pay-amount {
+    font-size: 2.1rem; font-weight: 800; line-height: 1.15; color: #149b82;
+    margin-top: 2px; letter-spacing: -.01em;
+}
+.calc-pay-freq { font-size: .88rem; font-weight: 700; color: #0f7a66; margin-top: 2px; }
+.calc-pay-freq b { font-weight: 800; }
+.calc-gst-note { font-size: .75rem; font-weight: 700; color: #6b7a8d; margin-top: 7px; }
+.calc-gst-total { font-weight: 600; opacity: .8; }
+.calc-savings-row {
+    display: none; align-items: center; justify-content: center; gap: 7px;
+    margin-top: 10px; padding-top: 9px; border-top: 1px dashed rgba(20, 155, 130, .3);
+    font-size: .85rem; font-weight: 700; color: #10b981;
+}
+.calc-savings-row svg { flex: none; }
+
 /* Offer saving line inside the per-card calculator */
 .calc-offer-row {
     display: none; align-items: center; justify-content: space-between; gap: 10px;

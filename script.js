@@ -399,16 +399,28 @@
             return isNaN(n) ? planEsc(v) : planEsc(n.toLocaleString('en-IN'));
         }
 
+        // The money box is written to be skimmed, not read: one plain multiplication, the
+        // monthly total, then the single amount actually charged. GST stays deliberately
+        // small — it is flagged, and the with-GST figure sits in fine print so it can never
+        // be mistaken for the price itself.
         function buildPlanCalc(cur) {
             return ''
-                + '<div class="plan-calc" style="background:var(--bg-sec); border:1px solid var(--line); padding:16px; border-radius:8px; margin-bottom:24px; font-size:0.95rem;">'
-                +   '<div style="display:flex; justify-content:space-between; margin-bottom:6px; color:var(--text-soft);"><span>Per User &times; <span class="calc-users">1</span></span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-per-user">0</span> <span style="font-size:0.85rem;">/ user / mo</span></span></div>'
-                +   '<div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-soft);"><span>Monthly Cost</span><span style="color:var(--text); font-weight:500;">' + cur + ' <span class="calc-base">0</span> <span style="font-size:0.85rem;">/ mo</span></span></div>'
+                + '<div class="plan-calc">'
+                +   '<div class="calc-row">'
+                +     '<span class="calc-row-label"><b class="calc-users">1</b> users &times; ' + cur + '<b class="calc-per-user">0</b> each</span>'
+                +     '<span class="calc-row-note">a month</span>'
+                +   '</div>'
+                +   '<div class="calc-row calc-row-sum">'
+                +     '<span class="calc-row-label">All users together</span>'
+                +     '<span class="calc-row-value">' + cur + '<b class="calc-base">0</b> <span class="calc-row-note">a month</span></span>'
+                +   '</div>'
                 +   '<div class="calc-offer-row"><span class="calc-offer-label">Sale discount</span><span>&minus; ' + cur + '<span class="calc-offer-saving">0</span></span></div>'
-                +   '<div style="background:#e8faed; border:1px solid #d1f4e0; border-radius:6px; padding:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display:flex; flex-direction:column; align-items:flex-end;">'
-                +     '<div style="font-weight:800; font-size:1.8rem; color:#149b82;">' + cur + '<span class="calc-billed">0</span></div>'
-                +     '<div style="font-size:0.95rem; font-weight:600; margin-top:2px;"><span style="color:#8a94a6;">' + cur + '<span class="calc-billed-base">0</span></span> <span style="color:#149b82;">+ 18% GST</span></div>'
-                +     '<div class="calc-savings-row" style="align-items:flex-start; gap:7px; width:100%; text-align:left; border-top:1px dashed rgba(20,155,130,.3); padding-top:9px; font-size:0.85rem; font-weight:700; color:#10b981; margin-top:10px; display:none;"><svg viewBox="0 0 24 24" width="14" height="14" style="margin-top:2px; flex:none;" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>You save ' + cur + ' <span class="calc-savings">0</span> a year<span class="calc-savings-note"></span></span></div>'
+                +   '<div class="calc-pay">'
+                +     '<div class="calc-pay-label">You pay</div>'
+                +     '<div class="calc-pay-amount">' + cur + '<span class="calc-pay-value">0</span></div>'
+                +     '<div class="calc-pay-freq">one payment &middot; covers <b class="calc-months">12</b> months</div>'
+                +     '<div class="calc-gst-note">+ 18% GST <span class="calc-gst-total">(' + cur + '<span class="calc-with-gst">0</span> in total)</span></div>'
+                +     '<div class="calc-savings-row"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>You save ' + cur + '<span class="calc-savings">0</span> a year<span class="calc-savings-note"></span></span></div>'
                 +   '</div>'
                 + '</div>';
         }
@@ -754,15 +766,11 @@
                 setTxt('.calc-users', users);
                 setTxt('.calc-per-user', Math.round(pricePerUser / months));
                 setTxt('.calc-base', Math.round(monthly));
-                setTxt('.calc-gst', gst);
-                setTxt('.calc-total', Math.round(cycleTotal));
-                // Billed amounts are shown as whole rupees — cycleTotal already rounds the GST
-                setTxt('.calc-billed', cycleTotal);
-                setTxt('.calc-billed-base', cycleBase);
-
-                var freqEl = card.querySelector('.calc-billed-freq');
-                var CYCLE_FREQ = { year: 'Annually', half: 'Every 6 Months', quarter: 'Every 4 Months' };
-                if (freqEl) freqEl.textContent = CYCLE_FREQ[currentBillingCycle] || 'Annually';
+                setTxt('.calc-months', months);
+                // The headline is the price itself (pre-GST); the tax-inclusive figure is
+                // kept as fine print. Both are whole rupees — gst is already rounded.
+                setTxt('.calc-pay-value', cycleBase);
+                setTxt('.calc-with-gst', cycleTotal);
 
                 // "You save X a year" — the real, total annual saving versus the worst deal
                 // this plan offers: the dearest annualised LIST rate among the billing cycles
@@ -784,7 +792,8 @@
                 });
 
                 var currentAnnual = (pricePerUser - (users > 0 ? flatOff / users : 0)) * (12 / months);
-                var savings = Math.round((baselineAnnual - currentAnnual) * users * 1.18);
+                // Pre-GST, so the saving is on the same basis as the "You pay" figure above.
+                var savings = Math.round((baselineAnnual - currentAnnual) * users);
 
                 if (savingsRow) {
                     if (baselineAnnual > 0 && savings > 0) {
