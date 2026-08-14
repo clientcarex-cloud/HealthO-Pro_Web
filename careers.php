@@ -233,10 +233,15 @@ require __DIR__ . '/partials/head.php';
       </div>
 
     <?php elseif ($loadFail): ?>
-      <div class="cr-empty">
-        <h3>Our openings are being updated</h3>
-        <p>Please check back shortly — or email your CV to <a href="mailto:sales@healtho.pro" class="link-cyan">sales@healtho.pro</a> and we will get in touch.</p>
-      </div>
+      <!--
+        The server-side fetch could not run (no API credentials, or the CRM was
+        briefly unreachable), so the embeddable widget takes over and loads the
+        same openings straight from the CRM in the visitor's browser. The page
+        therefore always shows live roles; configuring CAREERS_API_KEY only adds
+        the server-rendered version that search engines read.
+      -->
+      <div data-careers-embed data-accent="#00B4D8"></div>
+      <script src="<?= h(CAREERS_EMBED_JS) ?>" async></script>
     <?php else: ?>
       <div class="cr-empty">
         <h3>No openings right now</h3>

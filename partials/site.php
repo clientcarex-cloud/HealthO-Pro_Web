@@ -39,6 +39,14 @@ function h(?string $s): string
  */
 const CAREER_PRETTY_URLS = true;
 
+/**
+ * The CRM's embeddable careers widget. Loading this needs no key and no proxy,
+ * so it is what keeps /careers showing live openings even when the server-side
+ * API credentials are missing — and it is the same snippet that can be pasted
+ * on any other site.
+ */
+const CAREERS_EMBED_JS = 'https://healtho.pro/careers/careers_embed/js';
+
 /** Canonical path of one opening. Used for links, canonicals and structured data. */
 function career_url(string $slug, bool $absolute = false): string
 {
