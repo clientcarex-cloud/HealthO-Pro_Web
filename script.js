@@ -445,24 +445,50 @@
                 onSale[c] = !!(offer && offerIdOf[c] != null);
             });
 
-            // Struck-through reference price. During a sale it is this cycle's own list
-            // price; otherwise it falls back to the highest (shortest-cycle) rate, which is
-            // how the page has always shown the yearly saving.
+            // The headline quotes a per-user-per-MONTH rate, so every price on the card —
+            // headline, struck-through "was", and the calculator's first line — is the same
+            // number, and the tiers compare as 999 / 1,199 / 1,499 instead of five-digit
+            // cycle totals. The amount actually charged sits on the sub-line below.
+            var CARD_MONTHS = { year: 12, half: 6, quarter: 4 };
+            var CARD_BILLED = { year: 'once a year', half: 'every 6 months', quarter: 'every 4 months' };
+            var perMonth = function (v, cycle) {
+                var n = Number(v);
+                return isNaN(n) ? v : Math.round(n / (CARD_MONTHS[cycle] || 12));
+            };
+
+            // Struck-through reference price, also per month. During a sale it is this
+            // cycle's own list price; otherwise it falls back to the dearest rate the plan
+            // really sells — which is what makes the longer cycle look like the deal it is.
             var strikeFor = function (cycle) {
                 if (onSale[cycle] && !isFlat && listOf[cycle] != null && Number(listOf[cycle]) > Number(priceOf[cycle])) {
                     var pct = Math.round((1 - Number(priceOf[cycle]) / Number(listOf[cycle])) * 100);
-                    return '<span class="plan-was">' + cur + planNum(listOf[cycle]) + '</span>'
+                    return '<span class="plan-was">' + cur + planNum(perMonth(listOf[cycle], cycle)) + '</span>'
                         + (pct > 0 ? '<span class="plan-off" data-plan-off>Save ' + pct + '%</span>' : '');
                 }
                 if (cycle !== 'year') return '';
                 // Only a cycle the plan really sells (its own active package) may be used as
                 // the struck-through "before" price — a price copied from another cycle is
-                // not an offer the customer could have taken.
-                var origForYear = plan.native_quarter ? pq : (plan.native_half ? ph : null);
-                return (origForYear != null && py != null && Number(origForYear) > Number(py))
-                    ? '<span style="font-size:1.1rem; color:var(--text-soft); text-decoration:line-through; margin-right:8px;">' + cur + planNum(origForYear) + '</span>' : '';
+                // not an offer the customer could have taken. Both sides are monthly rates,
+                // so a 4-monthly package and a yearly one compare like for like.
+                var origCycle = plan.native_quarter ? 'quarter' : (plan.native_half ? 'half' : null);
+                if (!origCycle || py == null) return '';
+                var origMonthly = perMonth(origCycle === 'quarter' ? pq : ph, origCycle);
+                var yearMonthly = perMonth(py, 'year');
+                return (Number(origMonthly) > Number(yearMonthly))
+                    ? '<span class="plan-was">' + cur + planNum(origMonthly) + '</span>' : '';
             };
-            var strike = strikeFor('year');
+
+            // One cycle's headline: was-price on its own line (so the rate never has to
+            // share a row and wrap), the big monthly rate, then what is really charged.
+            var priceLine = function (cycle, price) {
+                var was = strikeFor(cycle);
+                return (was ? '<div class="plan-price-was">' + was + '</div>' : '')
+                    + '<span class="cur">' + cur + '</span>'
+                    + '<span class="amt">' + planNum(perMonth(price, cycle)) + '</span>'
+                    + '<span class="per">/ user / month</span>'
+                    + '<div class="plan-price-sub">Billed ' + CARD_BILLED[cycle] + ' &middot; '
+                    + cur + planNum(price) + ' per user</div>';
+            };
 
             var offerStyle = offer ? offerThemeVars(offerTheme(offer.theme)) : '';
             var offerTag = offer
@@ -498,9 +524,9 @@
                 +   '<div class="plan-name">' + planEsc(plan.tier) + '</div>'
                 +   '<div class="plan-desc">' + planEsc(plan.desc) + '</div>'
                 +   '<div class="plan-price" style="display:flex; flex-direction:column; align-items:flex-start;">'
-                +     '<div data-year>' + strike + '<span class="cur">' + cur + '</span><span class="amt">' + planNum(py) + '</span><span class="per">/ user / yr</span></div>'
-                +     '<div data-half style="display:none;">' + strikeFor('half') + '<span class="cur">' + cur + '</span><span class="amt">' + planNum(ph) + '</span><span class="per">/ user / 6 mo</span></div>'
-                +     '<div data-quarter style="display:none;">' + strikeFor('quarter') + '<span class="cur">' + cur + '</span><span class="amt">' + planNum(pq) + '</span><span class="per">/ user / 4 mo</span></div>'
+                +     '<div data-year>' + priceLine('year', py) + '</div>'
+                +     '<div data-half style="display:none;">' + priceLine('half', ph) + '</div>'
+                +     '<div data-quarter style="display:none;">' + priceLine('quarter', pq) + '</div>'
                 +   '</div>'
                 +   offerEnds
                 +   '<div class="plan-users">'
