@@ -1106,3 +1106,118 @@ body.demo-open { overflow: hidden; }
 
 /* Centred hero CTA pair on the product / careers page heroes. */
 .hero-actions--center { justify-content: center; margin-top: 28px; }
+
+/* ==========================================================================
+   PRICING BROCHURE
+   A "Download brochure" button that prints the plans currently on screen.
+   The sheet lives in the DOM only while printing: on screen it is hidden, in
+   print it is the only thing left, so the saved PDF keeps live text, real
+   links and the brand rather than a flattened screenshot.
+   ========================================================================== */
+.pb-brochure {
+    display: inline-flex; align-items: center; gap: 8px; flex: none;
+    height: var(--pb-ctl, 38px); padding: 0 15px;
+    background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--r-pill);
+    font-size: var(--text-sm); font-weight: 700; color: var(--navy); white-space: nowrap;
+    cursor: pointer; transition: background .2s, border-color .2s, color .2s, box-shadow .2s;
+}
+.pb-brochure:hover { background: var(--white); border-color: var(--cyan-light); color: var(--cyan-dark); box-shadow: var(--e1); }
+.pb-brochure svg { width: 16px; height: 16px; flex: none; }
+.pb-brochure-tag {
+    font-size: 10px; font-weight: 800; letter-spacing: .06em;
+    color: #fff; background: var(--grad-cyan); padding: 2px 7px; border-radius: var(--r-pill);
+}
+/* A slim right-aligned row above the plans. It deliberately sits outside the
+   sticky bar: one more control there tips that single row of controls onto a
+   second line, and the bar's height is paid for on every scrolled screen. */
+.plans-toolbar { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+.section--bar .pricing-bar { margin-bottom: 22px; }
+/* On the product pages the button sits under the centred billing toggle. */
+.billing-toggle-wrap .pb-brochure { margin: -18px auto 36px; }
+@media (max-width: 560px) { .plans-toolbar { justify-content: stretch; }
+    .plans-toolbar .pb-brochure { flex: 1; justify-content: center; } }
+
+/* Hint that the print window is where the PDF is saved from. */
+.br-toast {
+    position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px);
+    z-index: 9999; max-width: min(92vw, 460px);
+    padding: 13px 20px; border-radius: var(--r-pill);
+    background: var(--navy); color: #fff; font-size: var(--text-sm); font-weight: 600;
+    box-shadow: var(--e4); opacity: 0; pointer-events: none;
+    transition: opacity .25s var(--ease), transform .25s var(--ease);
+}
+.br-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+.brochure { display: none; }
+
+@media print {
+    /* Everything except the sheet — nav, cards, chat bubble, modals — steps aside. */
+    body > *:not(.brochure) { display: none !important; }
+    html, body { background: #fff; }
+    .brochure {
+        display: block !important;
+        color: #0F172A; font-size: 8pt; line-height: 1.45;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    @page { size: A4 portrait; margin: 11mm 10mm 12mm; }
+
+    .br-head {
+        display: flex; align-items: flex-end; justify-content: space-between; gap: 14mm;
+        padding-bottom: 4mm; border-bottom: 2.5pt solid #00B4D8;
+    }
+    .br-logo { width: 42mm; height: auto; }
+    .br-head-r { text-align: right; }
+    .br-kicker { font-size: 7pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #00B4D8; }
+    .br-product { font-size: 17pt; font-weight: 800; color: #0B2545; line-height: 1.1; }
+    .br-long { font-size: 7.5pt; color: #64748B; }
+
+    .br-meta {
+        display: flex; gap: 6mm; flex-wrap: wrap;
+        margin: 3.5mm 0 5mm; padding: 2.5mm 4mm; border-radius: 2mm;
+        background: #F1F8FC; font-size: 8pt; color: #475569;
+    }
+    .br-meta b { color: #0B2545; }
+
+    .br-plans { display: grid; gap: 4mm; align-items: stretch; }
+    /* Column layout so every plan's sign-up link lands on the same baseline,
+       however many features the plan lists. */
+    .br-plan {
+        display: flex; flex-direction: column; break-inside: avoid;
+        padding: 4mm; border: .6pt solid #DBE3EC; border-radius: 2.5mm;
+    }
+    .br-plan-rec { border: 1.4pt solid #00B4D8; }
+    .br-rec {
+        display: inline-block; align-self: flex-start; margin-bottom: 1.5mm; padding: 1mm 2.5mm; border-radius: 6mm;
+        background: #00B4D8; color: #fff; font-size: 6.5pt; font-weight: 800;
+        letter-spacing: .06em; text-transform: uppercase;
+    }
+    .br-plan h3 { font-size: 12pt; font-weight: 800; color: #0B2545; margin: 0; }
+    .br-rate { margin: 1mm 0 3mm; color: #0B2545; }
+    .br-rate b { font-size: 19pt; font-weight: 800; letter-spacing: -.02em; }
+    .br-rate span { font-size: 7pt; color: #64748B; }
+    .br-was { display: block; font-size: 8.5pt; color: #94A3B8; text-decoration: line-through; }
+
+    .br-sum { width: 100%; border-collapse: collapse; font-size: 7.5pt; }
+    .br-sum td { padding: 1.2mm 0; vertical-align: top; color: #475569; }
+    .br-sum td:last-child { text-align: right; white-space: nowrap; font-weight: 700; color: #0B2545; }
+    .br-sum-pay td { border-top: .5pt dashed #C7D3E0; padding-top: 2mm; font-weight: 800; color: #0F7A66; }
+    .br-sum-pay td:last-child { font-size: 11pt; color: #0F7A66; }
+    .br-sum-gst td { font-size: 6.8pt; color: #8092A8; }
+    .br-save { margin: 2mm 0 0; font-size: 7.5pt; font-weight: 800; color: #10B981; }
+
+    .br-feats { margin: 3mm 0 3mm; padding: 3mm 0 0; border-top: .5pt solid #E6ECF3; list-style: none; }
+    .br-feats li { position: relative; padding: 0 0 1.4mm 4mm; font-size: 7.5pt; color: #334155; break-inside: avoid; }
+    .br-feats li::before { content: "✓"; position: absolute; left: 0; color: #00B4D8; font-weight: 800; }
+    .br-feats li.br-hi { font-weight: 800; color: #0B2545; }
+
+    .br-cta {
+        display: block; margin-top: auto; padding: 2mm; border-radius: 6mm;
+        background: #0B2545; color: #fff !important; text-align: center;
+        font-size: 8pt; font-weight: 800; text-decoration: none;
+    }
+
+    .br-foot { margin-top: 6mm; padding-top: 3mm; border-top: .6pt solid #DBE3EC; }
+    .br-links { display: flex; flex-wrap: wrap; gap: 5mm; font-size: 8pt; font-weight: 700; }
+    .br-links a { color: #0096B7; text-decoration: none; }
+    .br-foot p { margin: 2.5mm 0 0; font-size: 6.8pt; line-height: 1.5; color: #8092A8; }
+}

@@ -1038,8 +1038,162 @@
         }
         } // end initPricing
 
+        /* ---------- Pricing brochure ----------
+           The sheet is built from the cards that are on screen at the moment of the
+           click, so it carries the visitor's own product, team size and billing cycle
+           rather than a generic price list. Printing is the browser's own "Save as
+           PDF": the type stays vector, ₹ renders, and every link in the sheet stays
+           clickable in the saved file — none of which survives a canvas snapshot. */
+        function initBrochure() {
+            var buttons = document.querySelectorAll('.js-brochure');
+            if (!buttons.length) return;
+
+            var GROUP_NAMES = { hims: 'HIMS', lims: 'LIMS', cims: 'CIMS', ris: 'RIS / RIMS' };
+            var GROUP_LONG = {
+                hims: 'Hospital Information Management System',
+                lims: 'Laboratory Information Management System',
+                cims: 'Clinic Information Management System',
+                ris: 'Radiology Information System'
+            };
+            var CYCLE_NAMES = { year: 'Yearly', half: 'Half-yearly', quarter: 'Quarterly' };
+
+            var txt = function (root, sel) {
+                var n = root && root.querySelector(sel);
+                return n ? n.textContent.trim() : '';
+            };
+
+            var planBlock = function (card) {
+                var cycleBox = null;
+                card.querySelectorAll('.plan-price > div').forEach(function (d) {
+                    if (d.offsetParent !== null) cycleBox = d;
+                });
+                var cur = txt(cycleBox, '.cur') || '₹';
+                var was = txt(cycleBox, '.plan-was');
+                var signup = card.querySelector('.plan-signup');
+                var feats = [].map.call(card.querySelectorAll('.checks li'), function (li) {
+                    var label = li.querySelector('span:last-child');
+                    return '<li' + (li.classList.contains('feat-hi') ? ' class="br-hi"' : '') + '>'
+                        + planEsc(label ? label.textContent.trim() : '') + '</li>';
+                }).join('');
+                var savings = card.querySelector('.calc-savings-row');
+                var showSaving = savings && savings.offsetParent !== null;
+
+                return '<div class="br-plan' + (card.classList.contains('recommended') ? ' br-plan-rec' : '') + '">'
+                    + (card.classList.contains('recommended') ? '<div class="br-rec">Recommended for you</div>' : '')
+                    + '<h3>' + planEsc(txt(card, '.plan-name')) + '</h3>'
+                    + '<div class="br-rate">'
+                    +   (was ? '<span class="br-was">' + planEsc(was) + '</span>' : '')
+                    +   '<b>' + cur + planEsc(txt(cycleBox, '.amt')) + '</b><span>/ user / month</span>'
+                    + '</div>'
+                    + '<table class="br-sum">'
+                    +   '<tr><td>' + planEsc(txt(card, '.calc-users')) + ' users &times; ' + cur + planEsc(txt(card, '.calc-per-user')) + ' each</td>'
+                    +     '<td>' + cur + planEsc(txt(card, '.calc-base')) + ' / month</td></tr>'
+                    +   '<tr class="br-sum-pay"><td>You pay once &middot; ' + planEsc(txt(card, '.calc-months')) + ' months</td>'
+                    +     '<td>' + cur + planEsc(txt(card, '.calc-pay-value')) + '</td></tr>'
+                    +   '<tr class="br-sum-gst"><td>+ 18% GST</td><td>' + cur + planEsc(txt(card, '.calc-with-gst')) + ' in total</td></tr>'
+                    + '</table>'
+                    + (showSaving ? '<p class="br-save">You save ' + cur + planEsc(txt(card, '.calc-savings')) + ' a year</p>' : '')
+                    + '<ul class="br-feats">' + feats + '</ul>'
+                    + (signup ? '<a class="br-cta" href="' + planEsc(signup.href) + '">Sign up for '
+                        + planEsc(txt(card, '.plan-name')) + ' &rarr;</a>' : '')
+                    + '</div>';
+            };
+
+            var build = function (btn) {
+                var panel = document.querySelector('.price-panel.active') || document.querySelector('.price-panel');
+                var mount = panel && panel.querySelector('.dynamic-plans');
+                var cards = panel ? panel.querySelectorAll('.price-card') : [];
+                if (!cards.length) return null;
+
+                var group = mount ? (mount.getAttribute('data-group') || '') : '';
+                var cycleBtn = document.querySelector('.billing-toggle button.active');
+                var cycle = cycleBtn ? (cycleBtn.getAttribute('data-cycle') || 'year') : 'year';
+                var usersEl = document.getElementById('globalUsers');
+                var users = usersEl ? usersEl.value : '';
+                var site = btn.getAttribute('data-site') || '';
+                var phone = btn.getAttribute('data-phone') || '';
+                var email = btn.getAttribute('data-email') || '';
+                var wa = btn.getAttribute('data-wa') || '';
+                var today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                var el = document.createElement('div');
+                el.className = 'brochure';
+                el.id = 'brochure';
+                el.setAttribute('aria-hidden', 'true');
+                el.innerHTML = ''
+                    + '<header class="br-head">'
+                    +   '<img class="br-logo" src="assets/images/logo.png" alt="HealthO Pro">'
+                    +   '<div class="br-head-r">'
+                    +     '<div class="br-kicker">Plans &amp; Pricing</div>'
+                    +     '<div class="br-product">' + planEsc(GROUP_NAMES[group] || 'HealthO Pro') + '</div>'
+                    +     '<div class="br-long">' + planEsc(GROUP_LONG[group] || '') + '</div>'
+                    +   '</div>'
+                    + '</header>'
+                    + '<div class="br-meta">'
+                    +   '<span>Team size <b>' + planEsc(users) + ' users</b></span>'
+                    +   '<span>Billing <b>' + planEsc(CYCLE_NAMES[cycle] || 'Yearly') + '</b></span>'
+                    +   '<span>Prepared <b>' + planEsc(today) + '</b></span>'
+                    + '</div>'
+                    + '<div class="br-plans" style="grid-template-columns:repeat(' + cards.length + ',1fr);">'
+                    +   [].map.call(cards, planBlock).join('')
+                    + '</div>'
+                    + '<footer class="br-foot">'
+                    +   '<div class="br-links">'
+                    +     '<a href="' + planEsc(site) + '/pricing">' + planEsc(site.replace(/^https?:\/\//, '')) + '/pricing</a>'
+                    +     (phone ? '<a href="tel:' + planEsc(phone.replace(/\s+/g, '')) + '">' + planEsc(phone) + '</a>' : '')
+                    +     (email ? '<a href="mailto:' + planEsc(email) + '">' + planEsc(email) + '</a>' : '')
+                    +     (wa ? '<a href="' + planEsc(wa) + '">WhatsApp us</a>' : '')
+                    +   '</div>'
+                    +   '<p>Every figure above is quoted for ' + planEsc(users) + ' users on ' + planEsc((CYCLE_NAMES[cycle] || 'Yearly').toLowerCase())
+                    +     ' billing. Amounts are exclusive of 18% GST unless stated. Prices are live from '
+                    +     planEsc(site.replace(/^https?:\/\//, '')) + ' on ' + planEsc(today) + ' and may change &mdash; open the link above for the current rate.</p>'
+                    + '</footer>';
+                return el;
+            };
+
+            var toast = function (msg) {
+                var t = document.querySelector('.br-toast');
+                if (!t) {
+                    t = document.createElement('div');
+                    t.className = 'br-toast';
+                    document.body.appendChild(t);
+                }
+                t.textContent = msg;
+                t.classList.add('show');
+                clearTimeout(t._hide);
+                t._hide = setTimeout(function () { t.classList.remove('show'); }, 6000);
+            };
+
+            // RIS/RIMS is pay-as-you-go — its panel has no plan cards, so there is no
+            // sheet to take away. Offer the button only where it can deliver something.
+            var syncVisibility = function () {
+                var panel = document.querySelector('.price-panel.active') || document.querySelector('.price-panel');
+                var has = !!(panel && panel.querySelector('.price-card'));
+                document.querySelectorAll('.plans-toolbar').forEach(function (bar) {
+                    bar.style.display = has ? '' : 'none';
+                });
+            };
+            document.querySelectorAll('.product-tab').forEach(function (tab) {
+                tab.addEventListener('click', function () { setTimeout(syncVisibility, 0); });
+            });
+            syncVisibility();
+
+            buttons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var old = document.getElementById('brochure');
+                    if (old) old.remove();
+                    var sheet = build(btn);
+                    if (!sheet) { toast('Plans are still loading — try again in a moment.'); return; }
+                    document.body.appendChild(sheet);
+                    // The print dialog blocks paint, so let the hint land on screen first.
+                    toast('Choose “Save as PDF” in the print window to download the brochure.');
+                    setTimeout(function () { window.print(); }, 400);
+                });
+            });
+        }
+
         // Build cards from the secure proxy first, then wire up the pricing interactions.
-        renderDynamicPlans(initPricing);
+        renderDynamicPlans(function () { initPricing(); initBrochure(); });
 
         /* ---------- FAQ accordion ---------- */
         document.querySelectorAll('.faq-q').forEach(function (q) {

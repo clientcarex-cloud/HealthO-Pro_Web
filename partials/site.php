@@ -8,7 +8,7 @@ const GA_ID      = 'G-1BJ76YS8W8';
 const CLARITY_ID = 'xc1duel6z4';
 
 /** Bump to bust the browser cache for styles.css / script.js. */
-const ASSET_VER = '23';
+const ASSET_VER = '24';
 
 /** Only Plus Jakarta Sans is used by the stylesheet; only these weights appear in it. */
 const FONT_CSS = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap';

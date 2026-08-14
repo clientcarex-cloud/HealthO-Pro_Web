@@ -21,6 +21,7 @@ function pricing_section(string $slug): void
         <button data-cycle="half">6 Months</button>
         <button data-cycle="year" class="active">Yearly<span class="save-badge">Save 20%</span></button>
       </div>
+      <?php brochure_button(); ?>
     </div>
     <div class="user-scaler reveal">
       <div class="user-scaler-head">

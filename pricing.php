@@ -57,6 +57,9 @@ require __DIR__ . '/partials/head.php';
   </div>
 
   <div class="container">
+    <!-- Takes away exactly what the bar above is showing -->
+    <div class="plans-toolbar"><?php brochure_button(); ?></div>
+
     <!-- ===== HIMS PANEL ===== -->
     <div class="price-panel active" id="panel-hims">
       <div class="dynamic-plans" data-group="hims"></div>
