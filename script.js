@@ -1041,9 +1041,9 @@
         /* ---------- Pricing brochure ----------
            The sheet is built from the cards that are on screen at the moment of the
            click, so it carries the visitor's own product, team size and billing cycle
-           rather than a generic price list. Printing is the browser's own "Save as
-           PDF": the type stays vector, ₹ renders, and every link in the sheet stays
-           clickable in the saved file — none of which survives a canvas snapshot. */
+           rather than a generic price list. The click then saves it as a PDF file
+           straight away — no print dialog to explain, no "Save as PDF" step to miss.
+           The print path stays as the fallback for when the renderer cannot load. */
         function initBrochure() {
             var buttons = document.querySelectorAll('.js-brochure');
             if (!buttons.length) return;
@@ -1122,7 +1122,7 @@
                 el.setAttribute('aria-hidden', 'true');
                 el.innerHTML = ''
                     + '<header class="br-head">'
-                    +   '<img class="br-logo" src="assets/images/logo.png" alt="HealthO Pro">'
+                    +   '<img class="br-logo" src="/assets/images/logo.png" alt="HealthO Pro">'
                     +   '<div class="br-head-r">'
                     +     '<div class="br-kicker">Plans &amp; Pricing</div>'
                     +     '<div class="br-product">' + planEsc(GROUP_NAMES[group] || 'HealthO Pro') + '</div>'
@@ -1178,16 +1178,100 @@
             });
             syncVisibility();
 
+            // html2pdf is a megabyte of renderer that most visitors never need, so it
+            // is fetched on the first click rather than on every page view.
+            var libPromise = null;
+            var loadLib = function () {
+                if (window.html2pdf) return Promise.resolve(window.html2pdf);
+                if (libPromise) return libPromise;
+                libPromise = new Promise(function (resolve, reject) {
+                    var s = document.createElement('script');
+                    s.src = '/js/vendor/html2pdf.bundle.min.js';
+                    s.onload = function () {
+                        window.html2pdf ? resolve(window.html2pdf) : reject(new Error('html2pdf missing'));
+                    };
+                    s.onerror = function () { libPromise = null; reject(new Error('html2pdf failed to load')); };
+                    document.head.appendChild(s);
+                });
+                return libPromise;
+            };
+
+            // Web fonts and the logo have to be painted before the sheet is captured,
+            // otherwise the PDF comes out in a fallback face or with a gap for the mark.
+            var ready = function (sheet) {
+                var jobs = [];
+                if (document.fonts && document.fonts.ready) jobs.push(document.fonts.ready);
+                sheet.querySelectorAll('img').forEach(function (img) {
+                    if (img.complete) return;
+                    jobs.push(new Promise(function (res) { img.onload = img.onerror = res; }));
+                });
+                return Promise.all(jobs);
+            };
+
+            var fileName = function (sheet) {
+                var product = txt(sheet, '.br-product').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '');
+                var d = new Date();
+                var stamp = d.getFullYear() + '-'
+                    + ('0' + (d.getMonth() + 1)).slice(-2) + '-'
+                    + ('0' + d.getDate()).slice(-2);
+                return 'HealthO-Pro-' + (product || 'Pricing') + '-Pricing-' + stamp + '.pdf';
+            };
+
             buttons.forEach(function (btn) {
                 btn.addEventListener('click', function () {
-                    var old = document.getElementById('brochure');
+                    if (btn.disabled) return;
+                    var old = document.querySelector('.br-stage');
                     if (old) old.remove();
                     var sheet = build(btn);
                     if (!sheet) { toast('Plans are still loading — try again in a moment.'); return; }
-                    document.body.appendChild(sheet);
-                    // The print dialog blocks paint, so let the hint land on screen first.
-                    toast('Choose “Save as PDF” in the print window to download the brochure.');
-                    setTimeout(function () { window.print(); }, 400);
+                    var stage = document.createElement('div');
+                    stage.className = 'br-stage';
+                    stage.setAttribute('aria-hidden', 'true');
+                    stage.appendChild(sheet);
+                    document.body.appendChild(stage);
+
+                    btn.disabled = true;
+                    var label = btn.querySelector('span');
+                    var was = label ? label.textContent : '';
+                    if (label) label.textContent = 'Preparing PDF…';
+
+                    var done = function () {
+                        btn.disabled = false;
+                        if (label) label.textContent = was;
+                        stage.remove();
+                    };
+
+                    loadLib()
+                        .then(function () { return ready(sheet); })
+                        .then(function () {
+                            return window.html2pdf().set({
+                                margin: 0,
+                                filename: fileName(sheet),
+                                image: { type: 'jpeg', quality: 0.98 },
+                                html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff', logging: false },
+                                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                                pagebreak: { mode: ['css', 'legacy'], avoid: '.br-plan' }
+                            }).from(sheet).save();
+                        })
+                        .then(function () {
+                            toast('Brochure downloaded.');
+                            done();
+                        })
+                        .catch(function () {
+                            // Renderer unavailable — hand the visitor the browser's own
+                            // "Save as PDF" rather than nothing at all. The sheet has to
+                            // outlive the print dialog, so it is cleared afterwards.
+                            btn.disabled = false;
+                            if (label) label.textContent = was;
+                            toast('Choose “Save as PDF” in the print window to download the brochure.');
+                            setTimeout(function () {
+                                window.addEventListener('afterprint', function once() {
+                                    window.removeEventListener('afterprint', once);
+                                    stage.remove();
+                                });
+                                window.print();
+                            }, 400);
+                        });
                 });
             });
         }

@@ -30,10 +30,11 @@ function user_slider(): void
 }
 
 /**
- * "Download brochure" trigger. script.js builds the printable sheet from the plans
- * currently on screen; the contact details it prints are passed down from here so
- * this file stays the single source for them. The sticky pricing bar passes a short
- * label — the full one tips that single row of controls onto a second line.
+ * "Download brochure" trigger. script.js builds the sheet from the plans currently
+ * on screen and saves it straight to a PDF file; the contact details it carries are
+ * passed down from here so this file stays the single source for them. The sticky
+ * pricing bar passes a short label — the full one tips that single row of controls
+ * onto a second line.
  */
 function brochure_button(string $label = 'Download Brochure'): void
 {
