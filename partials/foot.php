@@ -32,7 +32,7 @@ $demo_interest = PRODUCTS[$page ?? '']['short'] ?? '';
   <div class="container">
     <div class="footer-top">
       <div class="footer-about">
-        <span class="footer-logo"><img src="assets/images/logo.webp" alt="HealthO Pro" width="167" height="36" loading="lazy" decoding="async"></span>
+        <span class="footer-logo"><img src="/assets/images/logo.webp" alt="HealthO Pro" width="167" height="36" loading="lazy" decoding="async"></span>
         <p>HealthO Pro by Healthocare Private Limited — empowering healthcare providers with cloud-enabled HIMS, LIMS, CIMS and RIS/RIMS software since 2011.</p>
         <div class="socials">
           <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77Z"/></svg></a>
@@ -45,21 +45,21 @@ $demo_interest = PRODUCTS[$page ?? '']['short'] ?? '';
         <h5>Solutions</h5>
         <ul class="footer-links">
 <?php foreach (PRODUCTS as $slug => $p): ?>
-          <li><a href="<?= $slug ?>"><?= h($p['short']) ?></a></li>
+          <li><a href="/<?= $slug ?>"><?= h($p['short']) ?></a></li>
 <?php endforeach; ?>
-          <li><a href="pricing">Pricing</a></li>
+          <li><a href="/pricing">Pricing</a></li>
         </ul>
       </div>
       <div>
         <h5>Company</h5>
         <ul class="footer-links">
           <li><a href="/#solutions">About Us</a></li>
-          <li><a href="testimonials">Testimonials</a></li>
-          <li><a href="partners">Channel Partners</a></li>
-          <li><a href="verify-partner">Verify Partner</a></li>
-          <li><a href="careers">Careers</a></li>
-          <li><a href="contact">Contact Us</a></li>
-          <li><a href="message-to-ceo">Message to CEO</a></li>
+          <li><a href="/testimonials">Testimonials</a></li>
+          <li><a href="/partners">Channel Partners</a></li>
+          <li><a href="/verify-partner">Verify Partner</a></li>
+          <li><a href="/careers">Careers</a></li>
+          <li><a href="/contact">Contact Us</a></li>
+          <li><a href="/message-to-ceo">Message to CEO</a></li>
         </ul>
       </div>
       <div>
@@ -74,8 +74,8 @@ $demo_interest = PRODUCTS[$page ?? '']['short'] ?? '';
     <div class="footer-bottom">
       <span>© <?= date('Y') ?> Healthocare Private Limited. All rights reserved.</span>
       <div class="legal">
-        <a href="privacy-policy">Privacy Policy</a>
-        <a href="terms-conditions">Terms &amp; Conditions</a>
+        <a href="/privacy-policy">Privacy Policy</a>
+        <a href="/terms-conditions">Terms &amp; Conditions</a>
       </div>
     </div>
   </div>
@@ -89,9 +89,9 @@ $demo_interest = PRODUCTS[$page ?? '']['short'] ?? '';
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m18 15-6-6-6 6"/></svg>
 </button>
 
-<script src="script.js?v=<?= ASSET_VER ?>" defer></script>
+<script src="/script.js?v=<?= ASSET_VER ?>" defer></script>
 <?php foreach ($foot_scripts as $src): ?>
-<script src="<?= h($src) ?>?v=<?= ASSET_VER ?>" defer></script>
+<script src="/<?= h($src) ?>?v=<?= ASSET_VER ?>" defer></script>
 <?php endforeach; ?>
 </body>
 </html>

@@ -61,7 +61,7 @@ function interest_options(string $last = 'Multiple / Not sure'): array
 function lead_form(array $o = []): void
 {
     $msg = ($o['message'] ?? []) + ['label' => 'Message', 'placeholder' => 'Tell us about your requirements…', 'required' => false];
-    $note = $o['note'] ?? 'By submitting, you agree to our <a href="privacy-policy" class="link-cyan">Privacy Policy</a>.';
+    $note = $o['note'] ?? 'By submitting, you agree to our <a href="/privacy-policy" class="link-cyan">Privacy Policy</a>.';
     ?>
     <form data-ajax novalidate>
       <div class="form-status"></div>
