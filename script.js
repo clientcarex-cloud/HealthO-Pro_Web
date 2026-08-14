@@ -407,7 +407,8 @@
             return ''
                 + '<div class="plan-calc">'
                 +   '<div class="calc-row">'
-                +     '<span class="calc-row-label"><b class="calc-users">1</b> users &times; ' + cur + '<b class="calc-per-user">0</b> each</span>'
+                +     '<span class="calc-row-label"><b class="calc-users">1</b> users &times; ' + cur + '<b class="calc-per-user">0</b> each'
+                +       '<span class="calc-min-note">min <b class="calc-min">0</b></span></span>'
                 +     '<span class="calc-row-note">a month</span>'
                 +   '</div>'
                 +   '<div class="calc-row calc-row-sum">'
@@ -726,17 +727,6 @@
             return 'corporate';
         };
 
-        // Replace each per-plan dropdown with a live user-count readout
-        document.querySelectorAll('.plan-users').forEach(function (box) {
-            if (box.querySelector('.plan-users-readout')) return;
-            var r = document.createElement('div');
-            r.className = 'plan-users-readout';
-            r.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
-                + '<span>Billed for <strong class="pu-count">0</strong> users</span>'
-                + '<span class="pu-min-note" style="display:none;">min <b class="pu-min">0</b></span>';
-            box.appendChild(r);
-        });
-
         var getGlobalUsers = function () {
             var v = parseInt(numInput && numInput.value, 10);
             if (isNaN(v)) v = SLIDER_MIN;
@@ -828,18 +818,13 @@
                     }
                 }
 
-                // Per-plan user readout + minimum-seats note
-                var cntEl = card.querySelector('.pu-count');
-                if (cntEl) cntEl.textContent = users;
-                var minNote = card.querySelector('.pu-min-note');
-                var minEl = card.querySelector('.pu-min');
+                // Minimum-seats note, shown only when the plan bills for more users than
+                // the visitor asked for — the seat count itself is already in the sum above.
+                var minNote = card.querySelector('.calc-min-note');
+                var minEl = card.querySelector('.calc-min');
                 if (minNote) {
-                    if (globalUsers < base) {
-                        minNote.style.display = '';
-                        if (minEl) minEl.textContent = base;
-                    } else {
-                        minNote.style.display = 'none';
-                    }
+                    minNote.style.display = globalUsers < base ? 'inline-block' : 'none';
+                    if (minEl) minEl.textContent = base;
                 }
 
                 // Volume-based recommendation highlight (overrides static "Most Popular")
