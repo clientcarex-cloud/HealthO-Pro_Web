@@ -658,12 +658,35 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 .checks li.feat-hi .ck { background: var(--cyan-dark); color: #fff; }
 .checks li.feat-hi span { color: var(--navy); font-weight: 700; }
 /* Inside a plan card the list runs 15-20 items, so it sets the card's height:
-   one step down in type and tick size keeps a long plan readable in one screen. */
-.price-card .checks { gap: 10px; margin-bottom: 20px; }
-.price-card .checks li { gap: 10px; font-size: var(--text-sm); }
-.price-card .checks .ck { width: 20px; height: 20px; }
-.price-card .checks .ck svg { width: 12px; height: 12px; }
-.price-card .checks li.feat-hi { margin: 0 -6px; padding: 7px 8px; }
+   one step down in type and tick size keeps a long plan readable in one screen.
+   The tick is a soft cyan squircle rather than the stock green circle — it reads
+   as part of the brand, and lighting up under the cursor turns a wall of ticks
+   into something the eye can track a line at a time. */
+.price-card .checks { gap: 2px; margin-bottom: 20px; }
+.price-card .checks li {
+    gap: 10px; align-items: center; font-size: var(--text-sm);
+    margin: 0 -8px; padding: 5px 8px; border-radius: var(--r-sm);
+    transition: background .2s var(--ease);
+}
+.price-card .checks li:hover { background: var(--bg-soft); }
+.price-card .checks .ck {
+    width: 20px; height: 20px; border-radius: 7px;
+    background: linear-gradient(140deg, #E4F8FD 0%, #EAFBF4 100%);
+    color: var(--cyan-dark);
+    box-shadow: inset 0 0 0 1px rgba(0, 180, 216, .22);
+    transition: background .2s var(--ease), color .2s, box-shadow .2s, transform .2s var(--ease);
+}
+.price-card .checks .ck svg { width: 11px; height: 11px; stroke-linecap: round; stroke-linejoin: round; }
+.price-card .checks li:hover .ck {
+    background: var(--grad-cyan); color: #fff;
+    box-shadow: 0 3px 9px rgba(0, 180, 216, .35); transform: scale(1.08);
+}
+.price-card .checks li:hover span { color: var(--navy); }
+/* A plan's standout line keeps its tinted rail, with the tick already lit. */
+.price-card .checks li.feat-hi { margin: 3px -8px; padding: 7px 8px; }
+.price-card .checks li.feat-hi .ck {
+    background: var(--grad-cyan); color: #fff; box-shadow: 0 3px 9px rgba(0, 180, 216, .3);
+}
 .section--navy .checks li.feat-hi { background: rgba(255, 255, 255, .10); box-shadow: inset 3px 0 0 var(--cyan-light); }
 .section--navy .checks li.feat-hi span { color: #fff; }
 
