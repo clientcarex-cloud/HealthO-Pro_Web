@@ -1,9 +1,10 @@
 /**
  * Job detail — application submit.
  *
- * The form posts multipart (the CV rides along) to api/careers.php, which
- * forwards it to the CRM. Validation here is only there to save the candidate a
- * round trip; the CRM validates everything again before it stores anything.
+ * The form posts multipart (the CV rides along) straight to the CRM's keyless
+ * embed endpoint, named on the form itself. Validation here is only there to
+ * save the candidate a round trip; the CRM validates everything again before it
+ * stores anything.
  */
 (function () {
   'use strict';
@@ -95,7 +96,7 @@
     button.textContent = 'Submitting…';
     if (status) { status.className = 'jd-status'; }
 
-    fetch('/api/careers.php?action=apply', { method: 'POST', body: new FormData(form) })
+    fetch(form.getAttribute('data-endpoint'), { method: 'POST', body: new FormData(form), credentials: 'omit' })
       .then(function (response) { return response.json().catch(function () { return null; }); })
       .then(function (data) {
         button.disabled = false;

@@ -5,12 +5,10 @@
  * Rendered entirely server-side: Google Jobs reads the JobPosting structured
  * data and the description from the HTML, so neither may depend on JavaScript.
  * The apply form is built from the posting's own field configuration and
- * screening questions, and submits to api/careers.php, which forwards it to the
- * CRM with the CV attached.
+ * screening questions, and submits with the CV attached straight to the CRM's
+ * keyless embed endpoint — this website holds no careers credentials at all.
  */
-define('HO_CAREERS_LIB_ONLY', true);
-require __DIR__ . '/api/careers.php';
-require_once __DIR__ . '/partials/site.php';
+require __DIR__ . '/partials/careers-data.php';   // pulls in partials/site.php
 
 $slug = trim((string) ($_GET['j'] ?? ''));
 
@@ -306,7 +304,12 @@ function jd_fact(string $icon, string $label, string $value): void
               <h2>Apply for this position</h2>
               <p style="color:var(--text-soft);margin-bottom:22px;">Fields marked <span class="req" style="color:#DC2626">*</span> are required. We review every application personally.</p>
 
+              <!--
+                Posts straight to the CRM's keyless embed endpoint — the same
+                one the paste-anywhere snippet uses. No proxy, no API key.
+              -->
               <form class="jd-form" id="jdApply" novalidate
+                    data-endpoint="<?= h(CAREERS_EMBED_BASE) ?>/apply"
                     data-max-mb="<?= $maxMb ?>"
                     data-allowed="<?= h(implode(',', $allowedExt)) ?>">
                 <input type="hidden" name="slug" value="<?= h($job['slug']) ?>">
