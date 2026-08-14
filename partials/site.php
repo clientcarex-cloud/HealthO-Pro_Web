@@ -30,3 +30,21 @@ function h(?string $s): string
 {
     return htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
 }
+
+/**
+ * Pretty job URLs (/careers/{slug}) need the rewrite in .htaccess. This domain
+ * also serves the CRM, which answers anything the website's rules do not catch,
+ * so a missing rewrite shows the CRM's 404 rather than the opening. Set this to
+ * false to fall back to /career.php?j={slug}, which needs no server config.
+ */
+const CAREER_PRETTY_URLS = true;
+
+/** Canonical path of one opening. Used for links, canonicals and structured data. */
+function career_url(string $slug, bool $absolute = false): string
+{
+    $path = CAREER_PRETTY_URLS
+        ? '/careers/' . rawurlencode($slug)
+        : '/career.php?j=' . rawurlencode($slug);
+
+    return $absolute ? SITE_URL . $path : $path;
+}

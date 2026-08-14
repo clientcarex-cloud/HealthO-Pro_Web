@@ -41,7 +41,7 @@ foreach ($jobs as $index => $job) {
     $itemList[] = [
         '@type'    => 'ListItem',
         'position' => $index + 1,
-        'url'      => SITE_URL . '/careers/' . $job['slug'],
+        'url'      => career_url($job['slug'], true),
         'name'     => $job['title'],
     ];
 }
@@ -192,7 +192,7 @@ require __DIR__ . '/partials/head.php';
       <div class="cr-list" id="crList">
         <?php foreach ($jobs as $job):
           $isNew = !empty($job['posted_at']) && strtotime($job['posted_at']) > strtotime('-14 days');
-          $url   = '/careers/' . rawurlencode($job['slug']);
+          $url   = career_url($job['slug']);
         ?>
         <article class="cr-job<?= !empty($job['featured']) ? ' cr-job--feat' : '' ?>"
                  data-family="<?= h($job['type_family']) ?>"

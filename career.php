@@ -62,7 +62,7 @@ $resumeReq   = !empty($data['resume_required']) && !empty($fields['resume']);
 $page        = 'careers';
 $title       = ($job['seo_title'] !== '' ? $job['seo_title'] : $job['title'] . ' — Careers') . ' | ' . $company;
 $description = $job['seo_description'] !== '' ? $job['seo_description'] : $job['summary'];
-$canonical   = SITE_URL . '/careers/' . $job['slug'];
+$canonical   = career_url($job['slug'], true);
 
 /* ── JobPosting structured data (Google Jobs) ───────────────────────────── */
 
@@ -501,7 +501,7 @@ function jd_fact(string $icon, string $label, string $value): void
           <div class="jd-card reveal jd-related">
             <h4 style="color:var(--navy);margin-bottom:6px;">Similar openings</h4>
             <?php foreach ($related as $other): ?>
-              <a href="/careers/<?= h(rawurlencode($other['slug'])) ?>">
+              <a href="<?= h(career_url($other['slug'])) ?>">
                 <?= h($other['title']) ?>
                 <span><?= h(trim($other['type_label'] . ' · ' . $other['location'], ' ·')) ?></span>
               </a>
