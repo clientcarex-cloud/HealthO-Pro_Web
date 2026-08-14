@@ -17,7 +17,9 @@ $data     = ho_careers_jobs();
 $jobs     = (!empty($data['ok']) && !empty($data['jobs'])) ? $data['jobs'] : [];
 $facets   = $data['facets'] ?? [];
 $loadFail = empty($data['ok']);
-$alerts   = !empty($data['alerts_enabled']);
+// Job alerts post to the CRM's keyless endpoint, so the form does not depend on
+// the API credentials: it is shown unless the CRM positively reports alerts off.
+$alerts   = $loadFail ? true : !empty($data['alerts_enabled']);
 
 // Openings that are internships / apprenticeships get their own counter — it is
 // the question early-career visitors come to this page to answer.
@@ -54,46 +56,9 @@ $head_extra = '<script type="application/ld+json">' . json_encode([
     'itemListElement' => $itemList,
 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . <<<'HTML'
 <style>
-/* ── Careers page ── */
-.cr-toolbar { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:26px; }
-.cr-toolbar input, .cr-toolbar select {
-  padding:11px 16px; border:1.5px solid var(--line); border-radius:12px; background:var(--surface);
-  color:var(--ink); font:inherit; font-size:.95rem; min-width:180px; outline:none; transition:border-color .2s;
-}
-.cr-toolbar input { min-width:270px; flex:1; }
-.cr-toolbar input:focus, .cr-toolbar select:focus { border-color:var(--cyan); }
-.cr-pills { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
-.cr-pill {
-  border:1.5px solid var(--line); background:var(--surface); color:var(--text-soft);
-  border-radius:999px; padding:8px 16px; font-size:.85rem; font-weight:700; cursor:pointer; transition:all .2s;
-}
-.cr-pill:hover { border-color:var(--cyan-light); color:var(--cyan-dark); }
-.cr-pill.active { background:var(--navy); border-color:var(--navy); color:#fff; }
-.cr-count { color:var(--text-mute); font-size:.88rem; margin-bottom:20px; }
-
-.cr-list { display:grid; gap:16px; }
-.cr-job {
-  display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center;
-  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md);
-  padding:24px 28px; box-shadow:var(--e1); transition:transform .3s, box-shadow .3s, border-color .3s;
-}
-.cr-job:hover { transform:translateY(-4px); box-shadow:var(--e3); border-color:var(--cyan-light); }
-.cr-job--feat { border-color:var(--cyan); box-shadow:var(--e2); }
-.cr-job h3 { font-size:var(--text-lg); margin:0 0 8px; color:var(--navy); }
-.cr-job h3 a { color:inherit; text-decoration:none; }
-.cr-job h3 a:hover { color:var(--cyan-dark); }
-.cr-job-meta { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
-.cr-job-sum { color:var(--text-soft); font-size:.9rem; margin:10px 0 0; line-height:1.55; }
-.cr-tag-new { background:var(--green-tint); color:var(--green-dark); }
-.cr-tag-urgent { background:#FEE2E2; color:#B91C1C; }
-.cr-tag-feat { background:var(--amber); color:#fff; }
-.cr-job-cta { display:flex; flex-direction:column; gap:8px; align-items:stretch; text-align:center; }
-.cr-job-sal { font-size:.85rem; font-weight:700; color:var(--green-dark); white-space:nowrap; }
-@media (max-width: 640px) {
-  .cr-job { grid-template-columns:1fr; }
-  .cr-job-cta { align-items:flex-start; text-align:left; }
-}
-
+/* ── Careers page ──
+   The openings themselves are styled by the embedded widget (it ships its own
+   scoped CSS), so only the surrounding blocks need rules here. */
 .cr-empty { text-align:center; padding:56px 20px; color:var(--text-soft); background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); }
 .cr-empty h3 { color:var(--navy); margin-bottom:8px; }
 
@@ -153,101 +118,28 @@ require __DIR__ . '/partials/head.php';
       </p>
     </div>
 
-    <?php if ($jobs): ?>
-      <!-- Quick type filters -->
-      <div class="cr-pills" id="crPills">
-        <button type="button" class="cr-pill active" data-family="">All roles</button>
-        <button type="button" class="cr-pill" data-family="job">Jobs</button>
-        <button type="button" class="cr-pill" data-family="early">Internships &amp; apprenticeships</button>
-        <button type="button" class="cr-pill" data-mode="remote">Remote friendly</button>
-      </div>
+    <!--
+      Live openings come straight from the Careers module in the CRM through the
+      embeddable widget below. It needs no API key and no server configuration,
+      which is why the same three lines can be pasted on any other site or
+      landing page and behave identically.
 
-      <div class="cr-toolbar">
-        <input type="search" id="crSearch" placeholder="Search by title, skill or keyword…" aria-label="Search openings">
+      When CAREERS_API_URL / CAREERS_API_KEY are set in .env, the block above
+      additionally emits this page's meta description and ItemList structured
+      data from the same openings, so search engines get a server-rendered
+      summary while visitors get the interactive widget.
+    -->
+    <!-- HealthO Careers — live openings -->
+    <div data-careers-embed data-accent="#00B4D8"></div>
+    <script src="<?= h(CAREERS_EMBED_JS) ?>" async></script>
 
-        <select id="crDept" aria-label="Filter by department">
-          <option value="">All departments</option>
-          <?php foreach (($facets['departments'] ?? []) as $dept): ?>
-            <option value="<?= h($dept) ?>"><?= h($dept) ?></option>
-          <?php endforeach; ?>
-        </select>
-
-        <select id="crLoc" aria-label="Filter by location">
-          <option value="">All locations</option>
-          <?php foreach (($facets['locations'] ?? []) as $loc): ?>
-            <option value="<?= h($loc) ?>"><?= h($loc) ?></option>
-          <?php endforeach; ?>
-        </select>
-
-        <select id="crType" aria-label="Filter by employment type">
-          <option value="">All types</option>
-          <?php foreach (($facets['types'] ?? []) as $key => $label): ?>
-            <option value="<?= h($key) ?>"><?= h($label) ?></option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-
-      <div class="cr-count" id="crCount"></div>
-
-      <div class="cr-list" id="crList">
-        <?php foreach ($jobs as $job):
-          $isNew = !empty($job['posted_at']) && strtotime($job['posted_at']) > strtotime('-14 days');
-          $url   = career_url($job['slug']);
-        ?>
-        <article class="cr-job<?= !empty($job['featured']) ? ' cr-job--feat' : '' ?>"
-                 data-family="<?= h($job['type_family']) ?>"
-                 data-type="<?= h($job['type']) ?>"
-                 data-dept="<?= h($job['department']) ?>"
-                 data-loc="<?= h($job['location']) ?>"
-                 data-mode="<?= h($job['work_mode']) ?>"
-                 data-search="<?= h(strtolower($job['title'] . ' ' . $job['department'] . ' ' . $job['location'] . ' ' . implode(' ', $job['skills']) . ' ' . $job['summary'])) ?>">
-          <div>
-            <h3><a href="<?= h($url) ?>"><?= h($job['title']) ?></a></h3>
-            <div class="cr-job-meta">
-              <?php if (!empty($job['featured'])): ?><span class="chip cr-tag-feat">★ Featured</span><?php endif; ?>
-              <?php if (!empty($job['urgent'])): ?><span class="chip cr-tag-urgent">Urgent hiring</span><?php endif; ?>
-              <?php if ($isNew): ?><span class="chip cr-tag-new">New</span><?php endif; ?>
-              <?php if ($job['department'] !== ''): ?><span class="chip dept"><?= h($job['department']) ?></span><?php endif; ?>
-              <?php if ($job['location'] !== ''): ?><span class="chip">📍 <?= h($job['location']) ?></span><?php endif; ?>
-              <span class="chip"><?= h($job['type_label']) ?></span>
-              <span class="chip"><?= h($job['work_mode_label']) ?></span>
-              <?php if ($job['experience'] !== ''): ?><span class="chip"><?= h($job['experience']) ?></span><?php endif; ?>
-              <?php if ((int) $job['openings'] > 1): ?><span class="chip"><?= (int) $job['openings'] ?> openings</span><?php endif; ?>
-            </div>
-            <?php if ($job['summary'] !== ''): ?>
-              <p class="cr-job-sum"><?= h($job['summary']) ?></p>
-            <?php endif; ?>
-          </div>
-          <div class="cr-job-cta">
-            <?php if ($job['salary'] !== ''): ?><span class="cr-job-sal"><?= h($job['salary']) ?></span><?php endif; ?>
-            <a href="<?= h($url) ?>" class="btn btn-outline">View &amp; Apply</a>
-            <span class="chip" style="justify-content:center"><?= h($job['posted_ago'] ?: 'Just posted') ?></span>
-          </div>
-        </article>
-        <?php endforeach; ?>
-      </div>
-
-      <div class="cr-empty" id="crEmpty" hidden>
-        <h3>No roles match those filters</h3>
-        <p>Try clearing the search, or subscribe below and we will email you the moment something opens.</p>
-      </div>
-
-    <?php elseif ($loadFail): ?>
-      <!--
-        The server-side fetch could not run (no API credentials, or the CRM was
-        briefly unreachable), so the embeddable widget takes over and loads the
-        same openings straight from the CRM in the visitor's browser. The page
-        therefore always shows live roles; configuring CAREERS_API_KEY only adds
-        the server-rendered version that search engines read.
-      -->
-      <div data-careers-embed data-accent="#00B4D8"></div>
-      <script src="<?= h(CAREERS_EMBED_JS) ?>" async></script>
-    <?php else: ?>
+    <noscript>
       <div class="cr-empty">
-        <h3>No openings right now</h3>
-        <p>We are not actively hiring at this moment, but we are always glad to hear from good people. Send us your profile below.</p>
+        <h3>Our current openings need JavaScript</h3>
+        <p>Please enable JavaScript, or email your CV to <a href="mailto:sales@healtho.pro" class="link-cyan">sales@healtho.pro</a> and we will get in touch.</p>
       </div>
-    <?php endif; ?>
+    </noscript>
+
   </div>
 </section>
 
@@ -259,7 +151,8 @@ require __DIR__ . '/partials/head.php';
       <span class="eyebrow">Job Alerts</span>
       <h3 class="h-card" style="margin:6px 0 6px;">Be the first to know</h3>
       <p style="color:var(--text-soft);margin:0;">Tell us where to reach you and we will email you when a matching role opens — no newsletters, only openings.</p>
-      <form class="cr-alert-form" id="crAlertForm" novalidate>
+      <form class="cr-alert-form" id="crAlertForm" novalidate
+            data-endpoint="<?= h(CAREERS_EMBED_BASE) ?>/subscribe">
         <input type="text" name="company_website" class="cr-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <input type="text" name="name" placeholder="Your name" autocomplete="name">
         <input type="email" name="email" placeholder="you@email.com" required autocomplete="email">

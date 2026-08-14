@@ -45,7 +45,8 @@ const CAREER_PRETTY_URLS = true;
  * API credentials are missing — and it is the same snippet that can be pasted
  * on any other site.
  */
-const CAREERS_EMBED_JS = 'https://healtho.pro/careers/careers_embed/js';
+const CAREERS_EMBED_BASE = 'https://healtho.pro/careers/careers_embed';
+const CAREERS_EMBED_JS   = CAREERS_EMBED_BASE . '/js';
 
 /** Canonical path of one opening. Used for links, canonicals and structured data. */
 function career_url(string $slug, bool $absolute = false): string
