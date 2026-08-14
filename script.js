@@ -448,9 +448,8 @@
             // The headline quotes a per-user-per-MONTH rate, so every price on the card —
             // headline, struck-through "was", and the calculator's first line — is the same
             // number, and the tiers compare as 999 / 1,199 / 1,499 instead of five-digit
-            // cycle totals. The amount actually charged sits on the sub-line below.
+            // cycle totals. The amount actually charged is spelled out by the calculator.
             var CARD_MONTHS = { year: 12, half: 6, quarter: 4 };
-            var CARD_BILLED = { year: 'once a year', half: 'every 6 months', quarter: 'every 4 months' };
             var perMonth = function (v, cycle) {
                 var n = Number(v);
                 return isNaN(n) ? v : Math.round(n / (CARD_MONTHS[cycle] || 12));
@@ -479,15 +478,13 @@
             };
 
             // One cycle's headline: was-price on its own line (so the rate never has to
-            // share a row and wrap), the big monthly rate, then what is really charged.
+            // share a row and wrap), then the big monthly rate.
             var priceLine = function (cycle, price) {
                 var was = strikeFor(cycle);
                 return (was ? '<div class="plan-price-was">' + was + '</div>' : '')
                     + '<span class="cur">' + cur + '</span>'
                     + '<span class="amt">' + planNum(perMonth(price, cycle)) + '</span>'
-                    + '<span class="per">/ user / month</span>'
-                    + '<div class="plan-price-sub">Billed ' + CARD_BILLED[cycle] + ' &middot; '
-                    + cur + planNum(price) + ' per user</div>';
+                    + '<span class="per">/ user / month</span>';
             };
 
             var offerStyle = offer ? offerThemeVars(offerTheme(offer.theme)) : '';

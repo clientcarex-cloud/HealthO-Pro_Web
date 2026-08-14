@@ -554,8 +554,6 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 .plan-price .per { font-size: var(--text-sm); color: var(--text-mute); margin-bottom: 4px; white-space: nowrap; }
 /* The old rate sits above the headline so the rate itself always keeps one line. */
 .plan-price-was { display: flex; align-items: center; margin-bottom: 2px; }
-/* What is actually charged, under the monthly rate the headline quotes. */
-.plan-price-sub { margin-top: 5px; font-size: .82rem; font-weight: 600; color: var(--text-soft); }
 .plan-note { font-size: var(--text-sm); color: var(--text-mute); margin-bottom: 24px; }
 .plan-feats { display: flex; flex-direction: column; gap: 13px; margin-bottom: 28px; flex: 1; }
 .plan-feats li { display: flex; gap: 11px; align-items: flex-start; font-size: var(--text-base); color: var(--text); }
