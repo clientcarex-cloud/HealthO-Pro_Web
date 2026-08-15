@@ -131,19 +131,6 @@ require __DIR__ . '/partials/head.php';
   </div>
 </header>
 
-<!-- ===== PERKS ===== -->
-<section class="section section--soft">
-  <div class="container">
-    <div class="sec-head reveal"><span class="eyebrow">Why Join Us</span><h2 class="h-sec">Where talent meets purpose</h2><p class="lead">We invest in our people the way we invest in our products — for the long term.</p></div>
-    <div class="grid grid-4">
-      <div class="perk reveal"><span class="perk-ic bg-cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></span><h4>Meaningful work</h4><p>Build software that improves patient care every day.</p></div>
-      <div class="perk reveal d1"><span class="perk-ic bg-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg></span><h4>Growth &amp; learning</h4><p>Mentorship, training and clear career paths.</p></div>
-      <div class="perk reveal d2"><span class="perk-ic bg-navy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><h4>Flexibility</h4><p>Hybrid options and a healthy work-life balance.</p></div>
-      <div class="perk reveal d3"><span class="perk-ic bg-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9Z"/></svg></span><h4>Global exposure</h4><p>Work with clients across India, the GCC &amp; beyond.</p></div>
-    </div>
-  </div>
-</section>
-
 <!-- ===== OPENINGS ===== -->
 <section class="section" id="openings">
   <div class="container">
@@ -309,6 +296,19 @@ require __DIR__ . '/partials/head.php';
           'note'     => 'Applying for a listed role? Use the <strong>View &amp; Apply</strong> button on that opening — it reaches our hiring team directly.',
         ]); ?>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PERKS ===== -->
+<section class="section section--soft">
+  <div class="container">
+    <div class="sec-head reveal"><span class="eyebrow">Why Join Us</span><h2 class="h-sec">Where talent meets purpose</h2><p class="lead">We invest in our people the way we invest in our products — for the long term.</p></div>
+    <div class="grid grid-4">
+      <div class="perk reveal"><span class="perk-ic bg-cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></span><h4>Meaningful work</h4><p>Build software that improves patient care every day.</p></div>
+      <div class="perk reveal d1"><span class="perk-ic bg-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg></span><h4>Growth &amp; learning</h4><p>Mentorship, training and clear career paths.</p></div>
+      <div class="perk reveal d2"><span class="perk-ic bg-navy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><h4>Flexibility</h4><p>Hybrid options and a healthy work-life balance.</p></div>
+      <div class="perk reveal d3"><span class="perk-ic bg-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9Z"/></svg></span><h4>Global exposure</h4><p>Work with clients across India, the GCC &amp; beyond.</p></div>
     </div>
   </div>
 </section>
