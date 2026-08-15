@@ -45,19 +45,90 @@ foreach ($jobs as $index => $job) {
     ];
 }
 
-// Filter values, taken from the openings that are actually on the page so a
-// filter can never return nothing.
-$filterDepartments = [];
-$filterTypes       = [];
+/**
+ * Facets, taken from the openings that are actually on the page so a filter can
+ * never return nothing. Each is `value => label`; a facet with fewer than two
+ * distinct values is dropped, because a filter that cannot narrow anything is
+ * only noise on the page.
+ *
+ * The experience filter is banded rather than exact: candidates search for
+ * "I have about 4 years", not for "3 – 5 yrs". A posting lands in a band by its
+ * MINIMUM required experience, which is the number that decides whether someone
+ * is eligible at all.
+ */
+$expBands = [
+    'entry'  => ['label' => 'Entry level (0 – 1 yr)', 'min' => 0,  'max' => 1],
+    'junior' => ['label' => '1 – 3 yrs',              'min' => 1,  'max' => 3],
+    'mid'    => ['label' => '3 – 5 yrs',              'min' => 3,  'max' => 5],
+    'senior' => ['label' => '5 – 10 yrs',             'min' => 5,  'max' => 10],
+    'lead'   => ['label' => '10+ yrs',                'min' => 10, 'max' => 999],
+];
+
+/** Which band a posting belongs to, or '' when it states no experience at all. */
+$expBandOf = static function (array $job) use ($expBands) {
+    if (!isset($job['experience_min']) || $job['experience_min'] === null) {
+        return '';
+    }
+
+    $min = (float) $job['experience_min'];
+
+    foreach ($expBands as $key => $band) {
+        if ($min >= $band['min'] && $min < $band['max']) {
+            return $key;
+        }
+    }
+
+    return 'lead';
+};
+
+$facetDepartments = [];
+$facetTypes       = [];
+$facetModes       = [];
+$facetLocations   = [];
+$facetExperience  = [];
+
 foreach ($jobs as $job) {
     if (($job['department'] ?? '') !== '') {
-        $filterDepartments[$job['department']] = true;
+        $facetDepartments[$job['department']] = $job['department'];
     }
     if (($job['type'] ?? '') !== '') {
-        $filterTypes[$job['type']] = $job['type_label'] ?? $job['type'];
+        $facetTypes[$job['type']] = $job['type_label'] ?? $job['type'];
+    }
+    if (($job['work_mode'] ?? '') !== '') {
+        $facetModes[$job['work_mode']] = $job['work_mode_label'] ?? $job['work_mode'];
+    }
+    if (($job['location'] ?? '') !== '') {
+        $facetLocations[$job['location']] = $job['location'];
+    }
+
+    $band = $expBandOf($job);
+    if ($band !== '') {
+        $facetExperience[$band] = $expBands[$band]['label'];
     }
 }
-$filterDepartments = array_keys($filterDepartments);
+
+asort($facetDepartments, SORT_NATURAL | SORT_FLAG_CASE);
+asort($facetLocations, SORT_NATURAL | SORT_FLAG_CASE);
+// Experience reads as a ladder, so keep the band order rather than the
+// order the postings happened to appear in.
+$facetExperience = array_intersect_key($expBands, $facetExperience);
+$facetExperience = array_map(static function ($band) {
+    return $band['label'];
+}, $facetExperience);
+
+/** The facet groups the filter bar renders, in order. */
+$facetGroups = array_filter([
+    ['key' => 'department', 'label' => 'Department',  'options' => $facetDepartments],
+    ['key' => 'type',       'label' => 'Job type',    'options' => $facetTypes],
+    ['key' => 'mode',       'label' => 'Work mode',   'options' => $facetModes],
+    ['key' => 'location',   'label' => 'Location',    'options' => $facetLocations],
+    ['key' => 'experience', 'label' => 'Experience',  'options' => $facetExperience],
+], static function ($group) {
+    return count($group['options']) > 1;
+});
+
+// The filter bar earns its space only once there is enough to sift through.
+$showFilters = count($jobs) > 3 && !empty($facetGroups);
 
 $head_extra = '<script type="application/ld+json">' . json_encode([
     '@context'        => 'https://schema.org',
@@ -73,12 +144,62 @@ $head_extra = '<script type="application/ld+json">' . json_encode([
 .cr-empty { text-align:center; padding:56px 20px; color:var(--text-soft); background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-md); }
 .cr-empty h3 { color:var(--navy); margin-bottom:8px; }
 
-.cr-filters { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:26px; }
-.cr-chip { border:1.5px solid var(--line); background:var(--surface); color:var(--text-soft); font:inherit; font-size:.85rem; font-weight:600; padding:8px 16px; border-radius:var(--r-pill); cursor:pointer; transition:all .18s ease; }
+/* ── Faceted search ── */
+.cr-filters { margin-bottom:18px; }
+.cr-searchrow { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.cr-searchwrap { position:relative; flex:1; min-width:240px; display:flex; align-items:center; }
+.cr-searchic { position:absolute; left:16px; width:17px; height:17px; color:var(--text-mute); pointer-events:none; }
+.cr-search { width:100%; padding:12px 40px 12px 43px; border:1.5px solid var(--line); border-radius:var(--r-pill); font:inherit; font-size:.92rem; background:var(--surface); }
+.cr-search:focus { outline:none; border-color:var(--cyan); box-shadow:0 0 0 4px var(--cyan-tint); }
+.cr-search::-webkit-search-cancel-button { display:none; }
+.cr-searchclear { position:absolute; right:8px; width:26px; height:26px; border:0; border-radius:50%; background:var(--navy-tint); color:var(--text-soft); font-size:1.1rem; line-height:1; cursor:pointer; }
+.cr-searchclear:hover { background:var(--cyan-tint); color:var(--cyan-dark); }
+
+.cr-sortwrap { display:inline-flex; align-items:center; gap:8px; }
+.cr-sortlab { font-size:.82rem; font-weight:700; color:var(--text-mute); text-transform:uppercase; letter-spacing:.04em; }
+.cr-sort { padding:11px 14px; border:1.5px solid var(--line); border-radius:var(--r-pill); font:inherit; font-size:.88rem; background:var(--surface); color:var(--navy); cursor:pointer; }
+.cr-sort:focus { outline:none; border-color:var(--cyan); }
+
+.cr-facetoggle { display:none; align-items:center; gap:8px; padding:11px 18px; border:1.5px solid var(--line); border-radius:var(--r-pill); background:var(--surface); color:var(--navy); font:inherit; font-size:.88rem; font-weight:700; cursor:pointer; }
+.cr-facetoggle svg { width:16px; height:16px; }
+.cr-facetcount { min-width:20px; padding:1px 6px; border-radius:var(--r-pill); background:var(--cyan); color:#fff; font-size:.74rem; }
+
+.cr-facets { display:flex; flex-wrap:wrap; gap:18px 30px; margin-top:18px; padding:18px 20px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); }
+.cr-facet { border:0; margin:0; padding:0; min-width:0; }
+.cr-facetlab { padding:0; margin:0 0 9px; font-size:.74rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--text-mute); }
+.cr-facetopts { display:flex; flex-wrap:wrap; gap:8px; }
+.cr-chip { display:inline-flex; align-items:center; gap:7px; border:1.5px solid var(--line); background:var(--surface); color:var(--text-soft); font:inherit; font-size:.85rem; font-weight:600; padding:7px 14px; border-radius:var(--r-pill); cursor:pointer; transition:all .18s ease; }
 .cr-chip:hover { border-color:var(--cyan); color:var(--navy); }
 .cr-chip[aria-pressed="true"] { background:var(--navy); border-color:var(--navy); color:#fff; }
-.cr-search { flex:1; min-width:220px; padding:10px 16px; border:1.5px solid var(--line); border-radius:var(--r-pill); font:inherit; font-size:.9rem; background:var(--surface); }
-.cr-search:focus { outline:none; border-color:var(--cyan); }
+.cr-chip[disabled] { opacity:.4; cursor:not-allowed; }
+.cr-chip[disabled]:hover { border-color:var(--line); color:var(--text-soft); }
+.cr-chipn { font-size:.74rem; font-weight:700; color:var(--text-mute); }
+.cr-chip[aria-pressed="true"] .cr-chipn { color:rgba(255,255,255,.75); }
+.cr-chipn:empty { display:none; }
+
+.cr-active { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin-top:14px; }
+/* A class that sets `display` beats the UA's [hidden] rule, so every element in
+   here that JS toggles with .hidden needs this or it never actually hides. */
+.cr-filters [hidden], .cr-active[hidden], .cr-more[hidden], .cr-count[hidden] { display:none; }
+.cr-activelab { font-size:.78rem; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--text-mute); }
+.cr-activepills { display:flex; flex-wrap:wrap; gap:8px; }
+.cr-pill { display:inline-flex; align-items:center; gap:7px; padding:5px 8px 5px 13px; border-radius:var(--r-pill); background:var(--cyan-tint); color:var(--cyan-dark); font-size:.82rem; font-weight:700; }
+.cr-pill button { width:18px; height:18px; border:0; border-radius:50%; background:rgba(0,150,183,.18); color:inherit; font-size:.9rem; line-height:1; cursor:pointer; }
+.cr-pill button:hover { background:var(--cyan); color:#fff; }
+.cr-clear { border:0; background:none; font:inherit; font-size:.84rem; font-weight:700; color:var(--text-soft); text-decoration:underline; cursor:pointer; }
+.cr-clear:hover { color:var(--cyan-dark); }
+
+.cr-count { margin-bottom:16px; font-size:.88rem; color:var(--text-soft); }
+.cr-count strong { color:var(--navy); }
+.cr-more { text-align:center; margin-top:24px; }
+
+@media (max-width:820px) {
+  .cr-facetoggle { display:inline-flex; }
+  .cr-facets { display:none; }
+  .cr-facets.is-open { display:flex; }
+  .cr-sortwrap { flex:1; }
+  .cr-sort { flex:1; }
+}
 
 .cr-jobs { display:grid; gap:18px; }
 .cr-job { background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:24px 26px; box-shadow:var(--e1); transition:box-shadow .2s ease, transform .2s ease, border-color .2s ease; }
@@ -98,7 +219,9 @@ $head_extra = '<script type="application/ld+json">' . json_encode([
 .cr-job p.cr-summary { color:var(--text); font-size:.92rem; margin:0; max-width:70ch; }
 .cr-job-cta { display:flex; flex-direction:column; align-items:flex-end; gap:8px; white-space:nowrap; }
 .cr-posted { color:var(--text-mute); font-size:.78rem; }
-.cr-noresult { text-align:center; padding:34px 20px; color:var(--text-soft); }
+.cr-noresult { text-align:center; padding:40px 20px; color:var(--text-soft); }
+.cr-noresult strong { display:block; color:var(--navy); font-size:1.05rem; margin-bottom:6px; }
+.cr-noresult p { margin:0 0 12px; font-size:.9rem; }
 @media (max-width:640px) {
   .cr-job-top { flex-direction:column; }
   .cr-job-cta { align-items:flex-start; width:100%; }
@@ -148,17 +271,59 @@ require __DIR__ . '/partials/head.php';
     </div>
 
     <?php if ($jobs): ?>
-      <?php if (count($jobs) > 3 && (count($filterDepartments) > 1 || count($filterTypes) > 1)): ?>
-      <div class="cr-filters" id="crFilters">
-        <button type="button" class="cr-chip" data-filter="all" aria-pressed="true">All roles</button>
-        <?php foreach ($filterTypes as $typeKey => $typeLabel): ?>
-          <button type="button" class="cr-chip" data-filter="type" data-value="<?= h($typeKey) ?>" aria-pressed="false"><?= h($typeLabel) ?></button>
-        <?php endforeach; ?>
-        <?php foreach ($filterDepartments as $department): ?>
-          <button type="button" class="cr-chip" data-filter="department" data-value="<?= h($department) ?>" aria-pressed="false"><?= h($department) ?></button>
-        <?php endforeach; ?>
-        <input type="search" class="cr-search" id="crSearch" placeholder="Search roles, skills or locations…" aria-label="Search openings">
+      <?php if ($showFilters): ?>
+      <!--
+        Faceted search. Every control is additive: picking two departments
+        widens, picking a department AND a job type narrows. It filters the
+        cards already in the HTML below — nothing is fetched — so the openings
+        stay readable with JavaScript off, and the whole bar is hidden until
+        the script that drives it has bound to it.
+      -->
+      <div class="cr-filters" id="crFilters" hidden>
+        <div class="cr-searchrow">
+          <div class="cr-searchwrap">
+            <svg class="cr-searchic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" class="cr-search" id="crSearch" autocomplete="off"
+                   placeholder="Search by role, skill, department or location…" aria-label="Search openings">
+            <button type="button" class="cr-searchclear" id="crSearchClear" aria-label="Clear search" hidden>&times;</button>
+          </div>
+          <label class="cr-sortwrap">
+            <span class="cr-sortlab">Sort</span>
+            <select class="cr-sort" id="crSort" aria-label="Sort openings">
+              <option value="relevance">Most relevant</option>
+              <option value="newest">Newest first</option>
+              <option value="title">A – Z</option>
+            </select>
+          </label>
+          <button type="button" class="cr-facetoggle" id="crFacetToggle" aria-expanded="false" aria-controls="crFacets">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+            Filters<span class="cr-facetcount" id="crFacetCount" hidden></span>
+          </button>
+        </div>
+
+        <div class="cr-facets" id="crFacets">
+          <?php foreach ($facetGroups as $group): ?>
+            <fieldset class="cr-facet" data-facet="<?= h($group['key']) ?>">
+              <legend class="cr-facetlab"><?= h($group['label']) ?></legend>
+              <div class="cr-facetopts">
+                <?php foreach ($group['options'] as $value => $label): ?>
+                  <button type="button" class="cr-chip" data-facet="<?= h($group['key']) ?>"
+                          data-value="<?= h((string) $value) ?>" aria-pressed="false">
+                    <?= h((string) $label) ?><span class="cr-chipn" aria-hidden="true"></span>
+                  </button>
+                <?php endforeach; ?>
+              </div>
+            </fieldset>
+          <?php endforeach; ?>
+        </div>
+
+        <div class="cr-active" id="crActive" hidden>
+          <span class="cr-activelab">Filtering by</span>
+          <div class="cr-activepills" id="crActivePills"></div>
+          <button type="button" class="cr-clear" id="crClear">Clear all</button>
+        </div>
       </div>
+      <div class="cr-count" id="crCount" hidden></div>
       <?php endif; ?>
 
       <!--
@@ -172,15 +337,25 @@ require __DIR__ . '/partials/head.php';
           <?php
             $url    = career_url($job['slug']);
             $isNew  = !empty($job['posted_at']) && strtotime((string) $job['posted_at']) > strtotime('-14 days');
-            $search = strtolower(trim(
+            // One lowercase haystack per card. Education and the experience text
+            // are in here even though neither is a chip: someone typing "MBA" or
+            // "fresher" is searching, not filtering.
+            $search = strtolower(trim(preg_replace('/\s+/', ' ',
                 ($job['title'] ?? '') . ' ' . ($job['department'] ?? '') . ' ' . ($job['location'] ?? '')
                 . ' ' . ($job['type_label'] ?? '') . ' ' . ($job['work_mode_label'] ?? '')
                 . ' ' . implode(' ', (array) ($job['skills'] ?? [])) . ' ' . ($job['summary'] ?? '')
-            ));
+                . ' ' . ($job['education'] ?? '') . ' ' . ($job['experience'] ?? '')
+            )));
           ?>
           <article class="cr-job"
                    data-type="<?= h($job['type'] ?? '') ?>"
                    data-department="<?= h($job['department'] ?? '') ?>"
+                   data-mode="<?= h($job['work_mode'] ?? '') ?>"
+                   data-location="<?= h($job['location'] ?? '') ?>"
+                   data-experience="<?= h($expBandOf($job)) ?>"
+                   data-title="<?= h(strtolower((string) ($job['title'] ?? ''))) ?>"
+                   data-posted="<?= h((string) (!empty($job['posted_at']) ? strtotime((string) $job['posted_at']) : 0)) ?>"
+                   data-featured="<?= !empty($job['featured']) ? '1' : '0' ?>"
                    data-search="<?= h($search) ?>">
             <div class="cr-job-top">
               <div>
@@ -211,7 +386,14 @@ require __DIR__ . '/partials/head.php';
           </article>
         <?php endforeach; ?>
       </div>
-      <div class="cr-noresult" id="crNoResult" hidden>No openings match that filter. <button type="button" class="link-cyan" id="crReset" style="border:0;background:none;font:inherit;cursor:pointer;color:var(--cyan-dark);">Show all roles</button></div>
+      <div class="cr-more" id="crMore" hidden>
+        <button type="button" class="btn btn-ghost" id="crMoreBtn"></button>
+      </div>
+      <div class="cr-noresult" id="crNoResult" hidden>
+        <strong>No openings match those filters.</strong>
+        <p>Try removing one, or search a different keyword.</p>
+        <button type="button" class="link-cyan" id="crReset" style="border:0;background:none;font:inherit;cursor:pointer;color:var(--cyan-dark);">Clear all filters</button>
+      </div>
 
     <?php elseif ($loadFail): ?>
       <!--
