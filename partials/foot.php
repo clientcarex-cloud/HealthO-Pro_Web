@@ -89,6 +89,8 @@ $demo_interest = PRODUCTS[$page ?? '']['short'] ?? '';
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m18 15-6-6-6 6"/></svg>
 </button>
 
+<!-- Scripts fetched on demand (the brochure renderer) cache-bust off the same version. -->
+<script>window.HP_ASSET_VER = '<?= ASSET_VER ?>';</script>
 <script src="/script.js?v=<?= ASSET_VER ?>" defer></script>
 <?php foreach ($foot_scripts as $src): ?>
 <script src="/<?= h($src) ?>?v=<?= ASSET_VER ?>" defer></script>

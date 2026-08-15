@@ -1039,11 +1039,10 @@
         } // end initPricing
 
         /* ---------- Pricing brochure ----------
-           The sheet is built from the cards that are on screen at the moment of the
-           click, so it carries the visitor's own product, team size and billing cycle
-           rather than a generic price list. The click then saves it as a PDF file
-           straight away — no print dialog to explain, no "Save as PDF" step to miss.
-           The print path stays as the fallback for when the renderer cannot load. */
+           The sheet is read off the cards that are on screen at the moment of the
+           click, so it carries the visitor's own product, team size and billing
+           cycle rather than a generic price list. This file only gathers the
+           numbers; js/brochure.js turns them into a vector PDF and saves it. */
         function initBrochure() {
             var buttons = document.querySelectorAll('.js-brochure');
             if (!buttons.length) return;
@@ -1062,44 +1061,35 @@
                 return n ? n.textContent.trim() : '';
             };
 
-            var planBlock = function (card) {
+            var planData = function (card, currency) {
+                // Only one billing cycle's price block is on screen at a time.
                 var cycleBox = null;
                 card.querySelectorAll('.plan-price > div').forEach(function (d) {
                     if (d.offsetParent !== null) cycleBox = d;
                 });
-                var cur = txt(cycleBox, '.cur') || '₹';
-                var was = txt(cycleBox, '.plan-was');
-                var signup = card.querySelector('.plan-signup');
-                var feats = [].map.call(card.querySelectorAll('.checks li'), function (li) {
-                    var label = li.querySelector('span:last-child');
-                    return '<li' + (li.classList.contains('feat-hi') ? ' class="br-hi"' : '') + '>'
-                        + planEsc(label ? label.textContent.trim() : '') + '</li>';
-                }).join('');
                 var savings = card.querySelector('.calc-savings-row');
-                var showSaving = savings && savings.offsetParent !== null;
-
-                return '<div class="br-plan' + (card.classList.contains('recommended') ? ' br-plan-rec' : '') + '">'
-                    + (card.classList.contains('recommended') ? '<div class="br-rec">Recommended for you</div>' : '')
-                    + '<h3>' + planEsc(txt(card, '.plan-name')) + '</h3>'
-                    + '<div class="br-rate">'
-                    +   (was ? '<span class="br-was">' + planEsc(was) + '</span>' : '')
-                    +   '<b>' + cur + planEsc(txt(cycleBox, '.amt')) + '</b><span>/ user / month</span>'
-                    + '</div>'
-                    + '<table class="br-sum">'
-                    +   '<tr><td>' + planEsc(txt(card, '.calc-users')) + ' users &times; ' + cur + planEsc(txt(card, '.calc-per-user')) + ' each</td>'
-                    +     '<td>' + cur + planEsc(txt(card, '.calc-base')) + ' / month</td></tr>'
-                    +   '<tr class="br-sum-pay"><td>You pay once &middot; ' + planEsc(txt(card, '.calc-months')) + ' months</td>'
-                    +     '<td>' + cur + planEsc(txt(card, '.calc-pay-value')) + '</td></tr>'
-                    +   '<tr class="br-sum-gst"><td>+ 18% GST</td><td>' + cur + planEsc(txt(card, '.calc-with-gst')) + ' in total</td></tr>'
-                    + '</table>'
-                    + (showSaving ? '<p class="br-save">You save ' + cur + planEsc(txt(card, '.calc-savings')) + ' a year</p>' : '')
-                    + '<ul class="br-feats">' + feats + '</ul>'
-                    + (signup ? '<a class="br-cta" href="' + planEsc(signup.href) + '">Sign up for '
-                        + planEsc(txt(card, '.plan-name')) + ' &rarr;</a>' : '')
-                    + '</div>';
+                var signup = card.querySelector('.plan-signup');
+                return {
+                    name: txt(card, '.plan-name'),
+                    recommended: card.classList.contains('recommended'),
+                    was: txt(cycleBox, '.plan-was'),
+                    amount: txt(cycleBox, '.amt'),
+                    users: txt(card, '.calc-users'),
+                    perUser: txt(card, '.calc-per-user'),
+                    base: txt(card, '.calc-base'),
+                    months: txt(card, '.calc-months'),
+                    pay: txt(card, '.calc-pay-value'),
+                    withGst: txt(card, '.calc-with-gst'),
+                    savings: savings && savings.offsetParent !== null ? txt(card, '.calc-savings') : '',
+                    signup: signup ? signup.href : '',
+                    features: [].map.call(card.querySelectorAll('.checks li'), function (li) {
+                        var label = li.querySelector('span:last-child');
+                        return { text: (label ? label.textContent : li.textContent).trim(), hi: li.classList.contains('feat-hi') };
+                    })
+                };
             };
 
-            var build = function (btn) {
+            var collect = function (btn) {
                 var panel = document.querySelector('.price-panel.active') || document.querySelector('.price-panel');
                 var mount = panel && panel.querySelector('.dynamic-plans');
                 var cards = panel ? panel.querySelectorAll('.price-card') : [];
@@ -1109,46 +1099,22 @@
                 var cycleBtn = document.querySelector('.billing-toggle button.active');
                 var cycle = cycleBtn ? (cycleBtn.getAttribute('data-cycle') || 'year') : 'year';
                 var usersEl = document.getElementById('globalUsers');
-                var users = usersEl ? usersEl.value : '';
-                var site = btn.getAttribute('data-site') || '';
-                var phone = btn.getAttribute('data-phone') || '';
-                var email = btn.getAttribute('data-email') || '';
-                var wa = btn.getAttribute('data-wa') || '';
-                var today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                var first = cards[0].querySelector('.plan-price > div .cur');
 
-                var el = document.createElement('div');
-                el.className = 'brochure';
-                el.id = 'brochure';
-                el.setAttribute('aria-hidden', 'true');
-                el.innerHTML = ''
-                    + '<header class="br-head">'
-                    +   '<img class="br-logo" src="/assets/images/logo.png" alt="HealthO Pro">'
-                    +   '<div class="br-head-r">'
-                    +     '<div class="br-kicker">Plans &amp; Pricing</div>'
-                    +     '<div class="br-product">' + planEsc(GROUP_NAMES[group] || 'HealthO Pro') + '</div>'
-                    +     '<div class="br-long">' + planEsc(GROUP_LONG[group] || '') + '</div>'
-                    +   '</div>'
-                    + '</header>'
-                    + '<div class="br-meta">'
-                    +   '<span>Team size <b>' + planEsc(users) + ' users</b></span>'
-                    +   '<span>Billing <b>' + planEsc(CYCLE_NAMES[cycle] || 'Yearly') + '</b></span>'
-                    +   '<span>Prepared <b>' + planEsc(today) + '</b></span>'
-                    + '</div>'
-                    + '<div class="br-plans" style="grid-template-columns:repeat(' + cards.length + ',1fr);">'
-                    +   [].map.call(cards, planBlock).join('')
-                    + '</div>'
-                    + '<footer class="br-foot">'
-                    +   '<div class="br-links">'
-                    +     '<a href="' + planEsc(site) + '/pricing">' + planEsc(site.replace(/^https?:\/\//, '')) + '/pricing</a>'
-                    +     (phone ? '<a href="tel:' + planEsc(phone.replace(/\s+/g, '')) + '">' + planEsc(phone) + '</a>' : '')
-                    +     (email ? '<a href="mailto:' + planEsc(email) + '">' + planEsc(email) + '</a>' : '')
-                    +     (wa ? '<a href="' + planEsc(wa) + '">WhatsApp us</a>' : '')
-                    +   '</div>'
-                    +   '<p>Every figure above is quoted for ' + planEsc(users) + ' users on ' + planEsc((CYCLE_NAMES[cycle] || 'Yearly').toLowerCase())
-                    +     ' billing. Amounts are exclusive of 18% GST unless stated. Prices are live from '
-                    +     planEsc(site.replace(/^https?:\/\//, '')) + ' on ' + planEsc(today) + ' and may change &mdash; open the link above for the current rate.</p>'
-                    + '</footer>';
-                return el;
+                return {
+                    product: GROUP_NAMES[group] || 'HealthO Pro',
+                    productLong: GROUP_LONG[group] || '',
+                    currency: first ? first.textContent.trim() : '₹',
+                    users: usersEl ? String(usersEl.value) : '',
+                    cycleLabel: CYCLE_NAMES[cycle] || 'Yearly',
+                    cycleLower: (CYCLE_NAMES[cycle] || 'Yearly').toLowerCase(),
+                    today: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
+                    site: btn.getAttribute('data-site') || '',
+                    phone: btn.getAttribute('data-phone') || '',
+                    email: btn.getAttribute('data-email') || '',
+                    wa: btn.getAttribute('data-wa') || '',
+                    plans: [].map.call(cards, function (c) { return planData(c); })
+                };
             };
 
             var toast = function (msg) {
@@ -1178,99 +1144,37 @@
             });
             syncVisibility();
 
-            // html2pdf is a megabyte of renderer that most visitors never need, so it
-            // is fetched on the first click rather than on every page view.
-            var libPromise = null;
-            var loadLib = function () {
-                if (window.html2pdf) return Promise.resolve(window.html2pdf);
-                if (libPromise) return libPromise;
-                libPromise = new Promise(function (resolve, reject) {
+            // The renderer and its embedded font are a few hundred kilobytes that
+            // most visitors never need, so they are fetched on the first click.
+            var loadRenderer = function () {
+                if (window.HealthOBrochure) return Promise.resolve();
+                return new Promise(function (resolve, reject) {
                     var s = document.createElement('script');
-                    s.src = '/js/vendor/html2pdf.bundle.min.js';
-                    s.onload = function () {
-                        window.html2pdf ? resolve(window.html2pdf) : reject(new Error('html2pdf missing'));
-                    };
-                    s.onerror = function () { libPromise = null; reject(new Error('html2pdf failed to load')); };
+                    s.src = '/js/brochure.js?v=' + (window.HP_ASSET_VER || '1');
+                    s.onload = function () { window.HealthOBrochure ? resolve() : reject(new Error('brochure.js empty')); };
+                    s.onerror = function () { reject(new Error('brochure.js failed')); };
                     document.head.appendChild(s);
                 });
-                return libPromise;
-            };
-
-            // Web fonts and the logo have to be painted before the sheet is captured,
-            // otherwise the PDF comes out in a fallback face or with a gap for the mark.
-            var ready = function (sheet) {
-                var jobs = [];
-                if (document.fonts && document.fonts.ready) jobs.push(document.fonts.ready);
-                sheet.querySelectorAll('img').forEach(function (img) {
-                    if (img.complete) return;
-                    jobs.push(new Promise(function (res) { img.onload = img.onerror = res; }));
-                });
-                return Promise.all(jobs);
-            };
-
-            var fileName = function (sheet) {
-                var product = txt(sheet, '.br-product').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '');
-                var d = new Date();
-                var stamp = d.getFullYear() + '-'
-                    + ('0' + (d.getMonth() + 1)).slice(-2) + '-'
-                    + ('0' + d.getDate()).slice(-2);
-                return 'HealthO-Pro-' + (product || 'Pricing') + '-Pricing-' + stamp + '.pdf';
             };
 
             buttons.forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     if (btn.disabled) return;
-                    var old = document.querySelector('.br-stage');
-                    if (old) old.remove();
-                    var sheet = build(btn);
-                    if (!sheet) { toast('Plans are still loading — try again in a moment.'); return; }
-                    var stage = document.createElement('div');
-                    stage.className = 'br-stage';
-                    stage.setAttribute('aria-hidden', 'true');
-                    stage.appendChild(sheet);
-                    document.body.appendChild(stage);
+                    var data = collect(btn);
+                    if (!data) { toast('Plans are still loading — try again in a moment.'); return; }
 
-                    btn.disabled = true;
                     var label = btn.querySelector('span');
                     var was = label ? label.textContent : '';
+                    btn.disabled = true;
                     if (label) label.textContent = 'Preparing PDF…';
 
-                    var done = function () {
-                        btn.disabled = false;
-                        if (label) label.textContent = was;
-                        stage.remove();
-                    };
-
-                    loadLib()
-                        .then(function () { return ready(sheet); })
+                    loadRenderer()
+                        .then(function () { return window.HealthOBrochure.download(data); })
+                        .then(function () { toast('Brochure downloaded.'); })
+                        .catch(function () { toast('The brochure could not be prepared — please try again.'); })
                         .then(function () {
-                            return window.html2pdf().set({
-                                margin: 0,
-                                filename: fileName(sheet),
-                                image: { type: 'jpeg', quality: 0.98 },
-                                html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff', logging: false },
-                                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                                pagebreak: { mode: ['css', 'legacy'], avoid: '.br-plan' }
-                            }).from(sheet).save();
-                        })
-                        .then(function () {
-                            toast('Brochure downloaded.');
-                            done();
-                        })
-                        .catch(function () {
-                            // Renderer unavailable — hand the visitor the browser's own
-                            // "Save as PDF" rather than nothing at all. The sheet has to
-                            // outlive the print dialog, so it is cleared afterwards.
                             btn.disabled = false;
                             if (label) label.textContent = was;
-                            toast('Choose “Save as PDF” in the print window to download the brochure.');
-                            setTimeout(function () {
-                                window.addEventListener('afterprint', function once() {
-                                    window.removeEventListener('afterprint', once);
-                                    stage.remove();
-                                });
-                                window.print();
-                            }, 400);
                         });
                 });
             });

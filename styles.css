@@ -1110,10 +1110,8 @@ body.demo-open { overflow: hidden; }
 /* ==========================================================================
    PRICING BROCHURE
    A "Download brochure" button that saves the plans currently on screen as a
-   PDF file. The sheet is laid out at true A4 width and parked off-screen so
-   html2pdf can rasterise it straight to a download — no print dialog. The same
-   rules serve the print fallback, which only has to pull the sheet back on
-   screen and hide everything else.
+   PDF file. Only the button and its status line live here — the sheet itself is
+   never in the DOM: js/brochure.js draws it straight into the PDF as vector.
    ========================================================================== */
 .pb-brochure {
     display: inline-flex; align-items: center; gap: 8px; flex: none;
@@ -1152,95 +1150,3 @@ body.demo-open { overflow: hidden; }
 }
 .br-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-/* The sheet is a real A4 page laid out in the DOM: the renderer can only capture
-   what the browser has actually laid out. The stage is what hides it — parked
-   off-screen and clipped to nothing, while the sheet inside keeps its full
-   height. The sheet itself must stay in normal flow: taken out of it, the
-   renderer's own capture box collapses to zero and the PDF comes out blank. */
-.br-stage {
-    position: fixed; left: -20000px; top: 0;
-    width: 210mm; height: 0; overflow: hidden;
-    pointer-events: none;
-}
-.brochure {
-    box-sizing: border-box; width: 210mm; padding: 11mm 10mm 12mm;
-    background: #fff; color: #0F172A;
-    font-family: var(--font, 'Plus Jakarta Sans', system-ui, sans-serif);
-    font-size: 8pt; line-height: 1.45;
-}
-.brochure * { box-sizing: border-box; }
-
-.br-head {
-    display: flex; align-items: flex-end; justify-content: space-between; gap: 14mm;
-    padding-bottom: 4mm; border-bottom: 2.5pt solid #00B4D8;
-}
-.br-logo { width: 42mm; height: auto; }
-.br-head-r { text-align: right; }
-.br-kicker { font-size: 7pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #00B4D8; }
-.br-product { font-size: 17pt; font-weight: 800; color: #0B2545; line-height: 1.1; }
-.br-long { font-size: 7.5pt; color: #64748B; }
-
-.br-meta {
-    display: flex; gap: 6mm; flex-wrap: wrap;
-    margin: 3.5mm 0 5mm; padding: 2.5mm 4mm; border-radius: 2mm;
-    background: #F1F8FC; font-size: 8pt; color: #475569;
-}
-.br-meta b { color: #0B2545; }
-
-.br-plans { display: grid; gap: 4mm; align-items: stretch; }
-/* Column layout so every plan's sign-up link lands on the same baseline,
-   however many features the plan lists. */
-.br-plan {
-    display: flex; flex-direction: column; break-inside: avoid; page-break-inside: avoid;
-    padding: 4mm; border: .6pt solid #DBE3EC; border-radius: 2.5mm;
-}
-.br-plan-rec { border: 1.4pt solid #00B4D8; }
-.br-rec {
-    display: inline-block; align-self: flex-start; margin-bottom: 1.5mm; padding: 1mm 2.5mm; border-radius: 6mm;
-    background: #00B4D8; color: #fff; font-size: 6.5pt; font-weight: 800;
-    letter-spacing: .06em; text-transform: uppercase;
-}
-.br-plan h3 { font-size: 12pt; font-weight: 800; color: #0B2545; margin: 0; }
-.br-rate { margin: 1mm 0 3mm; color: #0B2545; }
-.br-rate b { font-size: 19pt; font-weight: 800; letter-spacing: -.02em; }
-.br-rate span { font-size: 7pt; color: #64748B; }
-.br-was { display: block; font-size: 8.5pt; color: #94A3B8; text-decoration: line-through; }
-
-.br-sum { width: 100%; border-collapse: collapse; font-size: 7.5pt; }
-.br-sum td { padding: 1.2mm 0; vertical-align: top; color: #475569; }
-.br-sum td:last-child { text-align: right; white-space: nowrap; font-weight: 700; color: #0B2545; }
-.br-sum-pay td { border-top: .5pt dashed #C7D3E0; padding-top: 2mm; font-weight: 800; color: #0F7A66; }
-.br-sum-pay td:last-child { font-size: 11pt; color: #0F7A66; }
-.br-sum-gst td { font-size: 6.8pt; color: #8092A8; }
-.br-save { margin: 2mm 0 0; font-size: 7.5pt; font-weight: 800; color: #10B981; }
-
-.br-feats { margin: 3mm 0 3mm; padding: 3mm 0 0; border-top: .5pt solid #E6ECF3; list-style: none; }
-.br-feats li { position: relative; padding: 0 0 1.4mm 4mm; font-size: 7.5pt; color: #334155; break-inside: avoid; }
-.br-feats li::before { content: "✓"; position: absolute; left: 0; color: #00B4D8; font-weight: 800; }
-.br-feats li.br-hi { font-weight: 800; color: #0B2545; }
-
-.br-cta {
-    display: block; margin-top: auto; padding: 2mm; border-radius: 6mm;
-    background: #0B2545; color: #fff !important; text-align: center;
-    font-size: 8pt; font-weight: 800; text-decoration: none;
-}
-
-.br-foot { margin-top: 6mm; padding-top: 3mm; border-top: .6pt solid #DBE3EC; }
-.br-links { display: flex; flex-wrap: wrap; gap: 5mm; font-size: 8pt; font-weight: 700; }
-.br-links a { color: #0096B7; text-decoration: none; }
-.br-foot p { margin: 2.5mm 0 0; font-size: 6.8pt; line-height: 1.5; color: #8092A8; }
-
-/* Fallback only: if the PDF renderer cannot load, the click falls back to the
-   print dialog, and there the sheet steps forward as the whole page. */
-@media print {
-    body > *:not(.br-stage) { display: none !important; }
-    html, body { background: #fff; }
-    .br-stage {
-        position: static; left: auto; width: auto; height: auto; overflow: visible;
-    }
-    .brochure {
-        width: auto; padding: 0;
-        -webkit-print-color-adjust: exact; print-color-adjust: exact;
-    }
-    @page { size: A4 portrait; margin: 11mm 10mm 12mm; }
-}
