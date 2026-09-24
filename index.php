@@ -1,32 +1,23 @@
 <?php
 $page        = '';
-$title       = 'HealthO Pro — Empowering Healthcare Providers | HIMS, LIMS, CIMS & RIS Software';
-$description = 'HealthO Pro by Healthocare Private Limited delivers cloud-enabled HIMS, LIMS, CIMS and RIS/RIMS software for hospitals, labs, clinics and radiology centers across India, the GCC, Egypt and Canada. Serving healthcare providers since 2011.';
-$head_extra  = <<<'HTML'
-<meta name="keywords" content="HIMS, LIMS, CIMS, RIS, RIMS, hospital management software, laboratory information system, clinic management, radiology information system, healthcare software India">
-<meta name="author" content="Healthocare Private Limited">
-<meta property="og:type" content="website">
-<meta property="og:title" content="HealthO Pro — Empowering Healthcare Providers">
-<meta property="og:description" content="Cloud-enabled HIMS, LIMS, CIMS and RIS/RIMS software for hospitals, labs, clinics and radiology centers. Trusted across 8 countries since 2011.">
-<meta property="og:image" content="https://healtho.pro/assets/images/logo.png">
-<meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Healthocare Private Limited",
-  "alternateName": "HealthO Pro",
-  "url": "https://healtho.pro",
-  "logo": "https://healtho.pro/assets/images/logo.png",
-  "slogan": "Empowering Healthcare Providers",
-  "foundingDate": "2011",
-  "email": "sales@healtho.pro",
-  "telephone": "+91-97007-30044",
-  "areaServed": ["IN", "AE", "QA", "SA", "BH", "KW", "EG", "CA"],
-  "sameAs": []
-}
-</script>
-HTML;
+$title       = 'HealthO Pro — HIMS, LIMS, CIMS & RIS Healthcare Software';
+$description = 'Cloud hospital (HIMS), lab (LIMS), clinic (CIMS) and radiology (RIS) software by Healthocare Pvt Ltd. Trusted in 8 countries since 2011. Book a free demo.';
+$faqs = [
+    'What is HealthO Pro?' =>
+        'HealthO Pro is a cloud-enabled healthcare software suite by Healthocare Private Limited. It includes HIMS for hospitals, LIMS for diagnostic laboratories, CIMS for clinics and polyclinics, and RIS/RIMS for radiology and imaging centers, all built to work together on one platform.',
+    'Who uses HealthO Pro?' =>
+        'Hospitals, diagnostic laboratories, clinics, polyclinics and radiology centers — from single-doctor clinics to multi-site hospital chains. HealthO Pro serves 1,200+ healthcare clients across India, the UAE, Qatar, Saudi Arabia, Bahrain, Kuwait, Egypt and Canada.',
+    'Is HealthO Pro cloud-based?' =>
+        'Yes. HealthO Pro is cloud-enabled, so your team can use it from anywhere with a browser. It is secure by design, with role-based access, audit trails and encrypted data.',
+    'Can HIMS, LIMS, CIMS and RIS be used together?' =>
+        'Yes. The products are modular and integrated — for example, HIMS has built-in LIMS and RIS integration for orders, results and reports. You can start with one product and add others as you grow.',
+    'How much does HealthO Pro cost?' =>
+        'HIMS, LIMS and CIMS are offered in Startup, Business and Enterprise plans with a choice of billing cycles, and yearly billing saves up to 20%. RIS/RIMS is pay-as-you-go at ₹5 per patient. See the pricing page for current plans.',
+    'How long has Healthocare Private Limited been in business?' =>
+        'Since 2011. The company started as Hallys IT, expanded as IncraSoft Private Limited in 2015, and became Healthocare Private Limited in 2023.',
+    'Does HealthO Pro offer a free demo and support?' =>
+        'Yes. You can book a free, no-obligation demo tailored to your organization. Onboarding is included and support is available 24×7.',
+];
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/contact-strip.php';
 require __DIR__ . '/partials/head.php';
@@ -48,9 +39,9 @@ require __DIR__ . '/partials/head.php';
           <a href="solutions" class="btn btn-ghost-light btn-lg">Explore Solutions</a>
         </div>
         <div class="hero-trust reveal d4">
-          <div><div class="num"><span data-count="13" data-suffix="+">0</span></div><div class="lbl">Years of Expertise</div></div>
-          <div><div class="num"><span data-count="8" data-suffix="">0</span></div><div class="lbl">Countries Served</div></div>
-          <div><div class="num"><span data-count="1200" data-suffix="+">0</span></div><div class="lbl">Healthcare Clients</div></div>
+          <div><div class="num"><span data-count="13" data-suffix="+">13+</span></div><div class="lbl">Years of Expertise</div></div>
+          <div><div class="num"><span data-count="8" data-suffix="">8</span></div><div class="lbl">Countries Served</div></div>
+          <div><div class="num"><span data-count="1200" data-suffix="+">1,200+</span></div><div class="lbl">Healthcare Clients</div></div>
         </div>
       </div>
       <div class="hero-visual reveal d2">
@@ -193,10 +184,10 @@ require __DIR__ . '/partials/head.php';
 <section class="section section--navy">
   <div class="container">
     <div class="stats">
-      <div class="stat reveal"><div class="n"><span data-count="13" data-suffix="+">0</span></div><div class="l">Years in healthcare IT</div></div>
-      <div class="stat reveal d1"><div class="n"><span data-count="1200" data-suffix="+">0</span></div><div class="l">Healthcare clients</div></div>
-      <div class="stat reveal d2"><div class="n"><span data-count="8" data-suffix="">0</span></div><div class="l">Countries served</div></div>
-      <div class="stat reveal d3"><div class="n"><span data-count="99.9" data-suffix="%">0</span></div><div class="l">Platform uptime</div></div>
+      <div class="stat reveal"><div class="n"><span data-count="13" data-suffix="+">13+</span></div><div class="l">Years in healthcare IT</div></div>
+      <div class="stat reveal d1"><div class="n"><span data-count="1200" data-suffix="+">1,200+</span></div><div class="l">Healthcare clients</div></div>
+      <div class="stat reveal d2"><div class="n"><span data-count="8" data-suffix="">8</span></div><div class="l">Countries served</div></div>
+      <div class="stat reveal d3"><div class="n"><span data-count="99.9" data-suffix="%">99.9%</span></div><div class="l">Platform uptime</div></div>
     </div>
   </div>
 </section>
@@ -231,6 +222,9 @@ require __DIR__ . '/partials/head.php';
     </div>
   </div>
 </section>
+
+<!-- ===== FAQ ===== -->
+<?php faq_section($faqs, 'Questions about HealthO Pro', 'section section--tint'); ?>
 
 <!-- ===== LEAD-GEN FORM ===== -->
 <section class="section" id="demo">

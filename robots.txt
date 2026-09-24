@@ -1,4 +1,30 @@
+# HealthO Pro — https://healtho.pro
+# Search engines and AI assistants are welcome to read and cite this site.
+
 User-agent: *
+Allow: /
+Disallow: /PHPMailer/
+Disallow: /api/
+Disallow: /partials/
+Disallow: /*?ts=
+
+# AI search and assistant crawlers — explicitly allowed so HealthO Pro can be
+# found and cited in ChatGPT, Claude, Perplexity, Gemini and Copilot answers.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Bingbot
+User-agent: CCBot
+User-agent: meta-externalagent
+User-agent: Amazonbot
+User-agent: DuckAssistBot
 Allow: /
 Disallow: /PHPMailer/
 Disallow: /api/

@@ -1,7 +1,19 @@
 <?php
 $page        = 'pricing';
 $title       = 'Pricing — HIMS, LIMS, CIMS & RIS/RIMS Plans | HealthO Pro';
-$description = 'Transparent HealthO Pro pricing. Choose the billing cycle that suits you for HIMS, LIMS and CIMS (Startup, Business, Enterprise plans), or pay-as-you-go RIS/RIMS at just ₹5 per patient.';
+$description = 'HealthO Pro pricing: Startup, Business & Enterprise plans for HIMS, LIMS and CIMS — save up to 20% yearly — and pay-as-you-go RIS/RIMS at ₹5 per patient.';
+$faqs = [
+    'Can I switch between billing cycles?' =>
+        'Yes. You can pick any billing cycle shown above and switch at renewal. Yearly billing gives the best value with up to 20% savings.',
+    'Is there a setup or onboarding fee?' =>
+        'Standard onboarding, configuration and data migration are included. Complex enterprise migrations may be scoped separately — your account manager will confirm upfront.',
+    'How does RIS/RIMS pay-as-you-go billing work?' =>
+        'You\'re billed a simple ₹5 per patient processed through the system. There are no fixed license fees, so your cost scales directly with your imaging volume.',
+    'Can I use multiple products together?' =>
+        'Absolutely. HIMS, LIMS, CIMS and RIS/RIMS are built to work together. Combine modules and we\'ll provide a bundled quote tailored to your organization.',
+    'Do you offer a free demo before purchase?' =>
+        'Yes — book a free, no-obligation demo and our team will walk you through the platform configured for your use case.',
+];
 require __DIR__ . '/partials/user-stepper.php';
 require __DIR__ . '/partials/head.php';
 ?>
@@ -116,18 +128,7 @@ require __DIR__ . '/partials/head.php';
 </section>
 
     <!-- ===== FAQ ===== -->
-<section class="section section--soft">
-  <div class="container">
-    <div class="sec-head reveal"><span class="eyebrow">FAQ</span><h2 class="h-sec">Pricing questions, answered</h2></div>
-    <div class="faq">
-      <div class="faq-item reveal"><button class="faq-q">Can I switch between billing cycles?<span class="ic">+</span></button><div class="faq-a"><div class="faq-a-inner">Yes. You can pick any billing cycle shown above and switch at renewal. Yearly billing gives the best value with up to 20% savings.</div></div></div>
-      <div class="faq-item reveal"><button class="faq-q">Is there a setup or onboarding fee?<span class="ic">+</span></button><div class="faq-a"><div class="faq-a-inner">Standard onboarding, configuration and data migration are included. Complex enterprise migrations may be scoped separately — your account manager will confirm upfront.</div></div></div>
-      <div class="faq-item reveal"><button class="faq-q">How does RIS/RIMS pay-as-you-go billing work?<span class="ic">+</span></button><div class="faq-a"><div class="faq-a-inner">You're billed a simple ₹5 per patient processed through the system. There are no fixed license fees, so your cost scales directly with your imaging volume.</div></div></div>
-      <div class="faq-item reveal"><button class="faq-q">Can I use multiple products together?<span class="ic">+</span></button><div class="faq-a"><div class="faq-a-inner">Absolutely. HIMS, LIMS, CIMS and RIS/RIMS are built to work together. Combine modules and we'll provide a bundled quote tailored to your organization.</div></div></div>
-      <div class="faq-item reveal"><button class="faq-q">Do you offer a free demo before purchase?<span class="ic">+</span></button><div class="faq-a"><div class="faq-a-inner">Yes — book a free, no-obligation demo and our team will walk you through the platform configured for your use case.</div></div></div>
-    </div>
-  </div>
-</section>
+<?php faq_section($faqs, 'Pricing questions, answered', 'section section--soft'); ?>
 
     <!-- ===== CTA ===== -->
 <section class="section">

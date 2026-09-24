@@ -8,15 +8,18 @@
  *   $description meta description
  * Optional:
  *   $canonical   full URL, defaults to https://healtho.pro/$page
- *   $head_extra  raw HTML appended inside <head> (og tags, JSON-LD, …)
+ *   $head_extra  raw HTML appended inside <head> (page styles, page-specific JSON-LD, …)
+ *   $faqs, $schema, $crumbs, $robots, $og_image, $og_type, $page_type — see partials/seo.php
  */
 require_once __DIR__ . '/site.php';
+require_once __DIR__ . '/seo.php';
 
 $page        = $page        ?? '';
 $title       = $title       ?? 'HealthO Pro — Empowering Healthcare Providers';
 $description = $description ?? '';
 $canonical   = $canonical   ?? SITE_URL . '/' . $page;
 $head_extra  = $head_extra  ?? '';
+$faqs        = $faqs        ?? [];
 
 // Product pages keep the Solutions tab lit.
 $nav_active = in_array($page, ['solutions', 'hims', 'lims', 'cims', 'ris'], true) ? 'solutions' : $page;
@@ -32,6 +35,20 @@ $active = static fn(string $slug): string => $slug === $nav_active ? ' active' :
 <meta name="theme-color" content="#122B5C">
 <link rel="canonical" href="<?= h($canonical) ?>">
 <link rel="icon" type="image/png" href="/assets/images/favicon.png">
+<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+<?= seo_head([
+    'page'        => $page,
+    'title'       => $title,
+    'description' => $description,
+    'canonical'   => $canonical,
+    'faqs'        => $faqs,
+    'schema'      => $schema ?? [],
+    'crumbs'      => $crumbs ?? null,
+    'robots'      => $robots ?? '',
+    'og_image'    => $og_image ?? '',
+    'og_type'     => $og_type ?? '',
+    'page_type'   => $page_type ?? '',
+]) ?>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

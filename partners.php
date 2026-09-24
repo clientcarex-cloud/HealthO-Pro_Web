@@ -1,7 +1,7 @@
 <?php
 $page        = 'partners';
-$title       = 'Channel Partners | HealthO Pro';
-$description = 'Meet HealthO Pro\'s authorized channel partners, resellers and distributors across countries and states. Every partner holds a verifiable partnership certificate — verify any certificate instantly by QR code.';
+$title       = 'Channel Partners, Resellers & Distributors | HealthO Pro';
+$description = 'Find authorized HealthO Pro channel partners, resellers and distributors by country and state. Every partner certificate can be verified by QR code.';
 $head_extra  = <<<'HTML'
 <style>
 /* ── Partners page ── */

@@ -1,7 +1,8 @@
 <?php
 $page        = 'testimonials';
 $title       = 'Testimonials & Client Success Stories | HealthO Pro';
-$description = 'See why hospitals, laboratories, clinics and radiology centers across 8 countries trust HealthO Pro. Read client success stories and results from real healthcare providers.';
+$description = 'Why 1,200+ hospitals, labs, clinics and radiology centers in 8 countries trust HealthO Pro. Read real client success stories and results.';
+$page_type = 'CollectionPage';
 require __DIR__ . '/partials/head.php';
 ?>
 <!-- ===== PAGE HERO ===== -->
@@ -19,10 +20,10 @@ require __DIR__ . '/partials/head.php';
 <section class="section--navy" style="padding:54px 0;">
   <div class="container">
     <div class="stats">
-      <div class="stat reveal"><div class="n"><span data-count="1200" data-suffix="+">0</span></div><div class="l">Happy clients</div></div>
-      <div class="stat reveal d1"><div class="n"><span data-count="8" data-suffix="">0</span></div><div class="l">Countries</div></div>
-      <div class="stat reveal d2"><div class="n"><span data-count="13" data-suffix="+">0</span></div><div class="l">Years of trust</div></div>
-      <div class="stat reveal d3"><div class="n"><span data-count="4.9" data-suffix="/5">0</span></div><div class="l">Average rating</div></div>
+      <div class="stat reveal"><div class="n"><span data-count="1200" data-suffix="+">1,200+</span></div><div class="l">Happy clients</div></div>
+      <div class="stat reveal d1"><div class="n"><span data-count="8" data-suffix="">8</span></div><div class="l">Countries</div></div>
+      <div class="stat reveal d2"><div class="n"><span data-count="13" data-suffix="+">13+</span></div><div class="l">Years of trust</div></div>
+      <div class="stat reveal d3"><div class="n"><span data-count="4.9" data-suffix="/5">4.9/5</span></div><div class="l">Average rating</div></div>
     </div>
   </div>
 </section>

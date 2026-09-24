@@ -7,6 +7,24 @@ RewriteRule (^|/)\.(?!well-known) - [F]
     Require all denied
 </FilesMatch>
 
+# ── SEO: one URL per page ────────────────────────────────────────────────
+# /index, /index.php -> /   and   /pricing.php -> /pricing  (301, query kept).
+# THE_REQUEST is the browser's original request line, so the internal
+# ".php" rewrites further down can never loop back into these redirects.
+# Only GET/HEAD on this site's own top-level files: form posts, api/*.php
+# and anything the CRM serves on this domain are never redirected.
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+RewriteCond %{THE_REQUEST} \s/+index(\.php)?[\s?]
+RewriteRule ^index(\.php)?$ / [R=301,L]
+
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+RewriteCond %{THE_REQUEST} \s/+[A-Za-z0-9\-]+\.php[\s?]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^([A-Za-z0-9\-]+)\.php$ /$1 [R=301,L]
+
+# Sitemap is generated live (new job openings included).
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
 # Single job opening: /careers/{slug} -> career.php?j={slug}
 # Must precede the extension rules — "careers/senior-engineer.php" does not
 # exist, so without this the request would fall through to a 404.
@@ -21,3 +39,29 @@ RewriteRule ^(.*)$ $1.html [L]
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^(.*)$ $1.php [L]
+
+# ── Performance (Core Web Vitals) ─────────────────────────────────────────
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml application/xml application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/webp "access plus 30 days"
+    ExpiresByType image/png  "access plus 30 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+    ExpiresByType image/x-icon "access plus 30 days"
+    # styles.css / script.js are cache-busted with ?v=ASSET_VER.
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    <FilesMatch "^llms(-full)?\.txt$">
+        Header set Content-Type "text/plain; charset=utf-8"
+    </FilesMatch>
+</IfModule>

@@ -1,0 +1,37 @@
+# HealthO Pro
+
+> HealthO Pro is a cloud-enabled healthcare software suite built by Healthocare Private Limited (India). It includes HIMS for hospitals, LIMS for diagnostic laboratories, CIMS for clinics and polyclinics, and RIS/RIMS for radiology and imaging centers. The company has served healthcare providers since 2011 and has 1,200+ clients in 8 countries: India, the United Arab Emirates, Qatar, Saudi Arabia, Bahrain, Kuwait, Egypt and Canada.
+
+Key facts:
+
+- Company: Healthocare Private Limited. Brand: HealthO Pro. Website: https://healtho.pro
+- History: founded in 2011 as Hallys IT, expanded as IncraSoft Private Limited in 2015, rebranded as Healthocare Private Limited in 2023.
+- Headquarters: India. Markets served: India, the GCC (UAE, Qatar, Saudi Arabia, Bahrain, Kuwait), Egypt and Canada.
+- Deployment: cloud-enabled and used in a web browser. Secure by design, with role-based access, audit trails and encrypted data.
+- Scale: from single-doctor clinics to multi-site hospital chains. 24×7 support. Onboarding is included.
+- Pricing: HIMS, LIMS and CIMS come in Startup, Business and Enterprise plans with a choice of billing cycles. Yearly billing saves up to 20%. RIS/RIMS is pay-as-you-go at ₹5 per patient, with no fixed licence fee.
+- Free demo: https://healtho.pro/contact
+- Sales: +91 97007 30044, sales@healtho.pro. Support: +91 97007 10055, support@healtho.pro
+
+## Products
+
+- [HIMS: Hospital Information Management System](https://healtho.pro/hims): OPD/IPD with real-time bed status, patient registration with UHID and ABHA support, EMR/EHR, cash, credit, insurance/TPA and package billing with GST-ready invoices, pharmacy and inventory (batch/expiry tracking, reorder alerts), built-in lab and radiology integration, analytics and MIS dashboards.
+- [LIMS: Laboratory Information Management System](https://healtho.pro/lims): barcoded sample registration and chain-of-custody tracking, bi-directional integration with biochemistry, hematology and immunoassay analyzers, automated validation, QC with Levey-Jennings charts, branded reports via WhatsApp, email and a patient portal, B2B collection centers and referral doctors, TAT analytics.
+- [CIMS: Clinic Information Management System](https://healtho.pro/cims): online and walk-in appointments, token and queue management, e-prescriptions with dosage templates, central EMR, billing and online payments, automated SMS/WhatsApp reminders, footfall and revenue reports.
+- [RIS / RIMS: Radiology Information System](https://healtho.pro/ris): slot-based scheduling and modality worklists, CT/MRI/X-ray/ultrasound integration with PACS and DICOM viewers, structured templates, voice-to-text and radiologist e-signature, report and image sharing via link, WhatsApp and patient portal, pay-as-you-go at ₹5 per patient.
+- [All solutions](https://healtho.pro/solutions): how the four products work together on one platform.
+
+## Company
+
+- [Pricing](https://healtho.pro/pricing): current plans, billing cycles and FAQs.
+- [Testimonials](https://healtho.pro/testimonials): client stories from hospitals, labs, clinics and imaging centers.
+- [Channel partners](https://healtho.pro/partners): authorized resellers and distributors. Each partner has a verifiable certificate.
+- [Careers](https://healtho.pro/careers): current job openings, internships and apprenticeships.
+- [Contact](https://healtho.pro/contact): sales, support and demo requests.
+
+## Optional
+
+- [Message to the CEO](https://healtho.pro/message-to-ceo)
+- [Privacy policy](https://healtho.pro/privacy-policy)
+- [Terms and conditions](https://healtho.pro/terms-conditions)
+- [Sitemap](https://healtho.pro/sitemap.xml)

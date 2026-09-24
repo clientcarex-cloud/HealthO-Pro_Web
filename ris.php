@@ -1,7 +1,23 @@
 <?php
 $page        = 'ris';
 $title       = 'RIS / RIMS — Radiology Information System | HealthO Pro';
-$description = 'HealthO Pro RIS/RIMS: a complete Radiology Information System with scheduling, modality worklists, DICOM-ready reporting and a flexible pay-as-you-go model at just ₹5 per patient.';
+$description = 'Radiology Information System (RIS/RIMS) with modality worklists, DICOM & PACS integration, templated reports and e-sign. Pay-as-you-go at ₹5 per patient.';
+require_once __DIR__ . '/partials/seo.php';
+$faqs = [
+    'What is a Radiology Information System (RIS/RIMS)?' =>
+        'A RIS manages the radiology workflow from scan booking to the signed report. HealthO Pro RIS/RIMS covers scheduling, modality worklists, reporting, radiologist e-signature, billing and report delivery.',
+    'How much does HealthO Pro RIS cost?' =>
+        'RIS/RIMS is pay-as-you-go at ₹5 per patient processed. There are no fixed monthly licence fees, all core features are included, and onboarding and 24×7 support are free.',
+    'Does the RIS integrate with PACS and DICOM?' =>
+        'Yes. It integrates CT, MRI, X-ray and ultrasound modalities with PACS and DICOM viewers, with DICOM-ready, PACS-friendly reporting.',
+    'Can radiologists report faster?' =>
+        'Yes. Reporting uses structured templates, voice-to-text and radiologist e-signature.',
+    'How do patients receive their reports?' =>
+        'Reports and images can be shared via a link, WhatsApp and the patient portal.',
+    'Is it suitable for hospital radiology departments?' =>
+        'Yes. It works for standalone imaging centers and hospital radiology departments, and it integrates with HealthO Pro HIMS.',
+];
+$schema = [seo_software('ris', 'RIS / RIMS — Radiology Information System', $description, 'Radiology Information System', ['price' => '5', 'unit' => '₹5 per patient processed, pay-as-you-go, no fixed licence fee'])];
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/contact-strip.php';
 require __DIR__ . '/partials/head.php';
@@ -88,6 +104,9 @@ require __DIR__ . '/partials/head.php';
     </div>
   </div>
 </section>
+
+<!-- ===== FAQ ===== -->
+<?php faq_section($faqs, 'RIS / RIMS questions, answered'); ?>
 
 <!-- ===== LEAD-GEN ===== -->
 <section class="section section--soft" id="demo">

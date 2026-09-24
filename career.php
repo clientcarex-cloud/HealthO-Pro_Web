@@ -28,6 +28,7 @@ if (!$job) {
     $title       = 'Position not found | HealthO Pro Careers';
     $description = 'This opening is no longer listed. See all current openings at HealthO Pro.';
     $canonical   = SITE_URL . '/careers';
+    $robots      = 'noindex, follow';
     require __DIR__ . '/partials/head.php';
     ?>
     <header class="page-hero">
@@ -61,6 +62,7 @@ $page        = 'careers';
 $title       = ($job['seo_title'] !== '' ? $job['seo_title'] : $job['title'] . ' — Careers') . ' | ' . $company;
 $description = $job['seo_description'] !== '' ? $job['seo_description'] : $job['summary'];
 $canonical   = career_url($job['slug'], true);
+$crumbs      = ['Careers' => SITE_URL . '/careers', $job['title'] => $canonical];
 
 /* ── JobPosting structured data (Google Jobs) ───────────────────────────── */
 

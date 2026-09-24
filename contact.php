@@ -1,7 +1,8 @@
 <?php
 $page        = 'contact';
 $title       = 'Contact Us — HealthO Pro | Healthocare Private Limited';
-$description = 'Get in touch with HealthO Pro. Talk to our sales team at +91 97007 30044 or support at +91 97007 10055, email sales@healtho.pro, or send us a message. Serving healthcare providers across 8 countries.';
+$description = 'Contact HealthO Pro: sales +91 97007 30044, support +91 97007 10055, sales@healtho.pro. Book a free HIMS, LIMS, CIMS or RIS demo today.';
+$page_type = 'ContactPage';
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/head.php';
 ?>

@@ -2,6 +2,7 @@
 $page        = 'message-to-ceo';
 $title       = 'Message to CEO — Share Your Feedback | HealthO Pro';
 $description = 'Have feedback, a suggestion or a concern? Send a message directly to the HealthO Pro CEO. Every message is read and we respond within two business days.';
+$page_type = 'ContactPage';
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/head.php';
 ?>

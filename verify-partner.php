@@ -2,8 +2,8 @@
 $page        = 'verify-partner';
 $title       = 'Verify Partner Certificate | HealthO Pro';
 $description = 'Instantly verify the authenticity of a HealthO Pro channel partner certificate. Enter the certificate number or scan the QR code on the certificate.';
+$robots      = 'noindex, follow';
 $head_extra  = <<<'HTML'
-<meta name="robots" content="noindex, follow">
 <style>
 /* ── Verify page ── */
 .vf-shell { max-width:680px; margin:0 auto; }

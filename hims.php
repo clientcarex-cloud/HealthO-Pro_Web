@@ -1,7 +1,23 @@
 <?php
 $page        = 'hims';
 $title       = 'HIMS — Hospital Information Management System | HealthO Pro';
-$description = 'HealthO Pro HIMS: a complete Hospital Information Management System covering OPD/IPD, EMR, billing, pharmacy, inventory and bed management. Scalable, secure and cloud-enabled.';
+$description = 'Cloud HIMS for hospitals: OPD/IPD, EMR, GST billing, insurance & TPA, pharmacy, inventory and bed management in one secure system. Book a free HealthO Pro demo.';
+require_once __DIR__ . '/partials/seo.php';
+$faqs = [
+    'What is a Hospital Information Management System (HIMS)?' =>
+        'A HIMS is software that runs a hospital\'s clinical, administrative and financial work in one system. HealthO Pro HIMS covers patient registration, OPD and IPD, electronic medical records, billing, pharmacy, inventory, bed management and reporting.',
+    'Which modules does HealthO Pro HIMS include?' =>
+        'Patient registration with UHID and ABHA support, EMR/EHR, billing and revenue (cash, credit, insurance and package billing with GST-ready invoices), pharmacy and inventory, built-in lab and radiology integration, and live analytics and MIS dashboards.',
+    'Does the HIMS handle insurance and TPA claims?' =>
+        'Yes. Billing covers cash, credit, insurance and package billing, including insurance and TPA claims, with GST-ready invoices.',
+    'Does HIMS integrate with the laboratory and radiology?' =>
+        'Yes. HealthO Pro HIMS has built-in LIMS and RIS integration, so lab and imaging orders, results and reports flow into the patient record.',
+    'Is HealthO Pro HIMS suitable for small hospitals?' =>
+        'Yes. It scales from small hospitals under 50 beds to 500+ bed hospitals and multi-site chains, with Startup, Business and Enterprise plans.',
+    'Is patient data secure?' =>
+        'HealthO Pro is secure by design, with role-based access, audit trails and encrypted data, and it is cloud-enabled for access from anywhere.',
+];
+$schema = [seo_software('hims', 'HIMS — Hospital Information Management System', $description, 'Hospital Information Management System', null)];
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/pricing-section.php';
 require __DIR__ . '/partials/contact-strip.php';
@@ -66,16 +82,19 @@ require __DIR__ . '/partials/head.php';
   <div class="container">
     <div class="sec-head reveal"><span class="eyebrow">Outcomes</span><h2 class="h-sec">Real impact for your hospital</h2></div>
     <div class="stats">
-      <div class="stat reveal"><div class="n"><span data-count="38" data-suffix="%">0</span></div><div class="l">Faster patient throughput</div></div>
-      <div class="stat reveal d1"><div class="n"><span data-count="60" data-suffix="%">0</span></div><div class="l">Fewer billing errors</div></div>
-      <div class="stat reveal d2"><div class="n"><span data-count="100" data-suffix="%">0</span></div><div class="l">Paperless records</div></div>
-      <div class="stat reveal d3"><div class="n"><span data-count="24" data-suffix="×7">0</span></div><div class="l">Support &amp; uptime</div></div>
+      <div class="stat reveal"><div class="n"><span data-count="38" data-suffix="%">38%</span></div><div class="l">Faster patient throughput</div></div>
+      <div class="stat reveal d1"><div class="n"><span data-count="60" data-suffix="%">60%</span></div><div class="l">Fewer billing errors</div></div>
+      <div class="stat reveal d2"><div class="n"><span data-count="100" data-suffix="%">100%</span></div><div class="l">Paperless records</div></div>
+      <div class="stat reveal d3"><div class="n"><span data-count="24" data-suffix="×7">24×7</span></div><div class="l">Support &amp; uptime</div></div>
     </div>
   </div>
 </section>
 
 <!-- ===== PRICING ===== -->
 <?php pricing_section('hims'); ?>
+
+<!-- ===== FAQ ===== -->
+<?php faq_section($faqs, 'HIMS questions, answered'); ?>
 
 <!-- ===== LEAD-GEN ===== -->
 <section class="section section--soft" id="demo">

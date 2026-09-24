@@ -2,7 +2,6 @@
 $page        = 'privacy-policy';
 $title       = 'Privacy Policy | HealthO Pro';
 $description = 'HealthO Pro (Healthocare Private Limited) Privacy Policy — how we collect, use and protect your information.';
-$head_extra  = '<meta name="robots" content="noindex, follow">';
 require __DIR__ . '/partials/head.php';
 ?>
 <header class="page-hero">

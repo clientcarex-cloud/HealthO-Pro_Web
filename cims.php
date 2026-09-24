@@ -1,7 +1,23 @@
 <?php
 $page        = 'cims';
 $title       = 'CIMS — Clinic Information Management System | HealthO Pro';
-$description = 'HealthO Pro CIMS: a complete Clinic Information Management System with online appointments, queue management, e-prescriptions, patient records and billing. Perfect for clinics and polyclinics.';
+$description = 'Clinic management software for clinics & polyclinics: online appointments, queue tokens, e-prescriptions, patient records, billing and WhatsApp reminders.';
+require_once __DIR__ . '/partials/seo.php';
+$faqs = [
+    'What is a Clinic Information Management System (CIMS)?' =>
+        'A CIMS is clinic management software that handles appointments, patient records, prescriptions and billing. HealthO Pro CIMS is built for single-doctor clinics and multi-specialty polyclinics.',
+    'Does HealthO Pro CIMS support online appointment booking?' =>
+        'Yes. It supports online and walk-in booking with a calendar view, doctor availability slots, and token and queue management.',
+    'Can doctors write digital prescriptions?' =>
+        'Yes. E-prescriptions use quick-pick drugs and dosage templates and can be printed, and each patient\'s visit history, vitals and documents are kept in a central EMR.',
+    'Does CIMS send reminders to patients?' =>
+        'Yes. Automated SMS and WhatsApp reminders, follow-ups and feedback collection are built in.',
+    'Can a clinic chain use CIMS across locations?' =>
+        'Yes. CIMS is cloud-enabled and scales from a single clinic to multi-location clinic chains.',
+    'How quickly can a clinic get started?' =>
+        'Most clinics can go digital in days. Onboarding is included, and you can book a free demo first.',
+];
+$schema = [seo_software('cims', 'CIMS — Clinic Information Management System', $description, 'Clinic Management Software', null)];
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/pricing-section.php';
 require __DIR__ . '/partials/contact-strip.php';
@@ -66,16 +82,19 @@ require __DIR__ . '/partials/head.php';
   <div class="container">
     <div class="sec-head reveal"><span class="eyebrow">Outcomes</span><h2 class="h-sec">A better experience for everyone</h2></div>
     <div class="stats">
-      <div class="stat reveal"><div class="n"><span data-count="45" data-suffix="%">0</span></div><div class="l">Less waiting time</div></div>
-      <div class="stat reveal d1"><div class="n"><span data-count="30" data-suffix="%">0</span></div><div class="l">More repeat visits</div></div>
-      <div class="stat reveal d2"><div class="n"><span data-count="5" data-prefix="<" data-suffix="min">0</span></div><div class="l">Avg. checkout time</div></div>
-      <div class="stat reveal d3"><div class="n"><span data-count="24" data-suffix="×7">0</span></div><div class="l">Support &amp; uptime</div></div>
+      <div class="stat reveal"><div class="n"><span data-count="45" data-suffix="%">45%</span></div><div class="l">Less waiting time</div></div>
+      <div class="stat reveal d1"><div class="n"><span data-count="30" data-suffix="%">30%</span></div><div class="l">More repeat visits</div></div>
+      <div class="stat reveal d2"><div class="n"><span data-count="5" data-prefix="&lt;" data-suffix="min">&lt;5min</span></div><div class="l">Avg. checkout time</div></div>
+      <div class="stat reveal d3"><div class="n"><span data-count="24" data-suffix="×7">24×7</span></div><div class="l">Support &amp; uptime</div></div>
     </div>
   </div>
 </section>
 
 <!-- ===== PRICING ===== -->
 <?php pricing_section('cims'); ?>
+
+<!-- ===== FAQ ===== -->
+<?php faq_section($faqs, 'CIMS questions, answered'); ?>
 
 <!-- ===== LEAD-GEN ===== -->
 <section class="section section--soft" id="demo">

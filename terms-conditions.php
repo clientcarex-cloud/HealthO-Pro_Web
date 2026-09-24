@@ -1,8 +1,7 @@
 <?php
 $page        = 'terms-conditions';
-$title       = 'Terms &amp; Conditions | HealthO Pro';
+$title       = 'Terms & Conditions | HealthO Pro';
 $description = 'HealthO Pro (Healthocare Private Limited) Terms & Conditions governing the use of our website, products and services.';
-$head_extra  = '<meta name="robots" content="noindex, follow">';
 require __DIR__ . '/partials/head.php';
 ?>
 <header class="page-hero">

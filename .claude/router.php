@@ -14,6 +14,11 @@ if ($path === '/') {
     return true;
 }
 
+if ($path === '/sitemap.xml') {
+    require $root . '/sitemap.php';
+    return true;
+}
+
 // Single job opening — mirrors the /careers/{slug} rewrite in .htaccess.
 if (preg_match('#^/careers/([A-Za-z0-9\-]+)/?$#', $path, $m)) {
     $_GET['j'] = $m[1];

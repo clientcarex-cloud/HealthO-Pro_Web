@@ -1,7 +1,19 @@
 <?php
 $page        = 'solutions';
 $title       = 'Healthcare Software Solutions — HIMS, LIMS, CIMS & RIS | HealthO Pro';
-$description = 'Explore HealthO Pro\'s healthcare software suite: HIMS for hospitals, LIMS for laboratories, CIMS for clinics and RIS/RIMS for radiology centers. Scalable, secure and cloud-enabled.';
+$description = 'HealthO Pro healthcare software suite: HIMS for hospitals, LIMS for labs, CIMS for clinics and RIS/RIMS for radiology. Modular, secure and cloud-enabled.';
+require_once __DIR__ . '/partials/seo.php';
+$schema = [[
+    '@type'           => 'ItemList',
+    'name'            => 'HealthO Pro healthcare software',
+    'itemListElement' => [
+        ['@type' => 'ListItem', 'position' => 1, 'url' => SITE_URL . '/hims', 'name' => 'HIMS — Hospital Information Management System'],
+        ['@type' => 'ListItem', 'position' => 2, 'url' => SITE_URL . '/lims', 'name' => 'LIMS — Laboratory Information Management System'],
+        ['@type' => 'ListItem', 'position' => 3, 'url' => SITE_URL . '/cims', 'name' => 'CIMS — Clinic Information Management System'],
+        ['@type' => 'ListItem', 'position' => 4, 'url' => SITE_URL . '/ris',  'name' => 'RIS / RIMS — Radiology Information System'],
+    ],
+]];
+$page_type = 'CollectionPage';
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/head.php';
 ?>

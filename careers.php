@@ -130,6 +130,7 @@ $facetGroups = array_filter([
 // The filter bar earns its space only once there is enough to sift through.
 $showFilters = count($jobs) > 3 && !empty($facetGroups);
 
+$page_type  = 'CollectionPage';
 $head_extra = '<script type="application/ld+json">' . json_encode([
     '@context'        => 'https://schema.org',
     '@type'           => 'ItemList',

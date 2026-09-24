@@ -1,7 +1,23 @@
 <?php
 $page        = 'lims';
 $title       = 'LIMS — Laboratory Information Management System | HealthO Pro';
-$description = 'HealthO Pro LIMS: a complete Laboratory Information Management System with barcoded sample tracking, analyzer integration, automated validation and instant reporting. Cloud-enabled and secure.';
+$description = 'Cloud LIMS for diagnostic labs: barcoded samples, bi-directional analyzer integration, auto-validation, QC and instant WhatsApp/email reports. Book a free demo.';
+require_once __DIR__ . '/partials/seo.php';
+$faqs = [
+    'What is a Laboratory Information Management System (LIMS)?' =>
+        'A LIMS manages a diagnostic lab\'s work from sample registration to the final report. HealthO Pro LIMS handles barcoded sample tracking, analyzer integration, result validation, quality control and report delivery.',
+    'Can HealthO Pro LIMS connect to lab analyzers?' =>
+        'Yes. It supports bi-directional integration with biochemistry, hematology and immunoassay analyzers, so results flow in without manual entry.',
+    'How are lab reports delivered to patients?' =>
+        'Branded reports can be delivered instantly via WhatsApp, email and a patient portal, using custom templates and cumulative reports.',
+    'Does the LIMS support quality control?' =>
+        'Yes. It includes Levey-Jennings charts, normal ranges and automated validation rules.',
+    'Can it manage collection centers and referral doctors?' =>
+        'Yes. The B2B and referrals module manages collection centers, referral doctors and outsourced tests.',
+    'Is HealthO Pro LIMS suitable for multi-center labs?' =>
+        'Yes. It is built for everything from single labs to multi-center reference laboratories, with real-time turnaround time (TAT), revenue and volume tracking.',
+];
+$schema = [seo_software('lims', 'LIMS — Laboratory Information Management System', $description, 'Laboratory Information Management System', null)];
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/pricing-section.php';
 require __DIR__ . '/partials/contact-strip.php';
@@ -66,16 +82,19 @@ require __DIR__ . '/partials/head.php';
   <div class="container">
     <div class="sec-head reveal"><span class="eyebrow">Outcomes</span><h2 class="h-sec">Faster, error-free diagnostics</h2></div>
     <div class="stats">
-      <div class="stat reveal"><div class="n"><span data-count="50" data-suffix="%">0</span></div><div class="l">Faster report TAT</div></div>
-      <div class="stat reveal d1"><div class="n"><span data-count="99" data-suffix="%">0</span></div><div class="l">Result accuracy</div></div>
-      <div class="stat reveal d2"><div class="n"><span data-count="1000" data-suffix="+">0</span></div><div class="l">Tests/day capacity</div></div>
-      <div class="stat reveal d3"><div class="n"><span data-count="24" data-suffix="×7">0</span></div><div class="l">Support &amp; uptime</div></div>
+      <div class="stat reveal"><div class="n"><span data-count="50" data-suffix="%">50%</span></div><div class="l">Faster report TAT</div></div>
+      <div class="stat reveal d1"><div class="n"><span data-count="99" data-suffix="%">99%</span></div><div class="l">Result accuracy</div></div>
+      <div class="stat reveal d2"><div class="n"><span data-count="1000" data-suffix="+">1,000+</span></div><div class="l">Tests/day capacity</div></div>
+      <div class="stat reveal d3"><div class="n"><span data-count="24" data-suffix="×7">24×7</span></div><div class="l">Support &amp; uptime</div></div>
     </div>
   </div>
 </section>
 
 <!-- ===== PRICING ===== -->
 <?php pricing_section('lims'); ?>
+
+<!-- ===== FAQ ===== -->
+<?php faq_section($faqs, 'LIMS questions, answered'); ?>
 
 <!-- ===== LEAD-GEN ===== -->
 <section class="section section--soft" id="demo">
