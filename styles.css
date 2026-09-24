@@ -1185,6 +1185,7 @@ body.demo-open { overflow: hidden; }
 /* display:flex above would otherwise override the hidden attribute. */
 .bl-card[hidden] { display: none; }
 .bl-card:hover { transform: translateY(-4px); box-shadow: var(--e4); border-color: transparent; }
+.bl-card-img { display: block; width: calc(100% + 48px); max-width: none; height: auto; aspect-ratio: 640 / 358; object-fit: cover; margin: -24px -24px 4px; border-radius: var(--r-md) var(--r-md) 0 0; background: var(--bg-soft); }
 .bl-card h2, .bl-card h3 { font-size: 1.12rem; line-height: 1.35; color: var(--ink); }
 .bl-card p { color: var(--text-soft); font-size: .93rem; flex: 1; }
 .bl-card-foot { display: flex; justify-content: space-between; align-items: center; font-size: var(--text-sm); color: var(--text-mute); padding-top: 12px; border-top: 1px solid var(--line-soft); }
@@ -1197,6 +1198,7 @@ body.demo-open { overflow: hidden; }
 .bl-meta .bl-tag { color: var(--cyan-light); }
 .bl-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 34px; align-items: start; }
 .bl-article { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 40px 44px; box-shadow: var(--e1); }
+.bl-cover { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 672; border-radius: var(--r-md); margin-bottom: 28px; background: var(--bg-soft); }
 .bl-article > p.bl-lede { font-size: 1.12rem; color: var(--text); line-height: 1.75; }
 .bl-article h2 { font-size: 1.35rem; color: var(--ink); margin: 34px 0 16px; }
 .bl-points { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }

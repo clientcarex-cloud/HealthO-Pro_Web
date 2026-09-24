@@ -62,6 +62,9 @@ require __DIR__ . '/partials/head.php';
     <div class="bl-grid" id="blGrid">
 <?php foreach ($posts as $slug => $post): ?>
       <a class="bl-card" href="<?= h(blog_url($slug)) ?>" data-cat="<?= h($post['cat']) ?>" data-text="<?= h(mb_strtolower($post['name'] . ' ' . $post['title'] . ' ' . $post['short'] . ' ' . FEATURE_CATEGORIES[$post['cat']][0])) ?>">
+<?php if ($img = blog_image($slug, 'sm')): ?>
+        <img class="bl-card-img" src="<?= h($img) ?>" alt="<?= h($post['name']) ?> — HealthO Pro" width="640" height="358" loading="lazy" decoding="async">
+<?php endif; ?>
         <span class="bl-tag"><?= blog_icon($post['cat']) ?><?= h(FEATURE_CATEGORIES[$post['cat']][0]) ?></span>
         <h2><?= h($post['title']) ?></h2>
         <p><?= h($post['short']) ?></p>

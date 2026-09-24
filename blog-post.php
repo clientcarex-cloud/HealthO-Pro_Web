@@ -64,6 +64,8 @@ $canonical   = $url;
 $crumbs      = ['Blog' => blog_url('', true), $post['name'] => $url];
 $og_type     = 'article';
 $faqs        = $post['faqs'];
+$cover       = blog_image($slug);
+$og_image    = blog_image($slug, 'share', true);
 $schema      = [[
     '@type'            => 'BlogPosting',
     '@id'              => $url . '#article',
@@ -75,7 +77,7 @@ $schema      = [[
     'dateModified'     => BLOG_PUBLISHED,
     'author'           => ['@type' => 'Organization', 'name' => BRAND_NAME . ' Team', 'url' => SITE_URL . '/'],
     'publisher'        => ['@id' => ORG_ID],
-    'image'            => OG_IMAGE,
+    'image'            => $og_image ?: OG_IMAGE,
     'articleSection'   => $catName,
     'keywords'         => implode(', ', [$post['name'], $catName, 'HealthO Pro', 'healthcare software']),
     'about'            => ['@type' => 'Thing', 'name' => $post['name']],
@@ -106,6 +108,9 @@ $arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
   <div class="container">
     <div class="bl-layout">
       <article class="bl-article">
+<?php if ($cover): ?>
+        <img class="bl-cover" src="<?= h($cover) ?>" alt="<?= h($post['name']) ?> in HealthO Pro — illustration" width="1200" height="672" fetchpriority="high" decoding="async">
+<?php endif; ?>
         <p class="bl-lede"><?= h($post['intro']) ?></p>
 
         <h2>What <?= h($post['name']) ?> does</h2>

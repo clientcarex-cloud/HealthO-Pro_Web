@@ -118,6 +118,25 @@ function blog_read_minutes(array $post): int
     return max(2, (int) ceil(str_word_count($text) / 200));
 }
 
+/**
+ * Cover image for a post, from assets/images/blog/{slug}: 'lg' is the 1200×672
+ * WebP for the post page, 'sm' the 640-wide WebP for cards and 'share' the JPG
+ * for og:image and structured data. Empty string when the post has no cover.
+ */
+function blog_image(string $slug, string $size = 'lg', bool $absolute = false): string
+{
+    $file = match ($size) {
+        'sm'    => "$slug-sm.webp",
+        'share' => "$slug.jpg",
+        default => "$slug.webp",
+    };
+    if (!is_file(__DIR__ . '/../assets/images/blog/' . $file)) {
+        return '';
+    }
+    $path = '/assets/images/blog/' . rawurlencode($file);
+    return $absolute ? SITE_URL . $path : $path;
+}
+
 /** Inline category icon. */
 function blog_icon(string $cat, string $class = ''): string
 {
