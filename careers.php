@@ -473,7 +473,11 @@ require __DIR__ . '/partials/head.php';
               'Finance & HR', 'Internship / Apprenticeship', 'Other',
           ], true, 'Select an area…'),
           'interest' => '',
-          'extra'    => form_input('url', 'resume', 'Resume / CV link', 'Link to your CV (Google Drive, LinkedIn, etc.)'),
+          'extra'    => '<div class="field"><label>Resume / CV</label>'
+              . '<label class="file-drop"><input type="file" name="resume" accept=".pdf,.doc,.docx">'
+              . '<strong>Click to attach your CV</strong>'
+              . '<span class="file-drop-hint">PDF, DOC, DOCX · up to 5 MB</span>'
+              . '<span class="file-drop-name"></span></label></div>',
           'message'  => ['label' => 'About you', 'placeholder' => "Tell us what you do and what you'd like to work on…"],
           'submit'   => 'Submit Profile',
           'note'     => 'Applying for a listed role? Use the <strong>View &amp; Apply</strong> button on that opening — it reaches our hiring team directly.',

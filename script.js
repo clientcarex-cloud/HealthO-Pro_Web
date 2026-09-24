@@ -1297,6 +1297,21 @@
                     });
             });
 
+            form.querySelectorAll('.file-drop input[type="file"]').forEach(function (f) {
+                var name = f.closest('.file-drop').querySelector('.file-drop-name');
+                f.addEventListener('change', function () {
+                    var picked = f.files[0];
+                    if (picked && picked.size > 5 * 1048576) {
+                        f.value = '';
+                        name.textContent = '';
+                        showStatus('bad', 'Your CV is larger than 5 MB. Please attach a smaller file.');
+                        return;
+                    }
+                    name.textContent = picked ? picked.name + ' (' + (picked.size / 1048576).toFixed(1) + ' MB)' : '';
+                });
+                form.addEventListener('reset', function () { name.textContent = ''; });
+            });
+
             form.querySelectorAll('input, textarea, select').forEach(function (f) {
                 f.addEventListener('input', function () {
                     var field = f.closest('.field');

@@ -20,6 +20,26 @@ $phone    = isset($_POST['phone'])    ? strip_tags(trim($_POST['phone'])) : '';
 $orgType  = isset($_POST['orgType'])  ? strip_tags(trim($_POST['orgType'])) : '';
 $interest = isset($_POST['interest']) ? strip_tags(trim($_POST['interest'])) : '';
 $resume   = isset($_POST['resume'])   ? filter_var(trim($_POST['resume']), FILTER_SANITIZE_URL) : '';
+
+// Optional uploaded CV (general career application) — attached to the email.
+$cvPath = '';
+$cvName = '';
+if (isset($_FILES['resume']) && $_FILES['resume']['error'] !== UPLOAD_ERR_NO_FILE) {
+    $f   = $_FILES['resume'];
+    $ext = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
+    if ($f['error'] !== UPLOAD_ERR_OK || !is_uploaded_file($f['tmp_name'])) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'message' => 'Your CV could not be uploaded. Please try again (max 5 MB).']);
+        exit;
+    }
+    if (!in_array($ext, ['pdf', 'doc', 'docx'], true) || $f['size'] > 5 * 1048576) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'message' => 'Please attach your CV as a PDF, DOC or DOCX file up to 5 MB.']);
+        exit;
+    }
+    $cvPath = $f['tmp_name'];
+    $cvName = preg_replace('/[^A-Za-z0-9._ -]/', '_', basename($f['name']));
+}
 $message  = isset($_POST['message'])  ? strip_tags(trim($_POST['message'])) : '';
 
 // Auto-detected geo fields (populated client-side from the visitor's IP)
@@ -75,6 +95,7 @@ try {
     if ($orgType !== '')  $rows[] = ['Organization / Type', $h($orgType)];
     if ($category !== '') $rows[] = ['Type of Message', $h($category)];
     if ($interest !== '') $rows[] = ['Interested In / Position', $h($interest)];
+    if ($cvName !== '')   $rows[] = ['Resume / CV', $h($cvName) . ' <span style="color:#94a3b8;font-size:11px;">(attached)</span>'];
     if ($resume !== '')   $rows[] = ['Resume / CV', '<a href="' . $h($resume) . '" style="color:#0096B7;text-decoration:none;font-weight:600;">View / Download</a>'];
     $rows[] = ['Location', $h($location) . ' <span style="color:#94a3b8;font-size:11px;">(auto-detected)</span>'];
 
@@ -151,10 +172,13 @@ HTML;
     if ($orgType !== '')  $plain .= "Organization / Type: $orgType\n";
     if ($category !== '') $plain .= "Type of Message: $category\n";
     if ($interest !== '') $plain .= "Interested In / Position: $interest\n";
+    if ($cvName !== '')   $plain .= "Resume / CV: $cvName (attached)\n";
     if ($resume !== '')   $plain .= "Resume / CV: $resume\n";
     $plain .= "Location (auto-detected): $location\n";
     $plain .= str_repeat('-', 44) . "\n";
     $plain .= "Message:\n" . ($message !== '' ? $message : '— No message provided —') . "\n";
+
+    if ($cvPath !== '') $mail->addAttachment($cvPath, $cvName);
 
     $mail->Body    = $html;
     $mail->AltBody = $plain;

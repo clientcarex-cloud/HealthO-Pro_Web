@@ -1250,3 +1250,12 @@ body.demo-open { overflow: hidden; }
     .bl-pager { grid-template-columns: 1fr; }
     .bl-pager .next { grid-column: 1; }
 }
+
+/* File picker used by the general career application */
+.file-drop { display:block; border:1.5px dashed var(--line); border-radius:12px; padding:18px; text-align:center; cursor:pointer; transition:border-color .2s, background .2s; }
+.file-drop:hover { border-color:var(--cyan); background:var(--cyan-tint); }
+.file-drop input { display:none; }
+.file-drop strong { color:var(--navy); }
+.file-drop-hint { display:block; font-size:.8rem; color:var(--text-mute); margin-top:4px; }
+.file-drop-name { display:block; font-size:.86rem; color:var(--cyan-dark); font-weight:700; margin-top:6px; }
+.file-drop-name:empty { display:none; }
