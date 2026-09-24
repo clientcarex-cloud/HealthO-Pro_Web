@@ -1,0 +1,273 @@
+<?php
+/** Team & HR — see partials/blog-data.php for the format. */
+return [
+    'team' => [
+        'name'  => 'Team',
+        'cat'   => 'team',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Manage users, roles, permissions and branches for your whole team.',
+        'title' => 'Team: the right access for every person on your staff',
+        'desc'  => 'HealthO Pro Team manages users, roles, permissions and branch access, so every staff member sees exactly what their job needs.',
+        'intro' => 'A receptionist, a lab technician and an owner need very different access. HealthO Pro Team lets you add staff, assign roles and control permissions branch by branch.',
+        'points' => [
+            ['Users and roles', 'Add staff and assign them roles such as front desk, technician or doctor.'],
+            ['Fine-grained permissions', 'Control what each role can view, create, edit or approve.'],
+            ['Branch access', 'Limit users to the branches they work in.'],
+            ['Activity logs', 'See who did what, and when.'],
+            ['Quick deactivation', 'Remove access immediately when someone leaves.'],
+        ],
+        'benefits' => [
+            'Protected patient and financial data.',
+            'Fewer mistakes from wrong-screen access.',
+            'Accountability through activity logs.',
+            'Easy onboarding and offboarding.',
+        ],
+        'faqs' => [
+            'Can we control what each staff member can do?' => 'Yes. Roles and permissions define what each user can view, create, edit or approve, per branch.',
+            'Is user activity logged?' => 'Yes. Activity logs record who performed which action and when.',
+        ],
+    ],
+
+    'team-chat' => [
+        'name'  => 'Team Chat',
+        'cat'   => 'team',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Secure internal messaging between staff, departments and branches.',
+        'title' => 'Team Chat: work conversations off personal WhatsApp',
+        'desc'  => 'HealthO Pro Team Chat gives staff secure one-to-one and group messaging inside the system, so work and patient conversations stay professional.',
+        'intro' => 'Hospital and lab teams often coordinate on personal WhatsApp groups, mixing patient information with personal chats. HealthO Pro Team Chat moves work conversations into the system, where they belong.',
+        'points' => [
+            ['One-to-one and groups', 'Chat with a colleague, a department or a branch.'],
+            ['Inside HealthO Pro', 'No need to switch apps during work.'],
+            ['File sharing', 'Share documents and images with the team.'],
+            ['Controlled membership', 'Only current staff have access.'],
+            ['Searchable history', 'Find past conversations when needed.'],
+        ],
+        'benefits' => [
+            'Patient information stays off personal phones.',
+            'Faster coordination between departments.',
+            'Access ends when employment ends.',
+            'Fewer interruptions by phone.',
+        ],
+        'faqs' => [
+            'Why use Team Chat instead of WhatsApp groups?' => 'Team Chat keeps work conversations inside HealthO Pro, limited to current staff, instead of on personal phones.',
+            'Can we create department groups?' => 'Yes. Groups can be created for departments, branches or projects.',
+        ],
+    ],
+
+    'tasks-management' => [
+        'name'  => 'Tasks Management',
+        'cat'   => 'team',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Assign tasks with deadlines and track them to completion.',
+        'title' => 'Tasks Management: assign it, track it, get it done',
+        'desc'  => 'Assign tasks with owners, deadlines and priorities in HealthO Pro Tasks Management, and see what is pending, overdue and done.',
+        'intro' => 'Instructions given in the corridor are easily forgotten. HealthO Pro Tasks Management turns them into tasks with an owner and a deadline, so managers can see what is getting done.',
+        'points' => [
+            ['Create and assign', 'Give each task an owner, a due date and a priority.'],
+            ['Recurring tasks', 'Daily and weekly routines are created automatically.'],
+            ['Status tracking', 'Pending, in progress, done or overdue.'],
+            ['Comments and files', 'Discuss and attach documents on the task.'],
+            ['Task reports', 'Completion by person and team.'],
+        ],
+        'benefits' => [
+            'Nothing falls through the cracks.',
+            'Clear ownership.',
+            'Less micromanagement.',
+            'Measurable team productivity.',
+        ],
+        'faqs' => [
+            'Can tasks repeat automatically?' => 'Yes. Recurring tasks can be set to repeat daily, weekly or on another schedule.',
+            'Can managers see overdue tasks?' => 'Yes. Tasks are listed by status, including overdue, for each person and team.',
+        ],
+    ],
+
+    'staff-approvals' => [
+        'name'  => 'Staff Approvals',
+        'cat'   => 'team',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Route discounts, leave, purchases and changes to the right approver.',
+        'title' => 'Staff Approvals: fast decisions with a clear record',
+        'desc'  => 'Route discounts, refunds, leave, purchases and other requests to the right approver with HealthO Pro Staff Approvals — on any device.',
+        'intro' => 'Discounts, refunds, leave and purchases all need someone’s approval, and chasing managers slows everything down. HealthO Pro Staff Approvals routes each request to the right person and records the decision.',
+        'points' => [
+            ['Approval rules', 'Decide what needs approval and who approves it.'],
+            ['Request and notify', 'Approvers are notified as soon as a request is raised.'],
+            ['Approve anywhere', 'Approve or reject from any device.'],
+            ['Multi-level approvals', 'Escalate larger requests to senior approvers.'],
+            ['Approval history', 'Every request, decision and comment is kept.'],
+        ],
+        'benefits' => [
+            'Faster approvals.',
+            'Consistent application of policy.',
+            'No verbal approvals without a record.',
+            'Easier audits.',
+        ],
+        'faqs' => [
+            'What kinds of requests can go through Staff Approvals?' => 'Discounts, refunds, payment changes, leave, purchases and other requests you choose to control.',
+            'Can approvals have more than one level?' => 'Yes. Requests can be escalated to higher approvers based on your rules.',
+        ],
+    ],
+
+    'recruitment-management' => [
+        'name'  => 'Recruitment Management',
+        'cat'   => 'team',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Post jobs, track applicants and move them through interviews to offer.',
+        'title' => 'Recruitment Management: hire healthcare staff faster',
+        'desc'  => 'Post jobs, collect applications and move candidates through screening, interviews and offers with HealthO Pro Recruitment Management.',
+        'intro' => 'Healthcare facilities hire constantly — nurses, technicians, front-desk staff and doctors. HealthO Pro Recruitment Management brings job openings, applications and interviews into one pipeline.',
+        'points' => [
+            ['Job openings', 'Create openings and publish them on your careers page.'],
+            ['Applications', 'Collect CVs and screening answers in one place.'],
+            ['Hiring pipeline', 'Move candidates through screening, interview and offer.'],
+            ['Interview scheduling', 'Schedule interviews and record feedback.'],
+            ['Hire to employee', 'Turn a hired candidate into an HR record.'],
+        ],
+        'benefits' => [
+            'Shorter time to hire.',
+            'No lost CVs in inboxes.',
+            'Consistent candidate evaluation.',
+            'A professional candidate experience.',
+        ],
+        'faqs' => [
+            'Can openings be published on our website?' => 'Yes. Openings can be shown on your careers page, and applications flow back into HealthO Pro.',
+            'Can we track candidates through interviews?' => 'Yes. Each candidate moves through stages such as screening, interview and offer, with feedback recorded.',
+        ],
+    ],
+
+    'hr-records' => [
+        'name'  => 'HR Records',
+        'cat'   => 'team',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Digital employee files with documents, qualifications and history.',
+        'title' => 'HR Records: every employee file, digital and complete',
+        'desc'  => 'Keep digital employee records in HealthO Pro — personal details, documents, qualifications, registrations and employment history.',
+        'intro' => 'Healthcare staff records include qualifications and professional registrations that must be current. HealthO Pro HR Records keeps every employee’s file digital, complete and easy to find.',
+        'points' => [
+            ['Employee profiles', 'Personal, contact and employment details.'],
+            ['Documents', 'Store ID, qualification and registration documents.'],
+            ['Registration expiry', 'Track professional registrations that need renewal.'],
+            ['Employment history', 'Role changes, transfers and salary revisions.'],
+            ['Exit records', 'Resignation and exit details.'],
+        ],
+        'benefits' => [
+            'No missing paperwork during inspections.',
+            'Renewals tracked on time.',
+            'Faster HR queries.',
+            'Secure, access-controlled records.',
+        ],
+        'faqs' => [
+            'What is stored in HR Records?' => 'Employee details, documents, qualifications, professional registrations and employment history.',
+            'Can we track registration renewals?' => 'Yes. Registrations with expiry dates can be tracked so renewals are not missed.',
+        ],
+    ],
+
+    'timesheet-and-leave' => [
+        'name'  => 'Timesheet & Leave',
+        'cat'   => 'team',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Attendance, shifts, timesheets and leave requests with approvals.',
+        'title' => 'Timesheet & Leave: attendance and leave without the registers',
+        'desc'  => 'Track attendance, shifts and timesheets and handle leave requests and balances with approvals in HealthO Pro Timesheet & Leave.',
+        'intro' => 'Shift-based healthcare teams make attendance and leave complicated. HealthO Pro Timesheet & Leave records who worked when and handles leave requests from application to approval.',
+        'points' => [
+            ['Attendance', 'Record check-in and check-out.'],
+            ['Shifts and rosters', 'Plan shifts and see who is on duty.'],
+            ['Timesheets', 'Hours worked per employee and period.'],
+            ['Leave requests', 'Apply, approve and track leave online.'],
+            ['Leave balances', 'Balances by leave type, updated automatically.'],
+        ],
+        'benefits' => [
+            'Accurate data for payroll.',
+            'Fair, transparent leave.',
+            'Better shift coverage.',
+            'No paper registers.',
+        ],
+        'faqs' => [
+            'Can staff apply for leave online?' => 'Yes. Staff apply for leave in HealthO Pro, and requests go to their approver.',
+            'Does attendance feed into payroll?' => 'Yes. Attendance and leave data are used when processing payroll.',
+        ],
+    ],
+
+    'hr-payroll' => [
+        'name'  => 'HR Payroll',
+        'cat'   => 'team',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Monthly salaries from attendance and leave, with payslips and deductions.',
+        'title' => 'HR Payroll: accurate salaries, generated from real attendance',
+        'desc'  => 'Process monthly payroll in HealthO Pro from attendance and leave, with salary structures, deductions, payslips and payroll reports.',
+        'intro' => 'Payroll prepared from spreadsheets is slow and error-prone. HealthO Pro HR Payroll calculates salaries from attendance and leave already recorded in the system.',
+        'points' => [
+            ['Salary structures', 'Define earnings and deductions per employee.'],
+            ['Attendance-based pay', 'Pay is calculated from attendance and leave.'],
+            ['Deductions and advances', 'Handle statutory deductions, advances and loans.'],
+            ['Payslips', 'Generate and share payslips.'],
+            ['Payroll reports', 'Monthly salary registers and summaries.'],
+        ],
+        'benefits' => [
+            'Faster month-end payroll.',
+            'Fewer salary disputes.',
+            'Consistent calculations.',
+            'One system for HR and operations.',
+        ],
+        'faqs' => [
+            'Is payroll calculated from attendance?' => 'Yes. Salaries are calculated using the attendance and leave recorded in HealthO Pro.',
+            'Can employees receive payslips?' => 'Yes. Payslips are generated for each employee every pay period.',
+        ],
+    ],
+
+    'self-kt-and-learning' => [
+        'name'  => 'Self KT & Learning',
+        'cat'   => 'team',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Self-paced training and knowledge transfer for new and existing staff.',
+        'title' => 'Self KT & Learning: train staff without pulling seniors off the floor',
+        'desc'  => 'Onboard and train staff with HealthO Pro Self KT & Learning — self-paced lessons, videos and documents, with progress tracking.',
+        'intro' => 'Staff turnover means constant training, usually by senior staff who are already busy. HealthO Pro Self KT & Learning lets new joiners learn processes and the software at their own pace.',
+        'points' => [
+            ['Learning content', 'Lessons, videos and documents for each role.'],
+            ['Knowledge transfer', 'Capture how experienced staff do their work.'],
+            ['Role-based paths', 'Assign the right material to each role.'],
+            ['Progress tracking', 'See who has completed which training.'],
+            ['Refreshers', 'Re-assign training when processes change.'],
+        ],
+        'benefits' => [
+            'Faster onboarding.',
+            'Knowledge stays when people leave.',
+            'Consistent processes across branches.',
+            'Less senior time spent on training.',
+        ],
+        'faqs' => [
+            'What is Self KT?' => 'Self knowledge transfer: staff learn processes and the software from lessons, videos and documents at their own pace.',
+            'Can managers track training?' => 'Yes. Managers can see who has completed each training item.',
+        ],
+    ],
+
+    'healthcare-hiring' => [
+        'name'  => 'Healthcare Hiring',
+        'cat'   => 'team',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Reach healthcare professionals looking for work through the HealthO network.',
+        'title' => 'Healthcare Hiring: find qualified healthcare professionals',
+        'desc'  => 'HealthO Pro Healthcare Hiring helps facilities reach nurses, technicians, doctors and support staff looking for healthcare jobs.',
+        'intro' => 'Finding qualified nurses, technicians and doctors is one of the biggest challenges for healthcare providers. HealthO Pro Healthcare Hiring connects your openings with healthcare professionals looking for their next role.',
+        'points' => [
+            ['Healthcare-focused', 'Built for clinical, technical and support roles in healthcare.'],
+            ['Post openings', 'Publish openings with role, qualifications and location.'],
+            ['Applicant profiles', 'Review candidates’ qualifications and experience.'],
+            ['Connected to recruitment', 'Candidates flow into your recruitment pipeline.'],
+            ['Local reach', 'Find candidates near your facility.'],
+        ],
+        'benefits' => [
+            'Access to relevant candidates.',
+            'Less spend on general job portals.',
+            'Faster filling of critical roles.',
+            'A single hiring workflow.',
+        ],
+        'faqs' => [
+            'Who can we hire through Healthcare Hiring?' => 'Clinical, technical and support staff such as nurses, lab technicians, radiographers, doctors and front-desk staff.',
+            'Does it connect to Recruitment Management?' => 'Yes. Candidates can move into your recruitment pipeline for screening and interviews.',
+        ],
+    ],
+];

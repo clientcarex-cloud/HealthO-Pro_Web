@@ -25,6 +25,9 @@ RewriteRule ^([A-Za-z0-9\-]+)\.php$ /$1 [R=301,L]
 # Sitemap is generated live (new job openings included).
 RewriteRule ^sitemap\.xml$ sitemap.php [L]
 
+# Blog post: /blog/{slug} -> blog-post.php?s={slug}
+RewriteRule ^blog/([a-z0-9\-]+)/?$ blog-post.php?s=$1 [L,QSA]
+
 # Single job opening: /careers/{slug} -> career.php?j={slug}
 # Must precede the extension rules — "careers/senior-engineer.php" does not
 # exist, so without this the request would fall through to a 404.

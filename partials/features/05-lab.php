@@ -1,0 +1,273 @@
+<?php
+/** Laboratory & Diagnostics — see partials/blog-data.php for the format. */
+return [
+    'phlebotomist' => [
+        'name'  => 'Phlebotomist',
+        'cat'   => 'lab',
+        'for'   => ['lims', 'hims'],
+        'short' => 'A collection worklist for phlebotomists with barcodes and collection times.',
+        'title' => 'Phlebotomist: a clear worklist for every sample collection',
+        'desc'  => 'HealthO Pro Phlebotomist gives collectors a worklist of pending samples, the right tubes and barcodes, and records collection times for TAT.',
+        'intro' => 'Sample collection is where most lab errors begin — the wrong tube, a missing label, an unrecorded time. HealthO Pro Phlebotomist gives collectors a clear worklist so every sample is collected correctly and on time.',
+        'points' => [
+            ['Collection worklist', 'Patients waiting for collection, in order.'],
+            ['Container guidance', 'Which tubes and containers each order needs.'],
+            ['Barcode labels', 'Print barcodes at collection so samples are identified from the start.'],
+            ['Collection time', 'The time of collection is recorded for TAT tracking.'],
+            ['Rejection and recollection', 'Record rejected samples and request recollection.'],
+        ],
+        'benefits' => [
+            'Fewer labelling and tube errors.',
+            'Accurate TAT from the first step.',
+            'Faster collection queues.',
+            'Clear accountability per collector.',
+        ],
+        'faqs' => [
+            'Does the phlebotomist see which tubes to use?' => 'Yes. The worklist shows the containers needed for each patient’s tests.',
+            'Is the collection time recorded?' => 'Yes. Collection time is recorded and used in turnaround time tracking.',
+        ],
+    ],
+
+    'home-sample-management' => [
+        'name'  => 'Home Sample Management',
+        'cat'   => 'lab',
+        'for'   => ['lims'],
+        'short' => 'Book, assign and track home sample collections from booking to lab receipt.',
+        'title' => 'Home Sample Management: home collections, fully tracked',
+        'desc'  => 'Book, assign and track home sample collections with HealthO Pro — collector assignment, live status, payments and handover to the lab.',
+        'intro' => 'Home collection is one of the fastest-growing services for diagnostic labs, and one of the hardest to manage. HealthO Pro Home Sample Management covers the full journey from the patient’s booking to the sample arriving at the lab.',
+        'points' => [
+            ['Home collection booking', 'Book by phone, website or app with address and time slot.'],
+            ['Collector assignment', 'Assign bookings to collectors by area and availability.'],
+            ['Status tracking', 'Follow each visit from assigned to collected to received at the lab.'],
+            ['Collection-point payment', 'Record payments made at the patient’s home.'],
+            ['Lab handover', 'Samples are received at the lab against the booking.'],
+        ],
+        'benefits' => [
+            'More home collections handled with the same team.',
+            'Fewer missed or late visits.',
+            'Every sample and payment accounted for.',
+            'Patients kept informed.',
+        ],
+        'faqs' => [
+            'How are home collections assigned?' => 'Bookings are assigned to collectors by area and availability, and each visit’s status is tracked.',
+            'Can payments be collected at the patient’s home?' => 'Yes. Payments taken during the visit are recorded against the booking.',
+        ],
+    ],
+
+    'tests-master' => [
+        'name'  => 'Tests Master',
+        'cat'   => 'lab',
+        'for'   => ['lims', 'hims'],
+        'short' => 'Define tests, parameters, reference ranges, methods, prices and TATs.',
+        'title' => 'Tests Master: set up every test once, correctly',
+        'desc'  => 'Define tests, parameters, units, reference ranges, methods, sample types, prices and TATs in the HealthO Pro Tests Master.',
+        'intro' => 'Every report your lab produces depends on how its tests are set up. HealthO Pro Tests Master is the single place to define each test — parameters, ranges, sample type, price and turnaround — so every report is consistent.',
+        'points' => [
+            ['Tests and parameters', 'Define single tests and multi-parameter profiles.'],
+            ['Reference ranges', 'Ranges by age and gender, with units.'],
+            ['Sample and container', 'The sample type and container for each test.'],
+            ['Prices and TAT', 'Standard price and expected turnaround.'],
+            ['Report format', 'How results and interpretations appear on the report.'],
+        ],
+        'benefits' => [
+            'Consistent, correct reports.',
+            'Automatic flagging of abnormal values.',
+            'Accurate billing and TAT promises.',
+            'One place to make changes.',
+        ],
+        'faqs' => [
+            'Can reference ranges vary by age and gender?' => 'Yes. Reference ranges can be defined by age and gender for each parameter.',
+            'Is test pricing set in the Tests Master?' => 'Yes. Each test carries its standard price and expected turnaround time.',
+        ],
+    ],
+
+    'lab-packages' => [
+        'name'  => 'Lab Packages',
+        'cat'   => 'lab',
+        'for'   => ['lims', 'hims'],
+        'short' => 'Create health check-up packages with bundled tests and package prices.',
+        'title' => 'Lab Packages: health check-ups that sell themselves',
+        'desc'  => 'Create health check-up packages in HealthO Pro with bundled tests, package pricing and combined reports — for walk-ins, online and corporates.',
+        'intro' => 'Health check-up packages are simple for patients to choose and valuable for labs to sell. HealthO Pro Lab Packages lets you bundle tests, price them attractively and bill them in one click.',
+        'points' => [
+            ['Build packages', 'Combine any tests and profiles into a package.'],
+            ['Package pricing', 'Set a package price separate from individual test prices.'],
+            ['One-click billing', 'Bill the whole package at once.'],
+            ['Online and corporate', 'Offer packages on your website, app or to companies.'],
+            ['Package reports', 'See which packages sell best.'],
+        ],
+        'benefits' => [
+            'Higher value per patient.',
+            'Faster billing.',
+            'Easy seasonal and preventive offers.',
+            'Clear performance data.',
+        ],
+        'faqs' => [
+            'Can a package have its own price?' => 'Yes. Each package has its own price, independent of the individual test prices.',
+            'Can packages be offered online?' => 'Yes. Packages can be shown on your website or patient app as well as billed at the counter.',
+        ],
+    ],
+
+    'lis-integration' => [
+        'name'  => 'LIS Integration',
+        'cat'   => 'lab',
+        'for'   => ['lims', 'hims'],
+        'short' => 'Connect lab analyzers bi-directionally so results flow in without typing.',
+        'title' => 'LIS Integration: results straight from your analyzers',
+        'desc'  => 'HealthO Pro LIS Integration connects biochemistry, hematology and immunoassay analyzers bi-directionally, so orders go out and results flow in automatically.',
+        'intro' => 'Typing results from analyzer printouts is slow and error-prone. HealthO Pro LIS Integration connects your analyzers directly, so worklists are sent to the machines and results come back into the report automatically.',
+        'points' => [
+            ['Bi-directional interface', 'Send orders to analyzers and receive results back.'],
+            ['Barcode-driven', 'Analyzers identify samples by barcode.'],
+            ['Many analyzer types', 'Biochemistry, hematology, immunoassay and more.'],
+            ['Result review', 'Received results are reviewed before authorisation.'],
+            ['No re-typing', 'Results populate the report directly.'],
+        ],
+        'benefits' => [
+            'Eliminates transcription errors.',
+            'Faster reporting.',
+            'Less manual workload for technicians.',
+            'A fully traceable result trail.',
+        ],
+        'faqs' => [
+            'Which analyzers can HealthO Pro connect to?' => 'Biochemistry, hematology and immunoassay analyzers, among others. Our team confirms compatibility for your specific models during onboarding.',
+            'Is the analyzer interface bi-directional?' => 'Yes. Orders are sent to the analyzer and results are received back into the report.',
+        ],
+    ],
+
+    'inventory-management-of-lab' => [
+        'name'  => 'Inventory Management of Lab',
+        'cat'   => 'lab',
+        'for'   => ['lims'],
+        'short' => 'Track reagents and consumables with batches, expiry and reorder alerts.',
+        'title' => 'Lab Inventory Management: never run out of reagents again',
+        'desc'  => 'Track lab reagents and consumables in HealthO Pro with batch and expiry tracking, consumption, reorder alerts and purchase records.',
+        'intro' => 'A missing reagent can stop a whole section of the lab, while expired stock quietly wastes money. HealthO Pro Inventory Management of Lab tracks every reagent and consumable from purchase to use.',
+        'points' => [
+            ['Stock by item and location', 'Current stock for each reagent and consumable.'],
+            ['Batch and expiry', 'Track lot numbers and expiry dates.'],
+            ['Consumption', 'Record usage by section or test volume.'],
+            ['Reorder alerts', 'Alerts when stock falls below the minimum level.'],
+            ['Purchases and suppliers', 'Link stock received to purchase orders and suppliers.'],
+        ],
+        'benefits' => [
+            'No stock-outs that stop testing.',
+            'Less waste from expired reagents.',
+            'Accurate cost per test.',
+            'Audit-ready stock records.',
+        ],
+        'faqs' => [
+            'Does lab inventory track expiry dates?' => 'Yes. Batches and expiry dates are tracked, and items near expiry are highlighted.',
+            'Will we be alerted when stock is low?' => 'Yes. Reorder alerts appear when an item falls below its minimum level.',
+        ],
+    ],
+
+    'auto-ai-driven-qc' => [
+        'name'  => 'Auto AI-Driven QC',
+        'cat'   => 'lab',
+        'for'   => ['lims'],
+        'short' => 'AI-assisted quality control that flags QC shifts and trends automatically.',
+        'title' => 'Auto AI-Driven QC: quality control that watches itself',
+        'desc'  => 'HealthO Pro Auto AI-Driven QC analyses quality control data, flags shifts, trends and rule violations automatically and keeps QC records ready.',
+        'intro' => 'Quality control is essential, but reviewing QC charts every day takes time and experience. HealthO Pro Auto AI-Driven QC analyses QC results automatically and flags problems as they appear.',
+        'points' => [
+            ['Automatic QC capture', 'QC results are recorded as they are run.'],
+            ['Levey-Jennings charts', 'Charts for each control and parameter.'],
+            ['Rule checks', 'Common QC rule violations are flagged automatically.'],
+            ['AI-assisted trend detection', 'Gradual shifts and trends are highlighted before they fail.'],
+            ['QC records', 'A complete QC history for audits and accreditation.'],
+        ],
+        'benefits' => [
+            'Problems caught before patient results are affected.',
+            'Less manual QC review.',
+            'Consistent QC practice across shifts.',
+            'Accreditation-ready documentation.',
+        ],
+        'faqs' => [
+            'What does Auto AI-Driven QC flag?' => 'QC rule violations as well as gradual shifts and trends in control results, so the team can act before results are affected.',
+            'Are Levey-Jennings charts included?' => 'Yes. Levey-Jennings charts are generated for each control and parameter.',
+        ],
+    ],
+
+    'referral-lab' => [
+        'name'  => 'Referral Lab',
+        'cat'   => 'lab',
+        'for'   => ['lims'],
+        'short' => 'Send tests you don’t run to partner labs and track them to the report.',
+        'title' => 'Referral Lab: outsource tests without losing track',
+        'desc'  => 'Send tests to partner labs with HealthO Pro Referral Lab — track outsourced samples, costs and results, and report them under your brand.',
+        'intro' => 'No lab runs every test in-house. HealthO Pro Referral Lab lets you send specialised tests to partner labs while keeping full visibility of each sample, its cost and its result.',
+        'points' => [
+            ['Referral lab setup', 'List partner labs with the tests and rates agreed with each.'],
+            ['Outsource by test', 'Mark tests to be sent out automatically.'],
+            ['Sample tracking', 'Know which samples went where and when.'],
+            ['Result entry', 'Enter or upload results and report them to the patient.'],
+            ['Cost and margin', 'See what outsourced tests cost and earn.'],
+        ],
+        'benefits' => [
+            'Offer a wider test menu.',
+            'No lost outsourced samples.',
+            'Clear margins on referred tests.',
+            'One report experience for the patient.',
+        ],
+        'faqs' => [
+            'Can we track tests sent to other labs?' => 'Yes. Each outsourced sample is tracked with the partner lab, dispatch date and result status.',
+            'Can outsourced results be reported under our name?' => 'Yes. Results from partner labs can be entered and delivered through your own report.',
+        ],
+    ],
+
+    'referral-dispatch' => [
+        'name'  => 'Referral Dispatch',
+        'cat'   => 'lab',
+        'for'   => ['lims', 'ris'],
+        'short' => 'Dispatch samples and reports to partners and referrers, with proof of delivery.',
+        'title' => 'Referral Dispatch: every outgoing sample and report accounted for',
+        'desc'  => 'Manage outgoing samples and reports with HealthO Pro Referral Dispatch — batch dispatch, courier details and delivery confirmation.',
+        'intro' => 'Samples going to partner labs and reports going to referring doctors and centers need a clear handover. HealthO Pro Referral Dispatch records what was sent, how and when.',
+        'points' => [
+            ['Dispatch batches', 'Group samples or reports going to the same destination.'],
+            ['Courier and runner details', 'Record who carried the batch.'],
+            ['Dispatch list', 'Print a dispatch list to travel with the batch.'],
+            ['Delivery confirmation', 'Mark batches as received at the other end.'],
+            ['Dispatch history', 'Search past dispatches by date or destination.'],
+        ],
+        'benefits' => [
+            'No disputes about what was sent.',
+            'Faster tracing of delayed items.',
+            'Organised courier runs.',
+            'Better service to referrers.',
+        ],
+        'faqs' => [
+            'What can be dispatched?' => 'Samples going to partner labs and reports going to referring doctors, centers or clients.',
+            'Is delivery confirmed?' => 'Yes. Batches can be marked as received, giving a record of delivery.',
+        ],
+    ],
+
+    'b2b-collaboration' => [
+        'name'  => 'B2B Collaboration',
+        'cat'   => 'lab',
+        'for'   => ['lims', 'hims', 'ris'],
+        'short' => 'Work with collection centers, hospitals and clinics on credit, with their own rates.',
+        'title' => 'B2B Collaboration: grow through collection centers and partners',
+        'desc'  => 'Manage B2B partners in HealthO Pro — collection centers, hospitals and clinics with their own rates, credit, report access and statements.',
+        'intro' => 'Collection centers, hospitals, clinics and corporates can bring a steady flow of business. HealthO Pro B2B Collaboration gives each partner their own rates, credit terms and access to their reports.',
+        'points' => [
+            ['Partner accounts', 'Set up collection centers, hospitals, clinics and corporates.'],
+            ['Partner rate lists', 'Special prices per partner.'],
+            ['Credit and statements', 'Bill on credit and share periodic statements.'],
+            ['Partner report access', 'Partners can see and download their patients’ reports.'],
+            ['Partner business reports', 'Volume and revenue by partner.'],
+        ],
+        'benefits' => [
+            'Scalable growth beyond your own counters.',
+            'Accurate partner billing.',
+            'Faster report delivery to partners.',
+            'Know your most valuable partners.',
+        ],
+        'faqs' => [
+            'Can each B2B partner have different rates?' => 'Yes. Every partner can have its own rate list and credit terms.',
+            'Can partners access their reports?' => 'Yes. Partners can view and download the reports of the patients they send.',
+        ],
+    ],
+];

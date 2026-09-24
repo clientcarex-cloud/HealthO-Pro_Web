@@ -19,6 +19,13 @@ if ($path === '/sitemap.xml') {
     return true;
 }
 
+// Blog post — mirrors the /blog/{slug} rewrite in .htaccess.
+if (preg_match('#^/blog/([a-z0-9\-]+)/?$#', $path, $m)) {
+    $_GET['s'] = $m[1];
+    require $root . '/blog-post.php';
+    return true;
+}
+
 // Single job opening — mirrors the /careers/{slug} rewrite in .htaccess.
 if (preg_match('#^/careers/([A-Za-z0-9\-]+)/?$#', $path, $m)) {
     $_GET['j'] = $m[1];

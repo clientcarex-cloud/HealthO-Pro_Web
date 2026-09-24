@@ -10,6 +10,7 @@
  * Pages marked noindex (verify-partner) are left out on purpose.
  */
 require __DIR__ . '/partials/careers-data.php';   // pulls in partials/site.php
+require __DIR__ . '/partials/blog-data.php';
 
 /** slug => [changefreq, priority, images[]] */
 $pages = [
@@ -19,6 +20,8 @@ $pages = [
     'lims'             => ['monthly', '0.9', ['lims.webp']],
     'cims'             => ['monthly', '0.9', ['cms.webp']],
     'ris'              => ['monthly', '0.9', ['ris.webp']],
+    'features'         => ['weekly',  '0.9', []],
+    'blog'             => ['weekly',  '0.8', []],
     'pricing'          => ['weekly',  '0.9', []],
     'testimonials'     => ['monthly', '0.7', []],
     'partners'         => ['weekly',  '0.6', []],
@@ -44,6 +47,19 @@ foreach ($pages as $slug => [$freq, $prio, $images]) {
         'freq'    => $freq,
         'prio'    => $prio,
         'images'  => array_map(static fn($img) => SITE_URL . '/assets/images/' . $img, $images),
+    ];
+}
+
+// Feature guides: lastmod is the latest edit to their content or template.
+$blogFiles = array_merge(glob(__DIR__ . '/partials/features/*.php'), [__DIR__ . '/blog-post.php']);
+$blogMod   = max(strtotime(BLOG_PUBLISHED), $shared, ...array_map('filemtime', $blogFiles));
+foreach (blog_posts() as $slug => $post) {
+    $urls[] = [
+        'loc'     => blog_url($slug, true),
+        'lastmod' => date('c', $blogMod),
+        'freq'    => 'monthly',
+        'prio'    => '0.7',
+        'images'  => [],
     ];
 }
 

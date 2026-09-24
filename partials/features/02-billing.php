@@ -1,0 +1,273 @@
+<?php
+/** Billing & Finance, Reports & Analytics — see partials/blog-data.php for the format. */
+return [
+    'billing' => [
+        'name'  => 'Billing',
+        'cat'   => 'billing',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Fast OPD, IPD, lab and package billing with GST-ready invoices.',
+        'title' => 'Billing: fast, accurate invoices for every service',
+        'desc'  => 'HealthO Pro Billing handles OPD, IPD, lab, radiology and package billing with GST-ready invoices, discounts, insurance and credit — in one screen.',
+        'intro' => 'Billing is where every service your facility provides turns into revenue — and where small mistakes quietly cost money. HealthO Pro Billing brings consultations, tests, procedures, packages and pharmacy into one fast billing screen with the right prices, taxes and approvals built in.',
+        'points' => [
+            ['All service types', 'Bill consultations, lab tests, scans, procedures, packages and IPD stays from one place.'],
+            ['GST-ready invoices', 'Invoices carry the correct tax details and your branding.'],
+            ['Cash, credit and insurance', 'Handle cash, card, UPI, credit, corporate and insurance/TPA billing.'],
+            ['Controlled discounts', 'Discounts follow your rules and approvals, and every one is recorded.'],
+            ['Linked to the patient record', 'Each bill is attached to the visit, orders and reports it belongs to.'],
+        ],
+        'benefits' => [
+            'Faster checkout at the counter.',
+            'Fewer missed charges and pricing errors.',
+            'A clean audit trail for every rupee.',
+            'Real-time collection figures for management.',
+        ],
+        'faqs' => [
+            'What kinds of billing does HealthO Pro support?' => 'Consultation, lab, radiology, procedure, package and IPD billing, with cash, digital, credit, corporate and insurance/TPA payment modes.',
+            'Are HealthO Pro invoices GST-ready?' => 'Yes. Invoices are generated with the tax details required for GST.',
+        ],
+    ],
+
+    'manage-payments' => [
+        'name'  => 'Manage Payments',
+        'cat'   => 'billing',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Track collections, dues, advances and settlements across every payment mode.',
+        'title' => 'Manage Payments: know exactly what is collected and what is due',
+        'desc'  => 'Track collections, outstanding dues, advances and settlements across cash, card, UPI and credit with HealthO Pro Manage Payments.',
+        'intro' => 'Partial payments, advances, credit patients and corporate dues make it hard to answer a simple question: how much is still owed? HealthO Pro Manage Payments tracks every payment against every bill so the answer is always one click away.',
+        'points' => [
+            ['Every payment mode', 'Record cash, card, UPI, bank transfer and cheque payments.'],
+            ['Partial payments and dues', 'Accept part-payments and track the balance until it is cleared.'],
+            ['Advances and deposits', 'Take IPD advances and adjust them against the final bill.'],
+            ['Credit and corporate accounts', 'Follow up outstanding amounts from companies, TPAs and referral partners.'],
+            ['Day-end reconciliation', 'Match collections by user, counter and payment mode at the end of each shift.'],
+        ],
+        'benefits' => [
+            'Fewer unpaid balances slipping through.',
+            'Quick, accurate cash reconciliation.',
+            'Clear visibility of receivables.',
+            'Less dependence on manual registers.',
+        ],
+        'faqs' => [
+            'Can HealthO Pro track partial payments?' => 'Yes. Part-payments are recorded against the bill, and the remaining due is tracked until it is settled.',
+            'Can collections be reconciled per user?' => 'Yes. Collections can be reviewed by user, counter and payment mode for day-end reconciliation.',
+        ],
+    ],
+
+    'payment-modify' => [
+        'name'  => 'Payment Modify',
+        'cat'   => 'billing',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Correct payment entries through approvals, with every change logged.',
+        'title' => 'Payment Modify: fix payment mistakes without losing control',
+        'desc'  => 'Correct payment modes and entries in HealthO Pro through permission-based approvals, with a full audit log of who changed what and when.',
+        'intro' => 'Mistakes happen — a card payment recorded as cash, a wrong amount, a payment posted to the wrong bill. Unrestricted edits, however, are a fraud risk. HealthO Pro Payment Modify lets authorised staff correct payments while every change is approved and recorded.',
+        'points' => [
+            ['Permission-based edits', 'Only users with the right role can modify a payment.'],
+            ['Approval workflow', 'Changes can require a manager’s approval before they take effect.'],
+            ['Full audit trail', 'The original entry, the change, the user and the reason are all logged.'],
+            ['Mode and amount corrections', 'Fix the payment mode, amount or linked bill.'],
+            ['Change reports', 'Review all modifications for any period.'],
+        ],
+        'benefits' => [
+            'Accurate books without back-door edits.',
+            'Reduced risk of cash leakage.',
+            'Accountability for every correction.',
+            'Easier audits.',
+        ],
+        'faqs' => [
+            'Who can modify a payment in HealthO Pro?' => 'Only users whose role allows it, and changes can be set to need approval before they are applied.',
+            'Is the original payment kept after a modification?' => 'Yes. The original entry, the change, who made it and why are all kept in the audit log.',
+        ],
+    ],
+
+    'refunds' => [
+        'name'  => 'Refunds',
+        'cat'   => 'billing',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Approve and process full or partial refunds with reasons and records.',
+        'title' => 'Refunds: a controlled, transparent refund process',
+        'desc'  => 'Process full and partial refunds in HealthO Pro with reasons, approvals and records — so patients are refunded quickly and accounts stay accurate.',
+        'intro' => 'Cancelled tests, unused advances and billing errors all lead to refunds. Handled on paper they are slow for patients and hard to audit. HealthO Pro Refunds gives you one controlled process from request to payout.',
+        'points' => [
+            ['Full and partial refunds', 'Refund a whole bill, specific services or an unused advance.'],
+            ['Reasons and approvals', 'Every refund records a reason and can require approval.'],
+            ['Refund mode', 'Refund in cash, back to card/UPI or by bank transfer.'],
+            ['Linked to the bill', 'The refund appears on the original bill and the patient’s ledger.'],
+            ['Refund reports', 'See refunds by reason, user and period.'],
+        ],
+        'benefits' => [
+            'Faster refunds and happier patients.',
+            'No unauthorised refunds.',
+            'Refund trends reveal process problems.',
+            'Accurate revenue figures.',
+        ],
+        'faqs' => [
+            'Can we issue a partial refund?' => 'Yes. You can refund specific services or part of a payment as well as a full bill.',
+            'Do refunds need approval?' => 'Refunds can be configured to require approval, and each one records a reason.',
+        ],
+    ],
+
+    'expenses' => [
+        'name'  => 'Expenses',
+        'cat'   => 'billing',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Record daily expenses by category and branch to see true profitability.',
+        'title' => 'Expenses: see where the money goes, not just where it comes from',
+        'desc'  => 'Record and approve daily expenses by category and branch with HealthO Pro Expenses, and compare them with collections to see real profitability.',
+        'intro' => 'Revenue reports only tell half the story. Petty cash, courier charges, repairs and supplies add up quickly. HealthO Pro Expenses records every outgoing payment next to your collections, so you can see what each branch actually earns.',
+        'points' => [
+            ['Expense categories', 'Record expenses under your own heads such as utilities, repairs or courier.'],
+            ['Branch and department', 'Tag each expense to a branch or department.'],
+            ['Bills and attachments', 'Attach receipts and invoices to each entry.'],
+            ['Approvals', 'Route expenses above a limit for approval.'],
+            ['Expense vs. collection', 'Compare expenses with collections for any period.'],
+        ],
+        'benefits' => [
+            'Tighter control of petty cash.',
+            'Clear branch-level profitability.',
+            'Receipts are stored, not lost.',
+            'Faster month-end accounting.',
+        ],
+        'faqs' => [
+            'Can expenses be tracked per branch?' => 'Yes. Each expense can be tagged to a branch and department and reported separately.',
+            'Can we attach bills to expenses?' => 'Yes. Receipts and invoices can be attached to each expense entry.',
+        ],
+    ],
+
+    'payment-gateway-integration' => [
+        'name'  => 'Payment Gateway Integration',
+        'cat'   => 'billing',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Accept online payments by link, app or website — reconciled automatically.',
+        'title' => 'Payment Gateway Integration: get paid online, reconciled automatically',
+        'desc'  => 'Accept online payments by payment link, patient app or website with HealthO Pro Payment Gateway Integration — updated against bills automatically.',
+        'intro' => 'Patients want to pay from their phone — for a home collection, a booking or an outstanding bill. HealthO Pro Payment Gateway Integration connects online payments directly to your bills, so staff no longer match transactions by hand.',
+        'points' => [
+            ['Payment links', 'Send a secure payment link by SMS, WhatsApp or email.'],
+            ['Pay in the app or on the website', 'Patients pay while booking or from their bill.'],
+            ['Automatic bill update', 'A successful payment marks the bill as paid immediately.'],
+            ['Online refunds', 'Refunds can go back through the same channel.'],
+            ['Transaction reports', 'See every online transaction with its bill.'],
+        ],
+        'benefits' => [
+            'Faster collections, especially for home services.',
+            'No manual matching of online payments.',
+            'Less cash handling at the counter.',
+            'A modern payment experience.',
+        ],
+        'faqs' => [
+            'How do patients pay online?' => 'Through a payment link sent by SMS, WhatsApp or email, or directly in the patient app or on your website.',
+            'Are online payments linked to bills automatically?' => 'Yes. When a payment succeeds, the related bill is updated as paid without manual entry.',
+        ],
+    ],
+
+    'dashboard' => [
+        'name'  => 'Dashboard',
+        'cat'   => 'analytics',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'A live view of patients, revenue, pending work and alerts across branches.',
+        'title' => 'Dashboard: your whole facility on one live screen',
+        'desc'  => 'The HealthO Pro Dashboard shows today’s patients, revenue, pending work and alerts across departments and branches — updated in real time.',
+        'intro' => 'Owners and managers shouldn’t have to ask five people for today’s numbers. The HealthO Pro Dashboard brings patient volumes, collections, pending reports and alerts together on one screen that updates as the day goes on.',
+        'points' => [
+            ['Today at a glance', 'Registrations, appointments, bills and collections for the day so far.'],
+            ['Pending work', 'Samples to collect, reports to authorise and dues to follow up.'],
+            ['Branch comparison', 'Compare branches and departments side by side.'],
+            ['Trends', 'Compare today with yesterday, last week or last month.'],
+            ['Role-based views', 'Each user sees the figures that matter to their role.'],
+        ],
+        'benefits' => [
+            'Decisions based on live data, not guesses.',
+            'Bottlenecks are visible before they become complaints.',
+            'Less time spent compiling reports.',
+            'Remote oversight of every branch.',
+        ],
+        'faqs' => [
+            'Is the HealthO Pro dashboard real-time?' => 'Yes. Figures update as registrations, bills and reports are processed during the day.',
+            'Can different users see different dashboards?' => 'Yes. Dashboards are role-based, so each user sees the information relevant to them.',
+        ],
+    ],
+
+    'mis-reports' => [
+        'name'  => 'MIS Reports',
+        'cat'   => 'analytics',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Ready-made management reports on revenue, volumes, doctors and referrals.',
+        'title' => 'MIS Reports: the numbers that run your healthcare business',
+        'desc'  => 'HealthO Pro MIS Reports give ready-made reports on revenue, patient volumes, doctors, referrals and departments, with filters and export.',
+        'intro' => 'Good management needs consistent numbers every day, week and month. HealthO Pro MIS Reports turn the data your team already records into ready-made reports for owners, managers and accountants.',
+        'points' => [
+            ['Revenue reports', 'Collections by service, department, doctor, branch and payment mode.'],
+            ['Volume reports', 'Patients, tests, scans and visits over any period.'],
+            ['Doctor and referral reports', 'Business by consulting and referring doctor.'],
+            ['Filters and date ranges', 'Slice every report by date, branch, user or category.'],
+            ['Export', 'Download reports for accounts or presentations.'],
+        ],
+        'benefits' => [
+            'One version of the truth for everyone.',
+            'No spreadsheets compiled by hand.',
+            'Faster monthly reviews.',
+            'Spot growing and declining services early.',
+        ],
+        'faqs' => [
+            'What MIS reports are included?' => 'Revenue, patient and test volumes, doctor and referral business, department and branch performance, with filters by date, branch and user.',
+            'Can MIS reports be exported?' => 'Yes. Reports can be downloaded for accounting and management reviews.',
+        ],
+    ],
+
+    'shift-reports' => [
+        'name'  => 'Shift Reports',
+        'cat'   => 'analytics',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Close each shift with collections, work done and handover notes.',
+        'title' => 'Shift Reports: clean handovers at every shift change',
+        'desc'  => 'HealthO Pro Shift Reports summarise collections, work done and pending tasks for each shift, so handovers are accurate and accountable.',
+        'intro' => 'Round-the-clock facilities change hands several times a day. HealthO Pro Shift Reports close each shift with the cash collected, the work completed and what is still pending — so the next team starts with the full picture.',
+        'points' => [
+            ['Collections by shift', 'Cash and digital collections for each user and counter during the shift.'],
+            ['Work completed', 'Patients registered, samples collected and reports released.'],
+            ['Pending items', 'What the next shift needs to pick up.'],
+            ['Shift close', 'Users close their shift and hand over the cash with a record.'],
+            ['History', 'Every shift report is stored for later review.'],
+        ],
+        'benefits' => [
+            'Accurate cash handovers.',
+            'Nothing falls between shifts.',
+            'Clear accountability per user.',
+            'Easier night-shift supervision.',
+        ],
+        'faqs' => [
+            'What does a shift report include?' => 'Collections by user and mode, work completed during the shift, and pending items for the next team.',
+            'Are past shift reports stored?' => 'Yes. Every closed shift report is kept for later review and audit.',
+        ],
+    ],
+
+    'tats' => [
+        'name'  => 'TATs',
+        'cat'   => 'analytics',
+        'for'   => ['lims', 'ris', 'hims'],
+        'short' => 'Track turnaround time at every step and get alerts before reports run late.',
+        'title' => 'TATs: deliver every report on time, every time',
+        'desc'  => 'Track turnaround time (TAT) from registration to report in HealthO Pro, with targets per test and alerts before reports run late.',
+        'intro' => 'For labs and imaging centers, turnaround time is the promise patients and referring doctors remember. HealthO Pro TATs measures every step from registration to report and warns your team before a promise is broken.',
+        'points' => [
+            ['TAT targets per test', 'Set the expected turnaround for each test or scan.'],
+            ['Step-by-step timing', 'Track collection, receipt, processing, authorisation and release times.'],
+            ['Delay alerts', 'See which reports are close to or past their target.'],
+            ['Promised time on receipts', 'Show patients when their report will be ready.'],
+            ['TAT reports', 'Analyse TAT by test, department, shift and branch.'],
+        ],
+        'benefits' => [
+            'Fewer late reports and follow-up calls.',
+            'Bottlenecks are visible step by step.',
+            'Referring doctors trust your timelines.',
+            'Objective data for process improvement.',
+        ],
+        'faqs' => [
+            'What does TAT tracking measure in HealthO Pro?' => 'The time taken at each step — collection, receipt, processing, authorisation and release — against the target set for each test.',
+            'Will staff be alerted about delayed reports?' => 'Yes. Reports approaching or past their TAT target are highlighted so the team can act.',
+        ],
+    ],
+];

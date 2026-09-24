@@ -48,6 +48,7 @@ $demo_interest = PRODUCTS[$page ?? '']['short'] ?? '';
 <?php foreach (PRODUCTS as $slug => $p): ?>
           <li><a href="/<?= $slug ?>"><?= h($p['short']) ?></a></li>
 <?php endforeach; ?>
+          <li><a href="/features">All Features</a></li>
           <li><a href="/pricing">Pricing</a></li>
         </ul>
       </div>
@@ -56,6 +57,7 @@ $demo_interest = PRODUCTS[$page ?? '']['short'] ?? '';
         <ul class="footer-links">
           <li><a href="/#solutions">About Us</a></li>
           <li><a href="/testimonials">Testimonials</a></li>
+          <li><a href="/blog">Blog</a></li>
           <li><a href="/partners">Channel Partners</a></li>
           <li><a href="/verify-partner">Verify Partner</a></li>
           <li><a href="/careers">Careers</a></li>

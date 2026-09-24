@@ -22,7 +22,7 @@ $head_extra  = $head_extra  ?? '';
 $faqs        = $faqs        ?? [];
 
 // Product pages keep the Solutions tab lit.
-$nav_active = in_array($page, ['solutions', 'hims', 'lims', 'cims', 'ris'], true) ? 'solutions' : $page;
+$nav_active = in_array($page, ['solutions', 'features', 'hims', 'lims', 'cims', 'ris'], true) ? 'solutions' : $page;
 $active = static fn(string $slug): string => $slug === $nav_active ? ' active' : '';
 ?>
 <!DOCTYPE html>
@@ -97,10 +97,15 @@ $active = static fn(string $slug): string => $slug === $nav_active ? ' active' :
             <span><span class="drop-tt"><?= h($p['short']) ?></span><span class="drop-ds"><?= h($p['long']) ?></span></span>
           </a>
 <?php endforeach; ?>
+          <a href="/features" class="drop-item">
+            <span class="drop-ic bg-navy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+            <span><span class="drop-tt">All Features</span><span class="drop-ds">Every module, with a guide for each</span></span>
+          </a>
         </div>
       </li>
       <li class="nav-item"><a href="/pricing" class="nav-link<?= $active('pricing') ?>">Pricing</a></li>
       <li class="nav-item"><a href="/testimonials" class="nav-link<?= $active('testimonials') ?>">Testimonials</a></li>
+      <li class="nav-item"><a href="/blog" class="nav-link<?= $active('blog') ?>">Blog</a></li>
       <li class="nav-item"><a href="/careers" class="nav-link<?= $active('careers') ?>">Careers</a></li>
       <li class="nav-item"><a href="/contact" class="nav-link<?= $active('contact') ?>">Contact</a></li>
       <li><a href="/contact" class="btn btn-primary mobile-cta" style="display:none;">Get a Demo</a></li>

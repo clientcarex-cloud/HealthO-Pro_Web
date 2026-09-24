@@ -1,0 +1,246 @@
+<?php
+/** Clinical & Doctors — see partials/blog-data.php for the format. */
+return [
+    'medical-records' => [
+        'name'  => 'Medical Records',
+        'cat'   => 'clinical',
+        'for'   => ['hims', 'cims', 'lims', 'ris'],
+        'short' => 'A complete electronic record of every visit, report, prescription and document.',
+        'title' => 'Medical Records: the complete patient history in one place',
+        'desc'  => 'HealthO Pro Medical Records keeps every visit, vital, diagnosis, prescription, report and document in one secure electronic record for each patient.',
+        'intro' => 'Paper files get lost, and scattered systems mean doctors decide with half the picture. HealthO Pro Medical Records builds one electronic record per patient, gathering every visit, report and document so clinicians see the full history in seconds.',
+        'points' => [
+            ['Visit history', 'Every consultation, admission and procedure in date order.'],
+            ['Vitals and clinical notes', 'Record vitals, complaints, findings and diagnoses at each visit.'],
+            ['Reports in the record', 'Lab and radiology results attach themselves to the patient’s record.'],
+            ['Documents and images', 'Upload referral letters, old reports and images.'],
+            ['Role-based access', 'Only authorised staff can see or edit clinical information.'],
+        ],
+        'benefits' => [
+            'Faster, better-informed consultations.',
+            'No lost files or repeated tests.',
+            'Continuity of care across departments and branches.',
+            'Secure, auditable access to sensitive data.',
+        ],
+        'faqs' => [
+            'What does a HealthO Pro medical record include?' => 'Visit history, vitals, clinical notes, diagnoses, prescriptions, lab and radiology reports, and uploaded documents.',
+            'Who can access patient medical records?' => 'Access is role-based, so only authorised staff can view or change clinical information, and access is recorded.',
+        ],
+    ],
+
+    'prescription' => [
+        'name'  => 'Prescription',
+        'cat'   => 'clinical',
+        'for'   => ['hims', 'cims'],
+        'short' => 'Write clear digital prescriptions in seconds with templates and quick-pick drugs.',
+        'title' => 'Prescription: clear digital prescriptions in seconds',
+        'desc'  => 'Write digital prescriptions in HealthO Pro with quick-pick drugs, dosage templates and advice, then print or share them with the patient instantly.',
+        'intro' => 'Handwritten prescriptions are slow to write and easy to misread. HealthO Pro Prescription lets doctors build a complete, legible prescription in a few clicks — medicines, dosage, advice, tests and follow-up — and share it instantly.',
+        'points' => [
+            ['Quick-pick medicines', 'Search your medicine list and add drugs with their usual dosage.'],
+            ['Templates', 'Save favourite prescriptions for common conditions and reuse them.'],
+            ['Advice, tests and follow-up', 'Add instructions, investigations and the next visit in the same step.'],
+            ['Print or share', 'Print on your letterhead or send by WhatsApp or email.'],
+            ['Saved to the record', 'Every prescription stays in the patient’s medical history.'],
+        ],
+        'benefits' => [
+            'Legible prescriptions and fewer dispensing errors.',
+            'More patients seen per session.',
+            'Consistent treatment protocols.',
+            'Prescriptions patients cannot lose.',
+        ],
+        'faqs' => [
+            'Can doctors reuse prescription templates?' => 'Yes. Doctors can save templates for common conditions and apply them in one click, then adjust as needed.',
+            'Can the prescription be sent to the patient digitally?' => 'Yes. Prescriptions can be printed or shared by WhatsApp or email.',
+        ],
+    ],
+
+    'medicines' => [
+        'name'  => 'Medicines',
+        'cat'   => 'clinical',
+        'for'   => ['hims', 'cims'],
+        'short' => 'A shared medicine master with strengths, forms and default dosages.',
+        'title' => 'Medicines: one medicine master for prescribing and pharmacy',
+        'desc'  => 'Maintain one medicine master in HealthO Pro — names, strengths, forms and default dosages — shared by doctors’ prescriptions and the pharmacy.',
+        'intro' => 'When doctors and the pharmacy use different medicine names, prescriptions get queried and patients wait. HealthO Pro Medicines keeps one master list that both prescribing and dispensing use.',
+        'points' => [
+            ['Medicine master', 'Brand and generic names, strength, form and manufacturer.'],
+            ['Default dosages', 'Set the usual dose, frequency and duration for faster prescribing.'],
+            ['Search as you type', 'Doctors find medicines instantly while prescribing.'],
+            ['Pharmacy link', 'Prescribed items flow to the pharmacy for dispensing.'],
+            ['Keep it current', 'Add new medicines and retire old ones centrally.'],
+        ],
+        'benefits' => [
+            'Consistent names across prescribing and dispensing.',
+            'Faster prescriptions.',
+            'Fewer pharmacy clarifications.',
+            'Clean data for prescribing reports.',
+        ],
+        'faqs' => [
+            'Is the medicine list shared with the pharmacy?' => 'Yes. Prescriptions and the pharmacy use the same medicine master, so prescribed items can be dispensed directly.',
+            'Can we set default dosages?' => 'Yes. Each medicine can carry a default dose, frequency and duration that the doctor can change.',
+        ],
+    ],
+
+    'case-taking' => [
+        'name'  => 'Case Taking',
+        'cat'   => 'clinical',
+        'for'   => ['cims', 'hims'],
+        'short' => 'Structured, detailed case history forms for thorough first consultations.',
+        'title' => 'Case Taking: structured, detailed case histories',
+        'desc'  => 'Capture detailed case histories in HealthO Pro with structured case-taking forms — complaints, history, examination and more — saved to the patient record.',
+        'intro' => 'Some specialties depend on a long, detailed first consultation — complaints, personal and family history, lifestyle and examination. HealthO Pro Case Taking gives clinicians structured forms, so nothing is missed and the history is easy to review later.',
+        'points' => [
+            ['Structured sections', 'Presenting complaints, history, family history, lifestyle and examination.'],
+            ['Specialty templates', 'Use case-taking formats suited to your practice.'],
+            ['Quick entry', 'Pick lists and free text together for speed and detail.'],
+            ['Review at every visit', 'The case history is available alongside follow-up notes.'],
+            ['Printable case sheet', 'Print or share the complete case when needed.'],
+        ],
+        'benefits' => [
+            'Thorough, consistent histories.',
+            'Faster follow-up consultations.',
+            'Better handover between doctors.',
+            'No thick paper case files.',
+        ],
+        'faqs' => [
+            'What is case taking in HealthO Pro?' => 'A structured form for recording a patient’s detailed history — complaints, past and family history, lifestyle and examination — saved to their record.',
+            'Can the case-taking format be customised?' => 'Yes. Templates can be set up to suit your specialty and way of practice.',
+        ],
+    ],
+
+    'medical-examination' => [
+        'name'  => 'Medical Examination',
+        'cat'   => 'clinical',
+        'for'   => ['hims', 'cims', 'lims'],
+        'short' => 'Run pre-employment, corporate and periodic health check-ups end to end.',
+        'title' => 'Medical Examination: corporate and pre-employment check-ups, organised',
+        'desc'  => 'Run pre-employment, corporate and periodic medical examinations in HealthO Pro — packages, examination forms, reports and fitness certificates.',
+        'intro' => 'Corporate and pre-employment check-ups involve many candidates, several tests and a certificate at the end. HealthO Pro Medical Examination organises the whole process from booking the group to issuing the fitness report.',
+        'points' => [
+            ['Examination packages', 'Define the tests and examinations for each company or purpose.'],
+            ['Group registration', 'Register many candidates for the same company at once.'],
+            ['Examination forms', 'Record physical examination findings in a structured form.'],
+            ['Combined report', 'Bring test results and findings into one report.'],
+            ['Fitness certificate', 'Issue the fitness result and share it with the company.'],
+        ],
+        'benefits' => [
+            'Faster turnaround on corporate batches.',
+            'A professional, consistent report.',
+            'Easier billing for companies.',
+            'A strong B2B revenue stream.',
+        ],
+        'faqs' => [
+            'Can HealthO Pro handle corporate health check-ups?' => 'Yes. You can set up company-specific packages, register candidates in groups and issue combined reports and fitness certificates.',
+            'Can companies be billed together?' => 'Yes. Examinations can be billed to the company on credit rather than to each candidate.',
+        ],
+    ],
+
+    'transcriptor' => [
+        'name'  => 'Transcriptor',
+        'cat'   => 'clinical',
+        'for'   => ['ris', 'hims', 'lims'],
+        'short' => 'Turn dictation into formatted reports with templates and voice-to-text.',
+        'title' => 'Transcriptor: from dictation to finished report, faster',
+        'desc'  => 'HealthO Pro Transcriptor turns doctors’ dictation into formatted reports using templates and voice-to-text, ready for review and sign-off.',
+        'intro' => 'Radiologists and pathologists spend a large part of the day on report writing. HealthO Pro Transcriptor speeds this up with templates and voice-to-text, so a dictated report reaches review and sign-off much faster.',
+        'points' => [
+            ['Voice-to-text', 'Dictate findings and see them typed into the report.'],
+            ['Report templates', 'Start from a template for each study or test.'],
+            ['Transcription queue', 'Transcriptionists see which reports are waiting for them.'],
+            ['Review before release', 'Reports go to the doctor for review and signature.'],
+            ['Consistent format', 'Every report follows your layout and letterhead.'],
+        ],
+        'benefits' => [
+            'Shorter reporting turnaround.',
+            'Less typing for doctors.',
+            'Uniform, professional reports.',
+            'Clear ownership at each step.',
+        ],
+        'faqs' => [
+            'Does Transcriptor support voice-to-text?' => 'Yes. Doctors can dictate findings, and the text is entered into the report template for editing.',
+            'Are transcribed reports checked before release?' => 'Yes. Transcribed reports go to the responsible doctor for review and sign-off before release.',
+        ],
+    ],
+
+    'dr-authorization' => [
+        'name'  => 'Dr. Authorization',
+        'cat'   => 'clinical',
+        'for'   => ['lims', 'ris', 'hims'],
+        'short' => 'Doctors review and digitally sign reports before they are released.',
+        'title' => 'Dr. Authorization: no report leaves without a doctor’s sign-off',
+        'desc'  => 'HealthO Pro Dr. Authorization routes lab and radiology reports to the responsible doctor for review and digital signature before release.',
+        'intro' => 'A report is only as trustworthy as its sign-off. HealthO Pro Dr. Authorization makes sure every lab and radiology report is reviewed and digitally signed by the responsible doctor before it reaches the patient.',
+        'points' => [
+            ['Authorisation queue', 'Doctors see all reports waiting for their review.'],
+            ['Review with context', 'Previous results and flags are visible while reviewing.'],
+            ['Digital signature', 'The authorised report carries the doctor’s signature and details.'],
+            ['Hold or send back', 'Doctors can hold a report or return it for correction.'],
+            ['Audit trail', 'Who authorised which report, and when, is recorded.'],
+        ],
+        'benefits' => [
+            'Quality control on every report.',
+            'Remote authorisation from anywhere.',
+            'Faster release after review.',
+            'Clear accountability.',
+        ],
+        'faqs' => [
+            'Can doctors authorise reports remotely?' => 'Yes. HealthO Pro is cloud-enabled, so doctors can review and sign reports from anywhere with access.',
+            'Is report authorisation recorded?' => 'Yes. The authorising doctor and time are recorded for every report.',
+        ],
+    ],
+
+    'pndt-form' => [
+        'name'  => 'PNDT Form',
+        'cat'   => 'clinical',
+        'for'   => ['ris', 'hims'],
+        'short' => 'Complete and store PCPNDT forms digitally for every ultrasound.',
+        'title' => 'PNDT Form: PCPNDT paperwork, done digitally',
+        'desc'  => 'Complete, store and report PCPNDT forms digitally in HealthO Pro for every obstetric ultrasound, with records ready for inspection.',
+        'intro' => 'Imaging centers in India must maintain PCPNDT records for obstetric ultrasounds. Missing or incomplete forms are a serious compliance risk. HealthO Pro PNDT Form makes the form part of the scan workflow, so records are complete and easy to produce.',
+        'points' => [
+            ['Form in the workflow', 'The form is prompted for applicable scans before reporting.'],
+            ['Patient details pre-filled', 'Details already captured at registration are reused.'],
+            ['Required fields', 'The form cannot be completed with mandatory information missing.'],
+            ['Digital storage', 'Forms are stored with the scan and patient record.'],
+            ['Registers and reports', 'Produce the records you need for submissions and inspections.'],
+        ],
+        'benefits' => [
+            'Reduced compliance risk.',
+            'Less paperwork for staff.',
+            'Records are complete and quick to find.',
+            'Inspection-ready at any time.',
+        ],
+        'faqs' => [
+            'What is the PNDT form in HealthO Pro?' => 'A digital version of the form required under India’s PCPNDT Act for obstetric ultrasounds, completed during the scan workflow and stored with the record.',
+            'Can PNDT records be retrieved for inspection?' => 'Yes. Completed forms are stored digitally and can be listed and printed when needed.',
+        ],
+    ],
+
+    'doctors' => [
+        'name'  => 'Doctors',
+        'cat'   => 'clinical',
+        'for'   => ['hims', 'cims', 'lims', 'ris'],
+        'short' => 'Manage consulting and referring doctors, schedules, fees and payouts.',
+        'title' => 'Doctors: manage consultants, referrers, schedules and payouts',
+        'desc'  => 'HealthO Pro Doctors manages consulting and referring doctors — profiles, schedules, fees, revenue sharing and referral reports — in one place.',
+        'intro' => 'Doctors are at the centre of your facility, whether they consult in-house or refer patients to you. HealthO Pro Doctors keeps every doctor’s profile, schedule, fees and business in one place.',
+        'points' => [
+            ['Doctor profiles', 'Specialty, qualifications, contact details and signature.'],
+            ['Schedules and fees', 'Consulting hours and consultation fees per doctor.'],
+            ['Referring doctors', 'Track which doctors refer patients and how much business they send.'],
+            ['Revenue sharing', 'Calculate payouts according to agreed terms.'],
+            ['Doctor reports', 'Consultations, referrals and revenue by doctor.'],
+        ],
+        'benefits' => [
+            'Accurate, transparent doctor payouts.',
+            'Know your most valuable referrers.',
+            'Up-to-date schedules for booking.',
+            'Stronger doctor relationships.',
+        ],
+        'faqs' => [
+            'Can HealthO Pro track referring doctors?' => 'Yes. Each referral is linked to the referring doctor, and reports show the business each doctor sends.',
+            'Does it calculate doctor payouts?' => 'Yes. Payouts can be calculated from the terms set for each doctor.',
+        ],
+    ],
+];

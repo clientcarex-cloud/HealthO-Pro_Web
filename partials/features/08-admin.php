@@ -1,0 +1,246 @@
+<?php
+/** Administration & Operations — see partials/blog-data.php for the format. */
+return [
+    'master-data' => [
+        'name'  => 'Master Data',
+        'cat'   => 'admin',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Central masters for services, prices, departments, branches and more.',
+        'title' => 'Master Data: set it up once, use it everywhere',
+        'desc'  => 'Manage services, prices, departments, branches, payment modes and other masters centrally in HealthO Pro Master Data.',
+        'intro' => 'Every screen in a healthcare system depends on its masters — services, prices, departments, branches, payment modes. HealthO Pro Master Data keeps them in one controlled place, so every branch and user works from the same information.',
+        'points' => [
+            ['Services and prices', 'All billable services with their rates.'],
+            ['Departments and branches', 'Your organisation structure.'],
+            ['Rate lists', 'Different rates for walk-in, corporate and partner clients.'],
+            ['Payment modes and taxes', 'Configured once for billing.'],
+            ['Controlled changes', 'Only authorised users can change masters.'],
+        ],
+        'benefits' => [
+            'Consistent prices across branches.',
+            'Fewer billing errors.',
+            'Faster setup of new branches.',
+            'Controlled, auditable changes.',
+        ],
+        'faqs' => [
+            'Can different branches share the same masters?' => 'Yes. Masters are central, so every branch uses the same services and prices unless you set branch-specific rates.',
+            'Who can change master data?' => 'Only users with permission to manage masters.',
+        ],
+    ],
+
+    'sops-and-docs' => [
+        'name'  => 'SOPs & DOCs',
+        'cat'   => 'admin',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'A controlled library of SOPs and documents with versions and acknowledgements.',
+        'title' => 'SOPs & DOCs: one controlled library for every procedure',
+        'desc'  => 'Keep SOPs, policies and documents in HealthO Pro with version control, access by role and staff acknowledgement — ready for audits.',
+        'intro' => 'Standard operating procedures only work if staff can find the current version. HealthO Pro SOPs & DOCs keeps every procedure, policy and form in one controlled library.',
+        'points' => [
+            ['Document library', 'SOPs, policies, forms and manuals by department.'],
+            ['Version control', 'Only the current version is in use, with history kept.'],
+            ['Role-based access', 'Staff see the documents relevant to them.'],
+            ['Acknowledgements', 'Staff confirm they have read new or updated SOPs.'],
+            ['Review dates', 'Get reminded when a document is due for review.'],
+        ],
+        'benefits' => [
+            'Audit and accreditation readiness.',
+            'Consistent practice across shifts.',
+            'No outdated printouts in use.',
+            'Proof of staff training.',
+        ],
+        'faqs' => [
+            'Does SOPs & DOCs support version control?' => 'Yes. The current version is shown to staff while previous versions are kept for reference.',
+            'Can we confirm staff have read an SOP?' => 'Yes. Staff acknowledge documents, and acknowledgements are recorded.',
+        ],
+    ],
+
+    'process-management' => [
+        'name'  => 'Process Management',
+        'cat'   => 'admin',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Define step-by-step workflows and see where each case is stuck.',
+        'title' => 'Process Management: workflows everyone can follow',
+        'desc'  => 'Define step-by-step workflows in HealthO Pro Process Management, assign each step and see where every case stands.',
+        'intro' => 'Many operational jobs follow a series of steps across several people. HealthO Pro Process Management turns these into defined workflows, so every case moves forward and nothing stalls unseen.',
+        'points' => [
+            ['Workflow design', 'Define the steps of a process and their order.'],
+            ['Step owners', 'Assign each step to a role or person.'],
+            ['Case tracking', 'See where each case is in the process.'],
+            ['Bottleneck view', 'Spot steps where cases pile up.'],
+            ['Process history', 'A record of each case from start to finish.'],
+        ],
+        'benefits' => [
+            'Consistent execution.',
+            'Faster completion.',
+            'Visible bottlenecks.',
+            'Easier process improvement.',
+        ],
+        'faqs' => [
+            'What is Process Management in HealthO Pro?' => 'A way to define multi-step workflows, assign each step and track every case through them.',
+            'Can we see where a process is delayed?' => 'Yes. You can see how many cases are waiting at each step.',
+        ],
+    ],
+
+    'assets-management' => [
+        'name'  => 'Assets Management',
+        'cat'   => 'admin',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Register equipment and assets with location, warranty, AMC and maintenance.',
+        'title' => 'Assets Management: know every piece of equipment you own',
+        'desc'  => 'Register equipment and assets in HealthO Pro with location, warranty, AMC, calibration and maintenance history.',
+        'intro' => 'Analyzers, imaging machines, beds and computers represent a large investment. HealthO Pro Assets Management records every asset with its location, warranty and maintenance, so nothing is lost or neglected.',
+        'points' => [
+            ['Asset register', 'Every asset with its details, cost and location.'],
+            ['Warranty and AMC', 'Track warranty and service contract dates.'],
+            ['Maintenance and calibration', 'Record service and calibration history.'],
+            ['Breakdown logging', 'Log breakdowns and repairs.'],
+            ['Asset tagging', 'Tag assets for physical verification.'],
+        ],
+        'benefits' => [
+            'Less equipment downtime.',
+            'No missed AMC renewals.',
+            'Accurate asset records for accounts.',
+            'Calibration evidence for audits.',
+        ],
+        'faqs' => [
+            'Can we track AMC and warranty dates?' => 'Yes. Warranty and AMC dates are recorded for each asset, and reminders can be set.',
+            'Is maintenance history kept?' => 'Yes. Service, calibration and repair history are stored with each asset.',
+        ],
+    ],
+
+    'purchase-management' => [
+        'name'  => 'Purchase Management',
+        'cat'   => 'admin',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Indents, purchase orders, goods receipt and supplier bills in one flow.',
+        'title' => 'Purchase Management: from indent to payment, under control',
+        'desc'  => 'Manage indents, purchase orders, approvals, goods receipt and supplier bills with HealthO Pro Purchase Management.',
+        'intro' => 'Unplanned purchases and missing paperwork inflate costs. HealthO Pro Purchase Management takes every purchase from a department’s request to the supplier’s payment through one controlled flow.',
+        'points' => [
+            ['Indents', 'Departments raise requests for what they need.'],
+            ['Purchase orders', 'Create POs from approved indents.'],
+            ['Approvals', 'Purchases above limits need approval.'],
+            ['Goods receipt', 'Receive items against the PO and update stock.'],
+            ['Supplier bills', 'Match bills to receipts before payment.'],
+        ],
+        'benefits' => [
+            'Lower purchasing costs.',
+            'No unauthorised purchases.',
+            'Accurate stock updates.',
+            'Clear supplier records.',
+        ],
+        'faqs' => [
+            'Does Purchase Management update stock?' => 'Yes. Items received against a purchase order are added to stock.',
+            'Can purchases require approval?' => 'Yes. Purchases can be routed for approval based on value or category.',
+        ],
+    ],
+
+    'mail-box' => [
+        'name'  => 'Mail Box',
+        'cat'   => 'admin',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Read and send your facility’s emails from inside HealthO Pro.',
+        'title' => 'Mail Box: your facility’s email, inside your workspace',
+        'desc'  => 'HealthO Pro Mail Box lets staff read and send business emails from within the system, alongside the patients and partners they concern.',
+        'intro' => 'Switching between the system and a separate email client wastes time and scatters information. HealthO Pro Mail Box brings business email into the same workspace.',
+        'points' => [
+            ['Inbox and sent', 'Read and send email without leaving HealthO Pro.'],
+            ['Shared mailboxes', 'Teams can work from shared addresses such as reports or billing.'],
+            ['Attachments', 'Send reports and documents from the system.'],
+            ['Templates', 'Reuse standard replies.'],
+            ['Search', 'Find past emails quickly.'],
+        ],
+        'benefits' => [
+            'Less switching between tools.',
+            'Shared inboxes stay organised.',
+            'Faster replies to partners and patients.',
+            'Communication stays in one place.',
+        ],
+        'faqs' => [
+            'Can we use shared mailboxes?' => 'Yes. Teams can work from shared addresses such as reports or billing.',
+            'Can documents from HealthO Pro be emailed directly?' => 'Yes. Reports and documents can be attached and sent from the Mail Box.',
+        ],
+    ],
+
+    'healthcare-vendors' => [
+        'name'  => 'Healthcare Vendors',
+        'cat'   => 'admin',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Find and manage suppliers of equipment, reagents and services.',
+        'title' => 'Healthcare Vendors: the right suppliers, a click away',
+        'desc'  => 'HealthO Pro Healthcare Vendors helps facilities find and manage suppliers of equipment, reagents, consumables and services.',
+        'intro' => 'Healthcare providers depend on reliable suppliers for equipment, reagents, consumables and services. HealthO Pro Healthcare Vendors brings vendor discovery and vendor records into your system.',
+        'points' => [
+            ['Vendor directory', 'Browse suppliers by category.'],
+            ['Vendor records', 'Keep contacts, terms and documents for each supplier.'],
+            ['Connected to purchasing', 'Use vendors directly in purchase orders.'],
+            ['Supplier history', 'See past purchases from each vendor.'],
+            ['Compare options', 'Evaluate suppliers before you buy.'],
+        ],
+        'benefits' => [
+            'Faster sourcing.',
+            'Better purchasing decisions.',
+            'Organised supplier information.',
+            'Less time spent searching for suppliers.',
+        ],
+        'faqs' => [
+            'What kind of vendors can we find?' => 'Suppliers of medical equipment, reagents, consumables and healthcare services.',
+            'Is it connected to Purchase Management?' => 'Yes. Vendors can be used directly when creating purchase orders.',
+        ],
+    ],
+
+    'support' => [
+        'name'  => 'Support',
+        'cat'   => 'admin',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Raise and track support tickets with the HealthO Pro team from inside the app.',
+        'title' => 'Support: help from the HealthO Pro team, whenever you need it',
+        'desc'  => 'Raise support tickets from inside HealthO Pro, track their status and get help from our support team 24×7.',
+        'intro' => 'When something needs attention, your team shouldn’t have to hunt for a phone number. HealthO Pro Support lets users raise a ticket from inside the application and follow it to resolution.',
+        'points' => [
+            ['Raise tickets in-app', 'Describe the issue and attach screenshots.'],
+            ['Track status', 'See when a ticket is received, in progress and resolved.'],
+            ['Ticket history', 'All past tickets and their resolutions.'],
+            ['24×7 support', 'Our team is available around the clock.'],
+            ['Phone and email too', 'Reach support at +91 97007 10055 or support@healtho.pro.'],
+        ],
+        'benefits' => [
+            'Faster resolution.',
+            'No lost support requests.',
+            'Visibility of open issues.',
+            'Confidence to run 24×7 operations.',
+        ],
+        'faqs' => [
+            'How do we contact HealthO Pro support?' => 'Raise a ticket inside HealthO Pro, call +91 97007 10055 or email support@healtho.pro.',
+            'Is support available 24×7?' => 'Yes. HealthO Pro support is available 24×7.',
+        ],
+    ],
+
+    'feature-request' => [
+        'name'  => 'Feature Request',
+        'cat'   => 'admin',
+        'for'   => ['hims', 'lims', 'cims', 'ris'],
+        'short' => 'Suggest improvements and follow their progress on the roadmap.',
+        'title' => 'Feature Request: help shape what HealthO Pro builds next',
+        'desc'  => 'Suggest new features and improvements from inside HealthO Pro and follow their progress — your ideas shape our roadmap.',
+        'intro' => 'The people who use HealthO Pro every day know best what would make their work easier. Feature Request gives every customer a direct way to suggest improvements and see what happens to them.',
+        'points' => [
+            ['Suggest in-app', 'Submit an idea without leaving your work.'],
+            ['Describe the need', 'Explain the problem and how you would like it solved.'],
+            ['Status updates', 'See when a request is reviewed, planned or released.'],
+            ['Request history', 'All your suggestions in one place.'],
+            ['Roadmap input', 'Requests feed directly into product planning.'],
+        ],
+        'benefits' => [
+            'A product that fits your workflows.',
+            'Your team’s ideas are heard.',
+            'Transparency about what is coming.',
+            'A partnership, not just a vendor.',
+        ],
+        'faqs' => [
+            'How do we request a new feature?' => 'Submit it from the Feature Request section inside HealthO Pro, describing the need.',
+            'Can we see the status of our requests?' => 'Yes. Each request shows whether it has been reviewed, planned or released.',
+        ],
+    ],
+];
