@@ -37,7 +37,8 @@
                 if (!val || !interestSel) return;
                 for (var i = 0; i < interestSel.options.length; i++) {
                     var o = interestSel.options[i];
-                    if (o.value === val || o.text === val) { interestSel.selectedIndex = i; return; }
+                    // data-auto: a page preset, so Organization Type may still change it.
+                    if (o.value === val || o.text === val) { interestSel.selectedIndex = i; interestSel.setAttribute('data-auto', ''); return; }
                 }
             };
 
@@ -89,6 +90,44 @@
                     }
                 }).observe(statusEl, { attributes: true, attributeFilter: ['class'] });
             }
+        })();
+
+        /* ---------- Organization Type ⇄ Interested In ----------
+           Picking one fills the other on any lead form (page or popup), but
+           only while that other field is empty or was filled this way — a
+           choice the visitor made by hand is never overwritten. */
+        (function () {
+            var ORG_TO_INTEREST = {
+                'Hospital': 'HIMS',
+                'Laboratory': 'LIMS',
+                'Clinic': 'CIMS',
+                'Radiology Center': 'RIS / RIMS',
+                'Other': ['Multiple / Not sure', 'General Enquiry']
+            };
+            var INTEREST_TO_ORG = { 'HIMS': 'Hospital', 'LIMS': 'Laboratory', 'CIMS': 'Clinic', 'RIS / RIMS': 'Radiology Center' };
+
+            var fill = function (sel, wanted) {
+                if (!sel || (sel.value && !sel.hasAttribute('data-auto'))) return;
+                wanted = [].concat(wanted || []);
+                for (var i = 0; i < sel.options.length; i++) {
+                    if (sel.options[i].value && wanted.indexOf(sel.options[i].value) !== -1) {
+                        sel.selectedIndex = i;
+                        sel.setAttribute('data-auto', '');
+                        return;
+                    }
+                }
+            };
+
+            document.addEventListener('change', function (e) {
+                var sel = e.target;
+                if (!sel.form || (sel.name !== 'orgType' && sel.name !== 'interest')) return;
+                sel.removeAttribute('data-auto');
+                if (sel.name === 'orgType') {
+                    fill(sel.form.querySelector('select[name="interest"]'), ORG_TO_INTEREST[sel.value]);
+                } else {
+                    fill(sel.form.querySelector('select[name="orgType"]'), INTEREST_TO_ORG[sel.value]);
+                }
+            });
         })();
 
         /* ---------- Sticky navbar shadow ---------- */
