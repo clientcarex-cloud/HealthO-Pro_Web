@@ -35,6 +35,13 @@ if (!$post) {
     exit;
 }
 
+// Once pretty URLs are on, the /blog-post?s= fallback address permanently
+// redirects to /blog/{slug}, so links already indexed carry over.
+if (BLOG_PRETTY_URLS && !preg_match('#^/blog/#', (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH))) {
+    header('Location: ' . blog_url($slug, true), true, 301);
+    exit;
+}
+
 $cat      = $post['cat'];
 $catName  = FEATURE_CATEGORIES[$cat][0];
 $url      = blog_url($slug, true);
