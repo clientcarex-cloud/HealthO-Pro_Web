@@ -28,106 +28,106 @@ Key facts:
 
 ### Patient Experience & Front Desk
 
-- [Appointment Booking](https://healtho.pro/blog/appointment-booking): Online and walk-in bookings with doctor slots, calendars and instant confirmations.
-- [Follow-ups for Appointments](https://healtho.pro/blog/follow-ups-for-appointments): Schedule follow-up visits at consultation and remind patients automatically.
-- [Token System](https://healtho.pro/blog/token-system): Digital tokens and queue display so patients know exactly when it is their turn.
-- [Self QR](https://healtho.pro/blog/self-qr): Patients scan a QR code to register or check in themselves from their own phone.
-- [Patient App](https://healtho.pro/blog/patient-app): A branded app for bookings, reports, bills and reminders in the patient’s pocket.
-- [Patient Subscriptions](https://healtho.pro/blog/patient-subscriptions): Sell health plans and memberships with included visits, tests and renewals.
-- [Privilege Card](https://healtho.pro/blog/privilege-card): Issue discount and loyalty cards that apply benefits automatically at billing.
-- [Patients Review](https://healtho.pro/blog/patients-review): Collect patient feedback after every visit and grow your online reviews.
+- [Appointment Booking](https://healtho.pro/blog-post?s=appointment-booking): Online and walk-in bookings with doctor slots, calendars and instant confirmations.
+- [Follow-ups for Appointments](https://healtho.pro/blog-post?s=follow-ups-for-appointments): Schedule follow-up visits at consultation and remind patients automatically.
+- [Token System](https://healtho.pro/blog-post?s=token-system): Digital tokens and queue display so patients know exactly when it is their turn.
+- [Self QR](https://healtho.pro/blog-post?s=self-qr): Patients scan a QR code to register or check in themselves from their own phone.
+- [Patient App](https://healtho.pro/blog-post?s=patient-app): A branded app for bookings, reports, bills and reminders in the patient’s pocket.
+- [Patient Subscriptions](https://healtho.pro/blog-post?s=patient-subscriptions): Sell health plans and memberships with included visits, tests and renewals.
+- [Privilege Card](https://healtho.pro/blog-post?s=privilege-card): Issue discount and loyalty cards that apply benefits automatically at billing.
+- [Patients Review](https://healtho.pro/blog-post?s=patients-review): Collect patient feedback after every visit and grow your online reviews.
 
 ### Billing & Finance
 
-- [Billing](https://healtho.pro/blog/billing): Fast OPD, IPD, lab and package billing with GST-ready invoices.
-- [Manage Payments](https://healtho.pro/blog/manage-payments): Track collections, dues, advances and settlements across every payment mode.
-- [Payment Modify](https://healtho.pro/blog/payment-modify): Correct payment entries through approvals, with every change logged.
-- [Refunds](https://healtho.pro/blog/refunds): Approve and process full or partial refunds with reasons and records.
-- [Expenses](https://healtho.pro/blog/expenses): Record daily expenses by category and branch to see true profitability.
-- [Payment Gateway Integration](https://healtho.pro/blog/payment-gateway-integration): Accept online payments by link, app or website — reconciled automatically.
+- [Billing](https://healtho.pro/blog-post?s=billing): Fast OPD, IPD, lab and package billing with GST-ready invoices.
+- [Manage Payments](https://healtho.pro/blog-post?s=manage-payments): Track collections, dues, advances and settlements across every payment mode.
+- [Payment Modify](https://healtho.pro/blog-post?s=payment-modify): Correct payment entries through approvals, with every change logged.
+- [Refunds](https://healtho.pro/blog-post?s=refunds): Approve and process full or partial refunds with reasons and records.
+- [Expenses](https://healtho.pro/blog-post?s=expenses): Record daily expenses by category and branch to see true profitability.
+- [Payment Gateway Integration](https://healtho.pro/blog-post?s=payment-gateway-integration): Accept online payments by link, app or website — reconciled automatically.
 
 ### Reports & Analytics
 
-- [Dashboard](https://healtho.pro/blog/dashboard): A live view of patients, revenue, pending work and alerts across branches.
-- [MIS Reports](https://healtho.pro/blog/mis-reports): Ready-made management reports on revenue, volumes, doctors and referrals.
-- [Shift Reports](https://healtho.pro/blog/shift-reports): Close each shift with collections, work done and handover notes.
-- [TATs](https://healtho.pro/blog/tats): Track turnaround time at every step and get alerts before reports run late.
+- [Dashboard](https://healtho.pro/blog-post?s=dashboard): A live view of patients, revenue, pending work and alerts across branches.
+- [MIS Reports](https://healtho.pro/blog-post?s=mis-reports): Ready-made management reports on revenue, volumes, doctors and referrals.
+- [Shift Reports](https://healtho.pro/blog-post?s=shift-reports): Close each shift with collections, work done and handover notes.
+- [TATs](https://healtho.pro/blog-post?s=tats): Track turnaround time at every step and get alerts before reports run late.
 
 ### Clinical & Doctors
 
-- [Medical Records](https://healtho.pro/blog/medical-records): A complete electronic record of every visit, report, prescription and document.
-- [Prescription](https://healtho.pro/blog/prescription): Write clear digital prescriptions in seconds with templates and quick-pick drugs.
-- [Medicines](https://healtho.pro/blog/medicines): A shared medicine master with strengths, forms and default dosages.
-- [Case Taking](https://healtho.pro/blog/case-taking): Structured, detailed case history forms for thorough first consultations.
-- [Medical Examination](https://healtho.pro/blog/medical-examination): Run pre-employment, corporate and periodic health check-ups end to end.
-- [Transcriptor](https://healtho.pro/blog/transcriptor): Turn dictation into formatted reports with templates and voice-to-text.
-- [Dr. Authorization](https://healtho.pro/blog/dr-authorization): Doctors review and digitally sign reports before they are released.
-- [PNDT Form](https://healtho.pro/blog/pndt-form): Complete and store PCPNDT forms digitally for every ultrasound.
-- [Doctors](https://healtho.pro/blog/doctors): Manage consulting and referring doctors, schedules, fees and payouts.
+- [Medical Records](https://healtho.pro/blog-post?s=medical-records): A complete electronic record of every visit, report, prescription and document.
+- [Prescription](https://healtho.pro/blog-post?s=prescription): Write clear digital prescriptions in seconds with templates and quick-pick drugs.
+- [Medicines](https://healtho.pro/blog-post?s=medicines): A shared medicine master with strengths, forms and default dosages.
+- [Case Taking](https://healtho.pro/blog-post?s=case-taking): Structured, detailed case history forms for thorough first consultations.
+- [Medical Examination](https://healtho.pro/blog-post?s=medical-examination): Run pre-employment, corporate and periodic health check-ups end to end.
+- [Transcriptor](https://healtho.pro/blog-post?s=transcriptor): Turn dictation into formatted reports with templates and voice-to-text.
+- [Dr. Authorization](https://healtho.pro/blog-post?s=dr-authorization): Doctors review and digitally sign reports before they are released.
+- [PNDT Form](https://healtho.pro/blog-post?s=pndt-form): Complete and store PCPNDT forms digitally for every ultrasound.
+- [Doctors](https://healtho.pro/blog-post?s=doctors): Manage consulting and referring doctors, schedules, fees and payouts.
 
 ### Hospital & Inpatient
 
-- [Nursing Station](https://healtho.pro/blog/nursing-station): Ward patients, medication rounds, vitals and nursing notes on one screen.
-- [Surgeries](https://healtho.pro/blog/surgeries): Schedule OTs, surgical teams and procedure records with package billing.
-- [Rooms](https://healtho.pro/blog/rooms): Real-time bed and room status with transfers and room-wise tariffs.
-- [Blood Management](https://healtho.pro/blog/blood-management): Track donors, blood units, stock, cross-matching and issues.
-- [Canteen Management](https://healtho.pro/blog/canteen-management): Run the hospital canteen — menus, orders, patient diets and billing.
-- [Parking Management](https://healtho.pro/blog/parking-management): Record vehicle entry and exit, parking fees and passes.
+- [Nursing Station](https://healtho.pro/blog-post?s=nursing-station): Ward patients, medication rounds, vitals and nursing notes on one screen.
+- [Surgeries](https://healtho.pro/blog-post?s=surgeries): Schedule OTs, surgical teams and procedure records with package billing.
+- [Rooms](https://healtho.pro/blog-post?s=rooms): Real-time bed and room status with transfers and room-wise tariffs.
+- [Blood Management](https://healtho.pro/blog-post?s=blood-management): Track donors, blood units, stock, cross-matching and issues.
+- [Canteen Management](https://healtho.pro/blog-post?s=canteen-management): Run the hospital canteen — menus, orders, patient diets and billing.
+- [Parking Management](https://healtho.pro/blog-post?s=parking-management): Record vehicle entry and exit, parking fees and passes.
 
 ### Laboratory & Diagnostics
 
-- [Phlebotomist](https://healtho.pro/blog/phlebotomist): A collection worklist for phlebotomists with barcodes and collection times.
-- [Home Sample Management](https://healtho.pro/blog/home-sample-management): Book, assign and track home sample collections from booking to lab receipt.
-- [Tests Master](https://healtho.pro/blog/tests-master): Define tests, parameters, reference ranges, methods, prices and TATs.
-- [Lab Packages](https://healtho.pro/blog/lab-packages): Create health check-up packages with bundled tests and package prices.
-- [LIS Integration](https://healtho.pro/blog/lis-integration): Connect lab analyzers bi-directionally so results flow in without typing.
-- [Inventory Management of Lab](https://healtho.pro/blog/inventory-management-of-lab): Track reagents and consumables with batches, expiry and reorder alerts.
-- [Auto AI-Driven QC](https://healtho.pro/blog/auto-ai-driven-qc): AI-assisted quality control that flags QC shifts and trends automatically.
-- [Referral Lab](https://healtho.pro/blog/referral-lab): Send tests you don’t run to partner labs and track them to the report.
-- [Referral Dispatch](https://healtho.pro/blog/referral-dispatch): Dispatch samples and reports to partners and referrers, with proof of delivery.
-- [B2B Collaboration](https://healtho.pro/blog/b2b-collaboration): Work with collection centers, hospitals and clinics on credit, with their own rates.
+- [Phlebotomist](https://healtho.pro/blog-post?s=phlebotomist): A collection worklist for phlebotomists with barcodes and collection times.
+- [Home Sample Management](https://healtho.pro/blog-post?s=home-sample-management): Book, assign and track home sample collections from booking to lab receipt.
+- [Tests Master](https://healtho.pro/blog-post?s=tests-master): Define tests, parameters, reference ranges, methods, prices and TATs.
+- [Lab Packages](https://healtho.pro/blog-post?s=lab-packages): Create health check-up packages with bundled tests and package prices.
+- [LIS Integration](https://healtho.pro/blog-post?s=lis-integration): Connect lab analyzers bi-directionally so results flow in without typing.
+- [Inventory Management of Lab](https://healtho.pro/blog-post?s=inventory-management-of-lab): Track reagents and consumables with batches, expiry and reorder alerts.
+- [Auto AI-Driven QC](https://healtho.pro/blog-post?s=auto-ai-driven-qc): AI-assisted quality control that flags QC shifts and trends automatically.
+- [Referral Lab](https://healtho.pro/blog-post?s=referral-lab): Send tests you don’t run to partner labs and track them to the report.
+- [Referral Dispatch](https://healtho.pro/blog-post?s=referral-dispatch): Dispatch samples and reports to partners and referrers, with proof of delivery.
+- [B2B Collaboration](https://healtho.pro/blog-post?s=b2b-collaboration): Work with collection centers, hospitals and clinics on credit, with their own rates.
 
 ### Marketing & Growth
 
-- [Leads](https://healtho.pro/blog/leads): Capture enquiries from every channel and follow them up until they convert.
-- [Web Integration](https://healtho.pro/blog/web-integration): Connect your website for online bookings, report downloads and enquiries.
-- [Banner Management](https://healtho.pro/blog/banner-management): Publish promotional banners on your app and website from one place.
-- [Bulk SMS](https://healtho.pro/blog/bulk-sms): Send reminders, alerts and campaigns by SMS to selected patient groups.
-- [Official WhatsApp](https://healtho.pro/blog/official-whatsapp): Send reports, bills and reminders from your verified WhatsApp Business number.
-- [Bulk Emails](https://healtho.pro/blog/bulk-emails): Email reports, statements, newsletters and campaigns to patients and partners.
-- [Medical Representative Management](https://healtho.pro/blog/medical-representative-management): Plan and track field staff visits to doctors, and the business they bring.
-- [Forms (Survey, Testimonials)](https://healtho.pro/blog/forms-survey-testimonials): Build surveys and collect testimonials with shareable online forms.
+- [Leads](https://healtho.pro/blog-post?s=leads): Capture enquiries from every channel and follow them up until they convert.
+- [Web Integration](https://healtho.pro/blog-post?s=web-integration): Connect your website for online bookings, report downloads and enquiries.
+- [Banner Management](https://healtho.pro/blog-post?s=banner-management): Publish promotional banners on your app and website from one place.
+- [Bulk SMS](https://healtho.pro/blog-post?s=bulk-sms): Send reminders, alerts and campaigns by SMS to selected patient groups.
+- [Official WhatsApp](https://healtho.pro/blog-post?s=official-whatsapp): Send reports, bills and reminders from your verified WhatsApp Business number.
+- [Bulk Emails](https://healtho.pro/blog-post?s=bulk-emails): Email reports, statements, newsletters and campaigns to patients and partners.
+- [Medical Representative Management](https://healtho.pro/blog-post?s=medical-representative-management): Plan and track field staff visits to doctors, and the business they bring.
+- [Forms (Survey, Testimonials)](https://healtho.pro/blog-post?s=forms-survey-testimonials): Build surveys and collect testimonials with shareable online forms.
 
 ### AI & Automation
 
-- [HealthO AI Assistant](https://healtho.pro/blog/healtho-ai-assistant): Ask questions about your data and get help with everyday tasks in plain language.
-- [AI Call Agents](https://healtho.pro/blog/ai-call-agents): AI voice agents that answer and make calls for bookings, reminders and follow-ups.
-- [Master Reminders](https://healtho.pro/blog/master-reminders): Automated reminders for renewals, calibrations, dues and recurring tasks.
+- [HealthO AI Assistant](https://healtho.pro/blog-post?s=healtho-ai-assistant): Ask questions about your data and get help with everyday tasks in plain language.
+- [AI Call Agents](https://healtho.pro/blog-post?s=ai-call-agents): AI voice agents that answer and make calls for bookings, reminders and follow-ups.
+- [Master Reminders](https://healtho.pro/blog-post?s=master-reminders): Automated reminders for renewals, calibrations, dues and recurring tasks.
 
 ### Team & HR
 
-- [Team](https://healtho.pro/blog/team): Manage users, roles, permissions and branches for your whole team.
-- [Team Chat](https://healtho.pro/blog/team-chat): Secure internal messaging between staff, departments and branches.
-- [Tasks Management](https://healtho.pro/blog/tasks-management): Assign tasks with deadlines and track them to completion.
-- [Staff Approvals](https://healtho.pro/blog/staff-approvals): Route discounts, leave, purchases and changes to the right approver.
-- [Recruitment Management](https://healtho.pro/blog/recruitment-management): Post jobs, track applicants and move them through interviews to offer.
-- [HR Records](https://healtho.pro/blog/hr-records): Digital employee files with documents, qualifications and history.
-- [Timesheet & Leave](https://healtho.pro/blog/timesheet-and-leave): Attendance, shifts, timesheets and leave requests with approvals.
-- [HR Payroll](https://healtho.pro/blog/hr-payroll): Monthly salaries from attendance and leave, with payslips and deductions.
-- [Self KT & Learning](https://healtho.pro/blog/self-kt-and-learning): Self-paced training and knowledge transfer for new and existing staff.
-- [Healthcare Hiring](https://healtho.pro/blog/healthcare-hiring): Reach healthcare professionals looking for work through the HealthO network.
+- [Team](https://healtho.pro/blog-post?s=team): Manage users, roles, permissions and branches for your whole team.
+- [Team Chat](https://healtho.pro/blog-post?s=team-chat): Secure internal messaging between staff, departments and branches.
+- [Tasks Management](https://healtho.pro/blog-post?s=tasks-management): Assign tasks with deadlines and track them to completion.
+- [Staff Approvals](https://healtho.pro/blog-post?s=staff-approvals): Route discounts, leave, purchases and changes to the right approver.
+- [Recruitment Management](https://healtho.pro/blog-post?s=recruitment-management): Post jobs, track applicants and move them through interviews to offer.
+- [HR Records](https://healtho.pro/blog-post?s=hr-records): Digital employee files with documents, qualifications and history.
+- [Timesheet & Leave](https://healtho.pro/blog-post?s=timesheet-and-leave): Attendance, shifts, timesheets and leave requests with approvals.
+- [HR Payroll](https://healtho.pro/blog-post?s=hr-payroll): Monthly salaries from attendance and leave, with payslips and deductions.
+- [Self KT & Learning](https://healtho.pro/blog-post?s=self-kt-and-learning): Self-paced training and knowledge transfer for new and existing staff.
+- [Healthcare Hiring](https://healtho.pro/blog-post?s=healthcare-hiring): Reach healthcare professionals looking for work through the HealthO network.
 
 ### Administration & Operations
 
-- [Master Data](https://healtho.pro/blog/master-data): Central masters for services, prices, departments, branches and more.
-- [SOPs & DOCs](https://healtho.pro/blog/sops-and-docs): A controlled library of SOPs and documents with versions and acknowledgements.
-- [Process Management](https://healtho.pro/blog/process-management): Define step-by-step workflows and see where each case is stuck.
-- [Assets Management](https://healtho.pro/blog/assets-management): Register equipment and assets with location, warranty, AMC and maintenance.
-- [Purchase Management](https://healtho.pro/blog/purchase-management): Indents, purchase orders, goods receipt and supplier bills in one flow.
-- [Mail Box](https://healtho.pro/blog/mail-box): Read and send your facility’s emails from inside HealthO Pro.
-- [Healthcare Vendors](https://healtho.pro/blog/healthcare-vendors): Find and manage suppliers of equipment, reagents and services.
-- [Support](https://healtho.pro/blog/support): Raise and track support tickets with the HealthO Pro team from inside the app.
-- [Feature Request](https://healtho.pro/blog/feature-request): Suggest improvements and follow their progress on the roadmap.
+- [Master Data](https://healtho.pro/blog-post?s=master-data): Central masters for services, prices, departments, branches and more.
+- [SOPs & DOCs](https://healtho.pro/blog-post?s=sops-and-docs): A controlled library of SOPs and documents with versions and acknowledgements.
+- [Process Management](https://healtho.pro/blog-post?s=process-management): Define step-by-step workflows and see where each case is stuck.
+- [Assets Management](https://healtho.pro/blog-post?s=assets-management): Register equipment and assets with location, warranty, AMC and maintenance.
+- [Purchase Management](https://healtho.pro/blog-post?s=purchase-management): Indents, purchase orders, goods receipt and supplier bills in one flow.
+- [Mail Box](https://healtho.pro/blog-post?s=mail-box): Read and send your facility’s emails from inside HealthO Pro.
+- [Healthcare Vendors](https://healtho.pro/blog-post?s=healthcare-vendors): Find and manage suppliers of equipment, reagents and services.
+- [Support](https://healtho.pro/blog-post?s=support): Raise and track support tickets with the HealthO Pro team from inside the app.
+- [Feature Request](https://healtho.pro/blog-post?s=feature-request): Suggest improvements and follow their progress on the roadmap.
 
 ## Company
 
@@ -142,4 +142,4 @@ Key facts:
 - [Message to the CEO](https://healtho.pro/message-to-ceo)
 - [Privacy policy](https://healtho.pro/privacy-policy)
 - [Terms and conditions](https://healtho.pro/terms-conditions)
-- [Sitemap](https://healtho.pro/sitemap.xml)
+- [Sitemap](https://healtho.pro/sitemap)

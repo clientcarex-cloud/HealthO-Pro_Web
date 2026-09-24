@@ -1,6 +1,8 @@
 <?php
 /**
- * XML sitemap — served at /sitemap.xml (rewrite in .htaccess).
+ * XML sitemap — served at /sitemap (the extensionless rule) and at /sitemap.xml
+ * (rewrite in .htaccess). The server currently sends /sitemap.xml to the CRM,
+ * so robots.txt points to /sitemap; either URL is valid for search engines.
  *
  * Built on request so it never goes stale: every page's <lastmod> is its source
  * file's modification time (the latest of the page and the partials it renders),

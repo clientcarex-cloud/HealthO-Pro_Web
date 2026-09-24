@@ -30,4 +30,4 @@ Disallow: /PHPMailer/
 Disallow: /api/
 Disallow: /partials/
 
-Sitemap: https://healtho.pro/sitemap.xml
+Sitemap: https://healtho.pro/sitemap

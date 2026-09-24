@@ -23,10 +23,25 @@ require_once __DIR__ . '/site.php';
 /** Publication date shown on posts (ISO 8601). */
 const BLOG_PUBLISHED = '2026-09-24';
 
-/** Blog/features URLs. /blog/{slug} needs the rewrite in .htaccess. */
+/**
+ * Pretty post URLs (/blog/{slug}) need the rewrite in .htaccess — and, because
+ * this domain also serves the CRM, the server must send /blog/ paths to the
+ * website at all (as it already does for /careers/). Until it does, the CRM
+ * answers them with its 404, so posts use /blog-post?s={slug}, which needs no
+ * server change. Flip to true once /blog/ is routed to the website.
+ */
+const BLOG_PRETTY_URLS = false;
+
+/** Blog index or post URL. Used for links, canonicals, structured data and the sitemap. */
 function blog_url(string $slug = '', bool $absolute = false): string
 {
-    $path = $slug === '' ? '/blog' : '/blog/' . rawurlencode($slug);
+    if ($slug === '') {
+        $path = '/blog';
+    } else {
+        $path = BLOG_PRETTY_URLS
+            ? '/blog/' . rawurlencode($slug)
+            : '/blog-post?s=' . rawurlencode($slug);
+    }
     return $absolute ? SITE_URL . $path : $path;
 }
 
