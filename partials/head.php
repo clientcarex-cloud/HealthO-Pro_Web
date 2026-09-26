@@ -108,10 +108,10 @@ $active = static fn(string $slug): string => $slug === $nav_active ? ' active' :
       <li class="nav-item"><a href="/blog" class="nav-link<?= $active('blog') ?>">Blog</a></li>
       <li class="nav-item"><a href="/careers" class="nav-link<?= $active('careers') ?>">Careers</a></li>
       <li class="nav-item"><a href="/contact" class="nav-link<?= $active('contact') ?>">Contact</a></li>
-      <li><a href="/contact" class="btn btn-primary mobile-cta" style="display:none;">Get a Demo</a></li>
+      <li><a href="https://healtho.pro/login" class="btn btn-primary mobile-cta" style="display:none;">Login / Sign Up</a></li>
     </ul>
     <div class="nav-actions">
-      <a href="/contact" class="btn btn-primary nav-cta">Get a Demo</a>
+      <a href="https://healtho.pro/login" class="btn btn-primary nav-cta">Login / Sign Up</a>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
     </div>
   </div>

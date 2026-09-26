@@ -73,7 +73,7 @@
 
             // Intercept every demo trigger in the capture phase so neither the
             // smooth-scroll nor the mobile-menu handlers also fire.
-            var DEMO_SELECTOR = '[data-demo], .nav-cta, .mobile-cta, a[href="#demo"]';
+            var DEMO_SELECTOR = '[data-demo], a[href="#demo"]';
             document.addEventListener('click', function (e) {
                 var trigger = e.target.closest && e.target.closest(DEMO_SELECTOR);
                 if (!trigger || modal.contains(trigger)) return;

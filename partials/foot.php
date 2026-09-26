@@ -14,7 +14,7 @@ $foot_scripts = $foot_scripts ?? [];
 // On a product page the popup pre-selects that product.
 $demo_interest = PRODUCTS[$page ?? '']['short'] ?? '';
 ?>
-<!-- Demo popup — script.js opens this on any [data-demo] / .nav-cta click. -->
+<!-- Demo popup — script.js opens this on any [data-demo] click. -->
 <div class="demo-modal" role="dialog" aria-modal="true" aria-label="Book a free demo" data-page-interest="<?= h($demo_interest) ?>">
   <div class="demo-modal__dialog">
     <button type="button" class="demo-modal__close" aria-label="Close">
