@@ -1323,6 +1323,10 @@
                     .then(function (res) {
                         if (res.status === 'success') {
                             showStatus('ok', res.message || '✓ Thank you! Our team will get back to you within one business day.');
+                            // Conversion events for ad platforms (no-ops when not loaded).
+                            var interest = data.get('interest') || '';
+                            if (window.fbq) window.fbq('track', 'Lead', { content_name: interest });
+                            if (window.gtag) window.gtag('event', 'generate_lead', { interest: interest });
                             form.reset();
                         } else {
                             showStatus('bad', res.message || 'Something went wrong. Please email digicarelynx@gmail.com.');

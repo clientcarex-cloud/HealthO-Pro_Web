@@ -6,9 +6,11 @@
 const SITE_URL   = 'https://healtho.pro';
 const GA_ID      = 'G-1BJ76YS8W8';
 const CLARITY_ID = 'xc1duel6z4';
+/** Meta (Facebook) Pixel ID for ad conversion tracking. Empty = pixel not loaded. */
+const META_PIXEL_ID = '';
 
 /** Bump to bust the browser cache for styles.css / script.js. */
-const ASSET_VER = '28';
+const ASSET_VER = '29';
 
 /** Only Plus Jakarta Sans is used by the stylesheet; only these weights appear in it. */
 const FONT_CSS = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap';

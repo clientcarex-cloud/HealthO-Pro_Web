@@ -76,6 +76,18 @@ $active = static fn(string $slug): string => $slug === $nav_active ? ' active' :
     })(window, document, "clarity", "script", "<?= CLARITY_ID ?>");
   });
 </script>
+<?php if (META_PIXEL_ID !== ''): ?>
+<script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '<?= h(META_PIXEL_ID) ?>');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=<?= h(META_PIXEL_ID) ?>&amp;ev=PageView&amp;noscript=1"></noscript>
+<?php endif; ?>
 </head>
 <body>
 <div class="preloader" id="preloader"><div class="spinner"></div></div>
