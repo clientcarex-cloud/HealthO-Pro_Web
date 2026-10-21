@@ -100,23 +100,29 @@ function client_featured_rows(): array
 
 /** Which client types to show first on each product page, and how to name them. */
 const CLIENT_PRODUCT_FOCUS = [
-    'hims' => [['hospitals', 'clinics'], 'hospitals & nursing homes'],
-    'lims' => [['diagnostics'], 'diagnostic labs'],
-    'cims' => [['clinics', 'hospitals'], 'clinics & hospitals'],
-    'ris'  => [['imaging', 'diagnostics'], 'scanning & diagnostic centres'],
+    'hims' => ['hospitals',   'hospitals & nursing homes'],
+    'lims' => ['diagnostics', 'diagnostic labs'],
+    'cims' => ['clinics',     'clinics & polyclinics'],
+    'ris'  => ['imaging',     'imaging & scanning centres'],
 ];
 
-/** Clients ordered for a product: matching types first (featured before others), then everyone else. */
+/** Only the clients of the product's own type (featured first). */
 function clients_for(string $product, int $limit = 14): array
 {
-    $focus = CLIENT_PRODUCT_FOCUS[$product][0] ?? [];
-    $rank = static function (array $c) use ($focus): int {
-        $i = array_search($c['cat'], $focus, true);
-        return ($i === false ? 10 : $i * 2) + ($c['featured'] ? 0 : 1);
-    };
-    $list = CLIENTS;
-    usort($list, static fn($a, $b) => $rank($a) <=> $rank($b));
+    $cat  = CLIENT_PRODUCT_FOCUS[$product][0] ?? '';
+    $list = array_values(array_filter(CLIENTS, static fn($c) => $c['cat'] === $cat));
+    usort($list, static fn($a, $b) => $b['featured'] <=> $a['featured']);
     return array_slice($list, 0, $limit);
+}
+
+/** Logos in a still, centred row — used when there are too few to scroll without visibly repeating. */
+function client_logo_row(array $list): string
+{
+    $chips = '';
+    foreach ($list as $c) {
+        $chips .= '<div class="logo-chip" title="' . h($c['name']) . '">' . client_logo_img($c, 6400, 140, 60) . '</div>';
+    }
+    return '<div class="logo-row">' . $chips . '</div>';
 }
 
 /** Slim "Trusted by" logo band placed straight under a product page hero. */
@@ -125,7 +131,7 @@ function client_trust_strip(string $product): string
     $who = CLIENT_PRODUCT_FOCUS[$product][1] ?? 'healthcare providers';
     return '<section class="trust-strip" aria-label="Some of our clients">'
         . '<div class="container"><p class="trust-title">Trusted by <b>1,200+ ' . h($who) . '</b> across 8 countries</p></div>'
-        . client_marquee(clients_for($product, 14), false, 40, true)
+        . (count($list = clients_for($product, 14)) >= 6 ? client_marquee($list, false, 40, true) : client_logo_row($list))
         . '<div class="container"><a class="trust-link" href="/our-clients">See all our clients <span aria-hidden="true">→</span></a></div>'
         . '</section>';
 }
@@ -135,14 +141,15 @@ function client_proof(string $product): string
 {
     $list = clients_for($product, 30);
     // Round badges only suit compact marks; wide wordmarks go in the sentence instead.
-    $badges = array_slice(array_values(array_filter($list, static fn($c) => $c['w'] / $c['h'] <= 1.5)), 0, 5);
-    $named  = array_slice(array_values(array_filter($list, static fn($c) => $c['featured'])), 0, 2);
+    usort($list, static fn($a, $b) => ($a['w'] / $a['h'] > 1.5) <=> ($b['w'] / $b['h'] > 1.5));
+    $badges = array_slice($list, 0, 5);
+    $named  = clients_for($product, 2);
     $who    = CLIENT_PRODUCT_FOCUS[$product][1] ?? 'healthcare providers';
     $html = '<div class="client-proof"><div class="proof-logos">';
     foreach ($badges as $c) {
         $html .= '<span title="' . h($c['name']) . '">' . client_logo_img($c, 1300, 40, 40) . '</span>';
     }
-    $html .= '</div><p>Join <b>' . h($named[0]['name'] ?? '') . '</b>, <b>' . h($named[1]['name'] ?? '') . '</b>'
+    $html .= '</div><p>Join <b>' . h($named[0]['name'] ?? '') . '</b>' . (isset($named[1]) ? ', <b>' . h($named[1]['name']) . '</b>' : '')
         . ' and <b>1,200+ ' . h($who) . '</b> already on HealthO Pro.</p></div>';
     return $html;
 }
