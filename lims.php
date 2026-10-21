@@ -1,121 +1,141 @@
 <?php
 $page        = 'lims';
-$title       = 'LIMS — Laboratory Information Management System | HealthO Pro';
-$description = 'Cloud LIMS for diagnostic labs: barcoded samples, bi-directional analyzer integration, auto-validation, QC and instant WhatsApp/email reports. Book a free demo.';
+$title       = 'Your Analyzer Already Knows the Result — LIMS | HealthO Pro';
+$description = 'Stop typing results. HealthO Pro LIMS pulls values from your analyzers, checks them and sends branded reports on WhatsApp. Barcodes, QC, B2B and TAT dashboards. Free demo.';
 require_once __DIR__ . '/partials/seo.php';
 $faqs = [
-    'What is a Laboratory Information Management System (LIMS)?' =>
-        'A LIMS manages a diagnostic lab\'s work from sample registration to the final report. HealthO Pro LIMS handles barcoded sample tracking, analyzer integration, result validation, quality control and report delivery.',
-    'Can HealthO Pro LIMS connect to lab analyzers?' =>
-        'Yes. It supports bi-directional integration with biochemistry, hematology and immunoassay analyzers, so results flow in without manual entry.',
-    'How are lab reports delivered to patients?' =>
-        'Branded reports can be delivered instantly via WhatsApp, email and a patient portal, using custom templates and cumulative reports.',
-    'Does the LIMS support quality control?' =>
-        'Yes. It includes Levey-Jennings charts, normal ranges and automated validation rules.',
-    'Can it manage collection centers and referral doctors?' =>
-        'Yes. The B2B and referrals module manages collection centers, referral doctors and outsourced tests.',
-    'Is HealthO Pro LIMS suitable for multi-center labs?' =>
-        'Yes. It is built for everything from single labs to multi-center reference laboratories, with real-time turnaround time (TAT), revenue and volume tracking.',
+    'Do we still have to type results?' =>
+        'No. HealthO Pro LIMS connects to your biochemistry, hematology and immunoassay analyzers. Results come into the report by themselves — your team only checks and approves.',
+    'Will it work with my analyzers?' =>
+        'Most modern analyzers can send results to a computer, and we support two-way (bi-directional) connection. Tell us your machine models and we\'ll confirm in the demo.',
+    'How do patients get their reports?' =>
+        'Branded reports go out on WhatsApp, email and a patient portal the moment they are signed. Patients stop calling to ask "is my report ready?".',
+    'Does it help with quality control?' =>
+        'Yes. Normal ranges, auto-validation rules and Levey-Jennings QC charts are built in, so unusual values are flagged before a report goes out.',
+    'Can it manage collection centres and referral doctors?' =>
+        'Yes. The B2B module tracks collection centres, referral doctors, outsourced tests and their accounts — no separate notebook or Excel.',
+    'How long does it take to start?' =>
+        'Usually a few days. We set up your tests, rates and report format, connect your analyzers and train your team for free.',
 ];
 $schema = [seo_software('lims', 'LIMS — Laboratory Information Management System', $description, 'Laboratory Information Management System', null)];
+
+require __DIR__ . '/partials/landing.php';
+$head_extra = lp_styles();
+
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/pricing-section.php';
 require __DIR__ . '/partials/contact-strip.php';
 require __DIR__ . '/partials/head.php';
+
+$wa_link = WHATSAPP_URL . '?text=' . rawurlencode('Hi, I want a demo of HealthO Pro LIMS for my lab.');
+
+lp_hero([
+    'eyebrow' => 'For Diagnostic Labs & Collection Centres',
+    'title'   => 'Your analyzer already knows the result.<br><span class="text-grad">So why is someone still typing it?</span>',
+    'sub'     => 'Every typed value is a chance for a wrong digit — and a patient who waits longer. <b>HealthO Pro LIMS</b> reads results straight from your analyzers, checks them, and sends a branded report to the patient\'s WhatsApp.',
+    'pills'   => [['Zero', 'result typing'], ['Barcode', 'every sample'], ['Free', 'setup & training'], ['24×7', 'help']],
+    'aria'    => 'A barcoded sample runs on the analyzer, results flow into the report, and the patient gets it on WhatsApp',
+    'nodes'   => [
+        ['barcode', 'c-cyan',   'Sample',          'Barcoded at collection', '<div class="lp-vals"><span class="lp-val">SID 240817</span><span class="lp-val">CBC</span><span class="lp-val">LFT</span><span class="lp-val">TSH</span></div>'],
+        ['cpu',     'c-violet', 'Analyzer → LIMS', 'Results flow in & get checked', '<div class="lp-vals"><span class="lp-val">Hb 13.2</span><span class="lp-val">SGPT 34</span><span class="lp-val warn">TSH 6.8 ↑</span><span class="lp-val">QC ✓</span></div>'],
+        ['wa',      'c-green',  'Patient\'s phone','Report delivered', '<div><span class="lp-bubble">' . lp_ic('check') . ' Your lab report is ready</span></div>'],
+    ],
+]);
+
+lp_pains(
+    'Does any of this happen in your lab?',
+    'Tick what feels familiar. It takes 30 seconds.',
+    [
+        ['Patients call again and again',            '"Is my report ready yet?"'],
+        ['Results are typed from the analyzer',      'Copied from a screen or printout by hand.'],
+        ['A wrong value once went out',              'And the report had to be corrected and re-printed.'],
+        ['A sample got mixed up or misplaced',       'Hand-written labels, busy morning rush.'],
+        ['Doctor & centre accounts live in a notebook','Or in an Excel sheet only one person understands.'],
+        ['You don\'t know today\'s numbers until night','Tests done, pending reports, collection.'],
+    ],
+    [
+        0 => 'Tick the problems you see — we\'ll tell you what they mean.',
+        1 => 'Even <b>one</b> of these slows your lab every single day.',
+        3 => '<b>Your team is doing work a machine should do.</b> Every one of these is fixable.',
+        5 => '<b>Your lab is losing hours — and trust.</b> Scroll down to see how many.',
+    ]
+);
+
+lp_leak(
+    'How many hours does typing results really cost?',
+    'Nobody notices it — it\'s spread across every shift. Set your numbers to see the total.',
+    [
+        ['lp-tests', 'Test results per day',            20, 2000, 10, 200, '', ''],
+        ['lp-secs',  'Seconds to type & check each one', 10, 60,   5,  30,  '', ' sec'],
+    ],
+    'Your team spends every month',
+    'Based on 26 working days. Move the sliders to match your lab — it\'s your own estimate.'
+);
 ?>
-<!-- ===== PAGE HERO ===== -->
-<header class="page-hero">
-  <div class="hero-glow glow-1"></div>
-  <div class="hero-glow glow-2"></div>
-  <div class="container">
-    <div class="breadcrumb"><a href="/">Home</a><span>›</span><a href="solutions">Solutions</a><span>›</span>LIMS</div>
-    <h1>LIMS — <span class="text-grad">Laboratory Information</span> Management System</h1>
-    <p>From sample collection to verified reports — automate your diagnostic lab with speed, accuracy and full traceability.</p>
-    <div class="hero-actions hero-actions--center">
-      <a href="#demo" class="btn btn-primary btn-lg">Book a Demo</a>
-      <a href="#pricing" class="btn btn-ghost-light btn-lg">View Pricing</a>
-    </div>
-  </div>
-</header>
+<script>
+window.lpCalc = function (v, fmt) {
+  var hrs = v['lp-tests'] * v['lp-secs'] * 26 / 3600, days = hrs / 8;
+  return { big: fmt(hrs) + ' hours', sub: 'That\'s about <b>' + fmt(days) + ' full working days</b> a month — just typing numbers your analyzer already has. Every one is a chance for a wrong digit.' };
+};
+</script>
+<?php
+lp_before_after(
+    'Same sample. Half the steps. Zero typing.',
+    'Flip the switch to see one lab report made the old way — and with HealthO Pro LIMS.',
+    [['pen', 'Write in register'], ['pen', 'Label tubes by hand'], ['cpu', 'Run on the analyzer'], ['eye', 'Read the printout'], ['keyboard', 'Type every value'], ['redo', 'Fix typing mistakes'], ['doc', 'Print & sign'], ['phone', 'Patient calls to ask']],
+    [['x', '8 steps'], ['keyboard', 'Lots of typing'], ['x', 'Wrong digits slip in'], ['clock', 'Slow reports']],
+    [['barcode', 'Register & barcode'], ['cpu', 'Run on the analyzer'], ['shield', 'Results auto-checked'], ['wa', 'Report on WhatsApp']],
+    [['check', 'Just 4 steps'], ['check', 'No values typed'], ['check', 'Abnormals flagged'], ['check', 'Faster reports']]
+);
 
-<!-- ===== OVERVIEW SPLIT ===== -->
-<section class="section section--soft">
-  <div class="container">
-    <div class="split rev">
-      <div class="reveal">
-        <span class="eyebrow">For Laboratories</span>
-        <h2 class="h-sec">Accuracy and speed, automated</h2>
-        <p class="lead" style="margin:16px 0 24px;">HealthO Pro LIMS removes manual errors with barcoded tracking and direct analyzer integration — so reports go out faster and right the first time.</p>
-        <ul class="checks">
-          <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Barcoded sample registration &amp; tracking</span></li>
-          <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Bi-directional analyzer / instrument integration</span></li>
-          <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Automated result validation &amp; quality control</span></li>
-          <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Branded reports via WhatsApp, email &amp; patient portal</span></li>
-        </ul>
-      </div>
-      <div class="split-media reveal d1"><div class="media-frame"><img src="assets/images/lims.webp" alt="HealthO Pro LIMS laboratory management dashboard" width="1024" height="1024" loading="lazy" decoding="async"></div></div>
-    </div>
-  </div>
-</section>
+lp_journey(
+    'One sample\'s journey, in 4 steps',
+    [
+        ['barcode', 'c-navy',   'Register & barcode', 'Bill the patient and print a barcode. The tube is tracked from collection to report.', 'No mix-ups'],
+        ['cpu',     'c-cyan',   'Run the analyzer',   'The analyzer reads the barcode and knows which tests to run.',                         'Nothing new to learn'],
+        ['shield',  'c-violet', 'Results check themselves', 'Values flow into the report. Ranges, rules and QC flag anything unusual.',          'TSH 6.8 → flagged'],
+        ['send',    'c-green',  'Sign & send',        'The pathologist approves. The branded report reaches WhatsApp, email and the portal.', 'No "is it ready?" calls'],
+    ],
+    'Think of UPI. You don\'t count notes or write a receipt — the money just moves, and both sides get proof instantly. HealthO Pro LIMS <strong>moves results from analyzer to patient the same way</strong> — no hands in between.'
+);
 
-<!-- ===== FEATURE GRID ===== -->
-<section class="section">
-  <div class="container">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Capabilities</span>
-      <h2 class="h-sec">Built for modern diagnostics</h2>
-      <p class="lead">Everything from single labs to multi-center reference laboratories.</p>
-    </div>
-    <div class="grid grid-3">
-      <div class="card reveal"><span class="feat-ic bg-cyan" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 14h4"/></svg></span><h4>Sample Management</h4><p>Registration, barcoding, routing and full chain-of-custody tracking.</p></div>
-      <div class="card reveal d1"><span class="feat-ic bg-navy" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v4l-6 6v6l-4-2v-4L4 8Z"/></svg></span><h4>Analyzer Integration</h4><p>Connect bio-chemistry, hematology and immunoassay analyzers directly.</p></div>
-      <div class="card reveal d2"><span class="feat-ic bg-green" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><h4>Quality Control</h4><p>Levey-Jennings charts, normal ranges and auto-validation rules.</p></div>
-      <div class="card reveal"><span class="feat-ic bg-amber" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg></span><h4>Smart Reporting</h4><p>Custom templates, cumulative reports and instant digital delivery.</p></div>
-      <div class="card reveal d1"><span class="feat-ic bg-violet" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span><h4>B2B &amp; Referrals</h4><p>Manage collection centers, referral doctors and outsourced tests.</p></div>
-      <div class="card reveal d2"><span class="feat-ic bg-navy" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg></span><h4>Analytics &amp; TAT</h4><p>Track turnaround time, revenue and test volumes in real time.</p></div>
-    </div>
-  </div>
-</section>
+lp_benefits(
+    'Everything a busy lab needs',
+    'From a single lab to a multi-centre reference lab.',
+    [
+        ['barcode', 'bg-cyan',   'Barcode sample tracking',   'Every tube tracked from collection to report. Nothing misplaced.'],
+        ['cpu',     'bg-navy',   'Analyzer connection',       'Two-way connection with biochemistry, hematology and immunoassay machines.'],
+        ['shield',  'bg-green',  'Auto-check & QC',           'Normal ranges, validation rules and Levey-Jennings charts built in.'],
+        ['send',    'bg-amber',  'Reports on WhatsApp',       'Branded reports on WhatsApp, email and a patient portal — the moment they\'re signed.'],
+        ['users',   'bg-violet', 'B2B & referral doctors',    'Collection centres, referral doctors and outsourced tests — all accounted for.'],
+        ['chart',   'bg-navy',   'Live TAT & revenue',        'Pending reports, turnaround time and collection — live, from your phone.'],
+    ]
+);
 
-<!-- ===== BENEFITS BAND ===== -->
-<section class="section section--navy">
-  <div class="container">
-    <div class="sec-head reveal"><span class="eyebrow">Outcomes</span><h2 class="h-sec">Faster, error-free diagnostics</h2></div>
-    <div class="stats">
-      <div class="stat reveal"><div class="n"><span data-count="50" data-suffix="%">50%</span></div><div class="l">Faster report TAT</div></div>
-      <div class="stat reveal d1"><div class="n"><span data-count="99" data-suffix="%">99%</span></div><div class="l">Result accuracy</div></div>
-      <div class="stat reveal d2"><div class="n"><span data-count="1000" data-suffix="+">1,000+</span></div><div class="l">Tests/day capacity</div></div>
-      <div class="stat reveal d3"><div class="n"><span data-count="24" data-suffix="×7">24×7</span></div><div class="l">Support &amp; uptime</div></div>
-    </div>
-  </div>
-</section>
+lp_stats('What labs see after switching', [
+    [50, '', '%', '50%', 'Faster report TAT'],
+    [99, '', '%', '99%', 'Result accuracy'],
+    [1000, '', '+', '1,000+', 'Tests/day capacity'],
+    [24, '', '×7', '24×7', 'Support & uptime'],
+]);
 
-<!-- ===== PRICING ===== -->
-<?php pricing_section('lims'); ?>
+pricing_section('lims');
 
-<!-- ===== FAQ ===== -->
-<?php faq_section($faqs, 'LIMS questions, answered'); ?>
+faq_section($faqs, 'Questions? Simple answers.', 'section section--soft');
 
-<!-- ===== LEAD-GEN ===== -->
-<section class="section section--soft" id="demo">
-  <div class="container">
-    <div class="cta-split">
-      <div class="reveal">
-        <span class="eyebrow">Get Started</span>
-        <h2 class="h-sec">Automate your laboratory today</h2>
-        <p class="lead" style="margin:16px 0 28px;">Book a free LIMS demo and see how HealthO Pro streamlines your diagnostic workflow.</p>
-        <?php contact_strip(); ?>
-      </div>
-      <div class="form-card reveal d1">
-        <h3 class="h-card" style="margin-bottom:8px;">Request a LIMS demo</h3>
-        <p style="color:var(--text-mute);font-size:.92rem;margin-bottom:24px;">We'll respond within one business day.</p>
-        <?php lead_form([
-          'hidden'   => ['interest' => 'LIMS'],
-          'aside'    => form_select('orgType', 'Daily Test Volume', ['Under 100 tests/day', '100–500 tests/day', '500–2000 tests/day', '2000+ tests/day']),
-          'interest' => '',
-        ]); ?>
-      </div>
-    </div>
-  </div>
-</section>
-<?php require __DIR__ . '/partials/foot.php';
+lp_demo([
+    'title'      => 'See your own analyzer send a report — free',
+    'lead'       => 'Tell us about your lab. We\'ll show HealthO Pro LIMS working with your tests, your machines and your report format — free, no obligation.',
+    'form_title' => 'Book your free LIMS demo',
+    'wa'         => $wa_link,
+    'form'       => [
+        'hidden'   => ['interest' => 'LIMS', 'source' => 'LIMS landing — footer'],
+        'aside'    => form_select('orgType', 'Daily Test Volume', ['Under 100 tests/day', '100–500 tests/day', '500–2000 tests/day', '2000+ tests/day']),
+        'interest' => '',
+        'message'  => ['label' => 'Analyzers you use (optional)', 'placeholder' => 'e.g. Sysmex XN-350, Erba EM 200, Mindray BS-240…'],
+        'submit'   => 'Get My Free Demo',
+    ],
+]);
+
+lp_script();
+require __DIR__ . '/partials/foot.php';

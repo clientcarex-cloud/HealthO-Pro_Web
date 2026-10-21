@@ -1,121 +1,143 @@
 <?php
 $page        = 'cims';
-$title       = 'CIMS — Clinic Information Management System | HealthO Pro';
-$description = 'Clinic management software for clinics & polyclinics: online appointments, queue tokens, e-prescriptions, patient records, billing and WhatsApp reminders.';
+$title       = 'Why Patients Don\'t Come Back — Clinic Software (CIMS) | HealthO Pro';
+$description = 'Long waits, lost prescriptions, forgotten follow-ups. HealthO Pro CIMS gives your clinic online booking, queue tokens, e-prescriptions, billing and WhatsApp reminders. Free demo.';
 require_once __DIR__ . '/partials/seo.php';
 $faqs = [
-    'What is a Clinic Information Management System (CIMS)?' =>
-        'A CIMS is clinic management software that handles appointments, patient records, prescriptions and billing. HealthO Pro CIMS is built for single-doctor clinics and multi-specialty polyclinics.',
-    'Does HealthO Pro CIMS support online appointment booking?' =>
-        'Yes. It supports online and walk-in booking with a calendar view, doctor availability slots, and token and queue management.',
-    'Can doctors write digital prescriptions?' =>
-        'Yes. E-prescriptions use quick-pick drugs and dosage templates and can be printed, and each patient\'s visit history, vitals and documents are kept in a central EMR.',
-    'Does CIMS send reminders to patients?' =>
-        'Yes. Automated SMS and WhatsApp reminders, follow-ups and feedback collection are built in.',
-    'Can a clinic chain use CIMS across locations?' =>
-        'Yes. CIMS is cloud-enabled and scales from a single clinic to multi-location clinic chains.',
-    'How quickly can a clinic get started?' =>
-        'Most clinics can go digital in days. Onboarding is included, and you can book a free demo first.',
+    'What does HealthO Pro CIMS do, in simple words?' =>
+        'It runs your clinic from one app: patients book online or walk in, get a token, the doctor sees their full history and writes a digital prescription, the bill is made in a click, and the patient gets a WhatsApp reminder for their next visit.',
+    'How does it bring patients back?' =>
+        'When the doctor sets a follow-up date, the patient automatically gets a WhatsApp/SMS reminder before it. Fewer patients forget — so more of them return to you instead of going elsewhere.',
+    'Can patients book appointments online?' =>
+        'Yes. Online and walk-in booking with doctor availability slots, a calendar view and token/queue management — so the waiting room stays calm.',
+    'Is it hard for the doctor to use?' =>
+        'No. Prescriptions use quick-pick medicines and dosage templates, so a full Rx takes a few taps. Old visits, vitals and reports are on the same screen.',
+    'Will it work for a polyclinic or clinic chain?' =>
+        'Yes. It works for single-doctor clinics, multi-specialty polyclinics and multi-location chains, on the cloud.',
+    'How quickly can we start?' =>
+        'Most clinics go live in a few days. Setup and training are free, and help is a call or WhatsApp away 24×7.',
 ];
 $schema = [seo_software('cims', 'CIMS — Clinic Information Management System', $description, 'Clinic Management Software', null)];
+
+require __DIR__ . '/partials/landing.php';
+$head_extra = lp_styles();
+
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/pricing-section.php';
 require __DIR__ . '/partials/contact-strip.php';
 require __DIR__ . '/partials/head.php';
+
+$wa_link = WHATSAPP_URL . '?text=' . rawurlencode('Hi, I want a demo of HealthO Pro CIMS for my clinic.');
+
+lp_hero([
+    'eyebrow' => 'For Clinics & Polyclinics',
+    'title'   => 'Why do some patients visit once…<br><span class="text-grad">and never come back?</span>',
+    'sub'     => 'It\'s rarely the doctor. It\'s the long wait, the prescription nobody can read, the follow-up nobody reminded them about. <b>HealthO Pro CIMS</b> fixes all three — from booking to a WhatsApp nudge for the next visit.',
+    'pills'   => [['Online', 'booking'], ['Auto', 'WhatsApp reminders'], ['Free', 'setup & training'], ['24×7', 'help']],
+    'aria'    => 'A patient books and gets a token, the doctor writes a digital prescription, and the patient gets a WhatsApp reminder for the follow-up',
+    'nodes'   => [
+        ['ticket', 'c-cyan',   'Booking',         'Token on the patient\'s phone', '<div class="lp-vals"><span class="lp-val">Token #14</span><span class="lp-val">Dr. Mehta</span><span class="lp-val">~10 min</span></div>'],
+        ['doc',    'c-violet', 'Consultation',    'E-prescription in a few taps',  '<div class="lp-paper"><span class="lp-line"></span><span class="lp-line"></span><span class="lp-line"></span></div>'],
+        ['wa',     'c-green',  'A week later',    'Patient reminded to return',    '<div><span class="lp-bubble">' . lp_ic('bell') . ' Your follow-up is on Monday, 10 AM</span></div>'],
+    ],
+]);
+
+lp_pains(
+    'Does any of this happen at your clinic?',
+    'Tick what feels familiar. It takes 30 seconds.',
+    [
+        ['The waiting room is always crowded',        'And patients keep asking "how much longer?"'],
+        ['The phone never stops ringing',             'Just to book or change appointments.'],
+        ['Old prescriptions are hard to find',        'Paper files, or "I forgot to bring it, doctor".'],
+        ['Chemists call about handwritten Rx',        'Patients can\'t read the dose either.'],
+        ['Follow-up patients simply don\'t return',   'Nobody reminded them.'],
+        ['Day-end cash doesn\'t match the register',  'And no one knows where the gap is.'],
+    ],
+    [
+        0 => 'Tick the problems you see — we\'ll tell you what they mean.',
+        1 => 'Even <b>one</b> of these makes patients think twice about coming back.',
+        3 => '<b>Patients are quietly slipping away.</b> Every one of these is fixable.',
+        5 => '<b>This is costing your clinic real patients.</b> Scroll down to see how many.',
+    ]
+);
+
+lp_leak(
+    'How many patients forget to come back?',
+    'Every missed follow-up is a patient who needed you — and a consultation you never got. Set your numbers.',
+    [
+        ['lp-pts', 'Patients you see per day', 5,   150,  5,   30,  '',  ''],
+        ['lp-fee', 'Your consultation fee',    100, 2000, 50,  500, '₹', ''],
+        ['lp-miss','Follow-ups that never return', 5, 60, 5,   25,  '',  '%'],
+    ],
+    'Missed follow-ups every year',
+    'Assumes about 1 in 3 patients is told to come back, over 26 working days a month. Move the sliders to match your clinic.'
+);
 ?>
-<!-- ===== PAGE HERO ===== -->
-<header class="page-hero">
-  <div class="hero-glow glow-1"></div>
-  <div class="hero-glow glow-2"></div>
-  <div class="container">
-    <div class="breadcrumb"><a href="/">Home</a><span>›</span><a href="solutions">Solutions</a><span>›</span>CIMS</div>
-    <h1>CIMS — <span class="text-grad">Clinic Information</span> Management System</h1>
-    <p>Everything a modern clinic needs to run smoothly — appointments, e-prescriptions, records and billing in one simple app.</p>
-    <div class="hero-actions hero-actions--center">
-      <a href="#demo" class="btn btn-primary btn-lg">Book a Demo</a>
-      <a href="#pricing" class="btn btn-ghost-light btn-lg">View Pricing</a>
-    </div>
-  </div>
-</header>
+<script>
+window.lpCalc = function (v, fmt) {
+  var missedMonth = v['lp-pts'] * 26 / 3 * v['lp-miss'] / 100, year = missedMonth * 12, money = year * v['lp-fee'];
+  var show = money >= 10000000 ? '₹' + (money / 10000000).toFixed(2) + ' Cr' : (money >= 100000 ? '₹' + (money / 100000).toFixed(1) + ' lakh' : '₹' + fmt(money));
+  return { big: fmt(year) + ' patients', sub: 'That\'s about <b>' + show + '</b> a year in consultations — from patients who already trust you. A simple reminder brings many of them back.' };
+};
+</script>
+<?php
+lp_before_after(
+    'Same patient. Calmer clinic. They come back.',
+    'Flip the switch to see one patient visit the old way — and with HealthO Pro CIMS.',
+    [['phone', 'Patient calls to book'], ['pen', 'Name in a register'], ['clock', 'Waits with no token'], ['search', 'Doctor looks for old file'], ['pen', 'Handwritten Rx'], ['rupee', 'Cash in a drawer'], ['x', 'No reminder sent'], ['user', 'Patient forgets to return']],
+    [['x', '8 steps'], ['clock', 'Crowded waiting room'], ['x', 'Lost history'], ['x', 'Patients don\'t return']],
+    [['calendar', 'Book online or walk in'], ['ticket', 'Token on phone'], ['doc', 'History + e-Rx on one screen'], ['bell', 'Bill & auto reminder']],
+    [['check', 'Just 4 steps'], ['check', 'Calm waiting room'], ['check', 'Clear prescriptions'], ['check', 'Patients come back']]
+);
 
-<!-- ===== OVERVIEW SPLIT ===== -->
-<section class="section section--soft">
-  <div class="container">
-    <div class="split">
-      <div class="split-media reveal"><div class="media-frame"><img src="assets/images/cms.webp" alt="HealthO Pro CIMS clinic management dashboard" width="1024" height="1024" loading="lazy" decoding="async"></div></div>
-      <div class="reveal d1">
-        <span class="eyebrow">For Clinics &amp; Polyclinics</span>
-        <h2 class="h-sec">Simple to use, powerful underneath</h2>
-        <p class="lead" style="margin:16px 0 24px;">HealthO Pro CIMS helps single-doctor clinics and multi-specialty polyclinics deliver a seamless patient experience — without the complexity.</p>
-        <ul class="checks">
-          <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Online &amp; walk-in appointment booking</span></li>
-          <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Token &amp; queue management</span></li>
-          <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Digital prescriptions &amp; patient history</span></li>
-          <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span>Automated SMS / WhatsApp reminders</span></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
+lp_journey(
+    'One patient\'s visit, in 4 steps',
+    [
+        ['calendar', 'c-navy',   'Book',           'Patients book online or walk in. The doctor\'s slots fill without phone calls.',      'Fewer calls'],
+        ['ticket',   'c-cyan',   'Token & queue',  'A token number on their phone shows when it\'s their turn.',                           'No "how long?"'],
+        ['doc',      'c-violet', 'Consult',        'Full history on one screen. A clear e-prescription in a few taps.',                   'Readable Rx'],
+        ['bell',     'c-green',  'Bill & remind',  'Bill in a click. The patient gets a WhatsApp reminder before the follow-up date.',   'They come back'],
+    ],
+    'A good restaurant gives you a buzzer — you relax until your table is ready, and you come back because the experience was easy. HealthO Pro CIMS <strong>gives your patients that same easy experience</strong>, from booking to their next visit.'
+);
 
-<!-- ===== FEATURE GRID ===== -->
-<section class="section">
-  <div class="container">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Capabilities</span>
-      <h2 class="h-sec">Run your clinic effortlessly</h2>
-      <p class="lead">Designed for busy practitioners and front-desk teams.</p>
-    </div>
-    <div class="grid grid-3">
-      <div class="card reveal"><span class="feat-ic bg-green" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><h4>Appointments</h4><p>Online booking, calendar view and doctor availability slots.</p></div>
-      <div class="card reveal d1"><span class="feat-ic bg-cyan" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></span><h4>E-Prescriptions</h4><p>Quick-pick drugs, dosage templates and printable Rx.</p></div>
-      <div class="card reveal d2"><span class="feat-ic bg-navy" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg></span><h4>Patient Records</h4><p>Centralized EMR with visit history, vitals and documents.</p></div>
-      <div class="card reveal"><span class="feat-ic bg-amber" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span><h4>Billing &amp; Payments</h4><p>Quick invoicing, online payments and daily collection reports.</p></div>
-      <div class="card reveal d1"><span class="feat-ic bg-violet" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg></span><h4>Patient Engagement</h4><p>Reminders, follow-ups and feedback collection on autopilot.</p></div>
-      <div class="card reveal d2"><span class="feat-ic bg-navy" style="margin-bottom:18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg></span><h4>Reports &amp; Insights</h4><p>Track footfall, revenue and repeat patients at a glance.</p></div>
-    </div>
-  </div>
-</section>
+lp_benefits(
+    'Everything your clinic needs, nothing it doesn\'t',
+    'Simple for the front desk. Fast for the doctor.',
+    [
+        ['calendar', 'bg-green',  'Online appointments',     'Online and walk-in booking with doctor slots and a calendar view.'],
+        ['ticket',   'bg-cyan',   'Token & queue',           'Patients see their turn. The waiting room stays calm.'],
+        ['doc',      'bg-navy',   'E-prescriptions',         'Quick-pick medicines and dosage templates. Printed or sent on WhatsApp.'],
+        ['folder',   'bg-violet', 'Patient history',         'Every visit, vital and report in one place — no more lost files.'],
+        ['rupee',    'bg-amber',  'Billing & payments',      'Quick bills, online payments and a day-end collection report that matches.'],
+        ['bell',     'bg-green',  'Reminders on autopilot',  'WhatsApp/SMS reminders, follow-ups and feedback — sent by themselves.'],
+    ]
+);
 
-<!-- ===== BENEFITS BAND ===== -->
-<section class="section section--navy">
-  <div class="container">
-    <div class="sec-head reveal"><span class="eyebrow">Outcomes</span><h2 class="h-sec">A better experience for everyone</h2></div>
-    <div class="stats">
-      <div class="stat reveal"><div class="n"><span data-count="45" data-suffix="%">45%</span></div><div class="l">Less waiting time</div></div>
-      <div class="stat reveal d1"><div class="n"><span data-count="30" data-suffix="%">30%</span></div><div class="l">More repeat visits</div></div>
-      <div class="stat reveal d2"><div class="n"><span data-count="5" data-prefix="&lt;" data-suffix="min">&lt;5min</span></div><div class="l">Avg. checkout time</div></div>
-      <div class="stat reveal d3"><div class="n"><span data-count="24" data-suffix="×7">24×7</span></div><div class="l">Support &amp; uptime</div></div>
-    </div>
-  </div>
-</section>
+lp_stats('What clinics see after switching', [
+    [45, '', '%', '45%', 'Less waiting time'],
+    [30, '', '%', '30%', 'More repeat visits'],
+    [5, '<', 'min', '<5min', 'Avg. checkout time'],
+    [24, '', '×7', '24×7', 'Support & uptime'],
+]);
 
-<!-- ===== PRICING ===== -->
-<?php pricing_section('cims'); ?>
+pricing_section('cims');
 
-<!-- ===== FAQ ===== -->
-<?php faq_section($faqs, 'CIMS questions, answered'); ?>
+faq_section($faqs, 'Questions? Simple answers.', 'section section--soft');
 
-<!-- ===== LEAD-GEN ===== -->
-<section class="section section--soft" id="demo">
-  <div class="container">
-    <div class="cta-split">
-      <div class="reveal">
-        <span class="eyebrow">Get Started</span>
-        <h2 class="h-sec">Digitize your clinic in days</h2>
-        <p class="lead" style="margin:16px 0 28px;">Book a free CIMS demo and see how easy modern clinic management can be.</p>
-        <?php contact_strip(); ?>
-      </div>
-      <div class="form-card reveal d1">
-        <h3 class="h-card" style="margin-bottom:8px;">Request a CIMS demo</h3>
-        <p style="color:var(--text-mute);font-size:.92rem;margin-bottom:24px;">We'll respond within one business day.</p>
-        <?php lead_form([
-          'hidden'   => ['interest' => 'CIMS'],
-          'aside'    => form_select('orgType', 'Clinic Type', ['Single-doctor clinic', 'Multi-specialty polyclinic', 'Clinic chain', 'Dental / Eye / Specialty']),
-          'interest' => '',
-        ]); ?>
-      </div>
-    </div>
-  </div>
-</section>
-<?php require __DIR__ . '/partials/foot.php';
+lp_demo([
+    'title'      => 'Bring more patients back — see how in a free demo',
+    'lead'       => 'Tell us about your clinic. We\'ll show you one patient visit in HealthO Pro CIMS — from booking to the WhatsApp reminder — set up for your practice.',
+    'form_title' => 'Book your free CIMS demo',
+    'wa'         => $wa_link,
+    'form'       => [
+        'hidden'   => ['interest' => 'CIMS', 'source' => 'CIMS landing — footer'],
+        'aside'    => form_select('orgType', 'Clinic Type', ['Single-doctor clinic', 'Multi-specialty polyclinic', 'Clinic chain', 'Dental / Eye / Specialty']),
+        'interest' => '',
+        'message'  => ['label' => 'Your speciality (optional)', 'placeholder' => 'e.g. general physician, paediatrics, dental…'],
+        'submit'   => 'Get My Free Demo',
+    ],
+]);
+
+lp_script();
+require __DIR__ . '/partials/foot.php';
