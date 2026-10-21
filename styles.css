@@ -724,6 +724,9 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
 .socials a { width: 40px; height: 40px; border-radius: 11px; background: rgba(255, 255, 255, .08); display: grid; place-items: center; transition: background .25s, transform .25s; }
 .socials a:hover { background: var(--grad-cyan); transform: translateY(-3px); }
 .socials svg { width: 18px; height: 18px; color: #fff; }
+.socials--light a { width: 46px; height: 46px; background: var(--navy, #0F1B33); }
+.follow-us { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 32px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 24px 28px; margin-bottom: 48px; }
+.follow-us p { color: var(--text-soft); margin-top: 8px; }
 .footer-bottom { border-top: 1px solid rgba(255, 255, 255, .1); padding: 24px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; font-size: var(--text-sm); }
 .footer-bottom a:hover { color: var(--cyan-light); }
 .footer-bottom .legal { display: flex; gap: 22px; flex-wrap: wrap; }

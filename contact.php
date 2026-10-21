@@ -35,6 +35,12 @@ require __DIR__ . '/partials/head.php';
       </div>
     </div>
 
+    <!-- Follow us -->
+    <div class="follow-us reveal">
+      <div><span class="eyebrow">Follow Us</span><p>Client stories, product demos and updates — on YouTube, Instagram and Facebook.</p></div>
+      <?= social_links('socials socials--light') ?>
+    </div>
+
     <!-- Our Offices -->
     <div class="reveal" style="margin-bottom:24px;">
       <span class="eyebrow">Our Offices</span>
