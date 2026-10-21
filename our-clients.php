@@ -3,7 +3,7 @@ $page        = 'our-clients';
 $title       = 'Our Clients — Hospitals, Labs & Clinics on HealthO Pro';
 $description = 'Meet the hospitals, diagnostic labs, imaging centers and clinics that run on HealthO Pro. 1,200+ healthcare providers across 8 countries trust our HIMS, LIMS, CIMS and RIS.';
 $page_type   = 'CollectionPage';
-require __DIR__ . '/partials/clients-data.php';
+require_once __DIR__ . '/partials/clients-data.php';
 require __DIR__ . '/partials/head.php';
 
 [$rowA, $rowB] = client_featured_rows();

@@ -10,6 +10,8 @@
  */
 
 /** Stroke icons (24×24, currentColor). */
+require_once __DIR__ . '/clients-data.php';
+
 function lp_ic(string $name): string
 {
     static $p = [
@@ -298,6 +300,7 @@ function lp_hero(array $h): void
     </div>
   </div>
 </header>
+<?= client_trust_strip($GLOBALS['page'] ?? '') ?>
     <?php
 }
 
@@ -485,6 +488,7 @@ function lp_demo(array $d): void
         <span class="eyebrow">Free Demo</span>
         <h2 class="h-sec"><?= $d['title'] ?></h2>
         <p class="lead" style="margin:16px 0 28px;"><?= $d['lead'] ?></p>
+        <?= client_proof($GLOBALS['page'] ?? '') ?>
         <?php contact_strip(); ?>
       </div>
       <div class="form-card reveal d1">

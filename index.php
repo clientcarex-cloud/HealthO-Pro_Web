@@ -20,7 +20,7 @@ $faqs = [
 ];
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/contact-strip.php';
-require __DIR__ . '/partials/clients-data.php';
+require_once __DIR__ . '/partials/clients-data.php';
 require __DIR__ . '/partials/head.php';
 ?>
 <!-- ===== HERO ===== -->

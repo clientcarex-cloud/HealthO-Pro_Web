@@ -247,6 +247,7 @@ $head_extra = <<<'HTML'
 </style>
 HTML;
 
+require __DIR__ . '/partials/clients-data.php';
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/contact-strip.php';
 require __DIR__ . '/partials/head.php';
@@ -304,6 +305,7 @@ $volume  = form_select('orgType', 'Monthly Scan Volume', ['Under 500 scans/month
     </div>
   </div>
 </header>
+<?= client_trust_strip('ris') ?>
 
 <!-- ===== 2. BEFORE vs AFTER (one switch) ===== -->
 <section class="section section--soft" id="before-after">
@@ -426,6 +428,7 @@ $volume  = form_select('orgType', 'Monthly Scan Volume', ['Under 500 scans/month
         <span class="eyebrow">Free Demo</span>
         <h2 class="h-sec">See your own scan become a report</h2>
         <p class="lead" style="margin:16px 0 28px;">Tell us about your centre. We'll show HealthO Pro RIS working with your machine and your report format — free, no obligation.</p>
+        <?= client_proof('ris') ?>
         <?php contact_strip(); ?>
       </div>
       <div class="form-card reveal d1">

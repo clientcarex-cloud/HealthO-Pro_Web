@@ -74,15 +74,16 @@ function client_logo_img(array $c, int $area = 9000, int $maxW = 170, int $maxH 
  * Endless scrolling row of logo chips. The list is printed twice (the copy hidden
  * from screen readers) so the CSS animation can loop seamlessly.
  */
-function client_marquee(array $list, bool $reverse = false, int $seconds = 48): string
+function client_marquee(array $list, bool $reverse = false, int $seconds = 48, bool $compact = false): string
 {
     $chips = '';
     foreach ($list as $c) {
-        $chips .= '<div class="logo-chip" title="' . h($c['name']) . '">' . client_logo_img($c, 9600, 164, 80) . '</div>';
+        $img = $compact ? client_logo_img($c, 6400, 140, 60) : client_logo_img($c, 9600, 164, 80);
+        $chips .= '<div class="logo-chip" title="' . h($c['name']) . '">' . $img . '</div>';
     }
     $copy = str_replace('<div class="logo-chip"', '<div class="logo-chip" aria-hidden="true"', $chips);
     $copy = preg_replace('/alt="[^"]*"/', 'alt=""', $copy);
-    return '<div class="logo-marquee' . ($reverse ? ' reverse' : '') . '" style="--speed:' . $seconds . 's">'
+    return '<div class="logo-marquee' . ($reverse ? ' reverse' : '') . ($compact ? ' is-compact' : '') . '" style="--speed:' . $seconds . 's">'
         . '<div class="logo-track">' . $chips . $copy . '</div></div>';
 }
 
@@ -92,4 +93,56 @@ function client_featured_rows(): array
     $f = array_values(array_filter(CLIENTS, static fn($c) => $c['featured']));
     $half = (int) ceil(count($f) / 2);
     return [array_slice($f, 0, $half), array_slice($f, $half)];
+}
+
+
+/* ---------- Product landing pages (HIMS / LIMS / CIMS / RIS) ---------- */
+
+/** Which client types to show first on each product page, and how to name them. */
+const CLIENT_PRODUCT_FOCUS = [
+    'hims' => [['hospitals', 'clinics'], 'hospitals & nursing homes'],
+    'lims' => [['diagnostics'], 'diagnostic labs'],
+    'cims' => [['clinics', 'hospitals'], 'clinics & hospitals'],
+    'ris'  => [['imaging', 'diagnostics'], 'scanning & diagnostic centres'],
+];
+
+/** Clients ordered for a product: matching types first (featured before others), then everyone else. */
+function clients_for(string $product, int $limit = 14): array
+{
+    $focus = CLIENT_PRODUCT_FOCUS[$product][0] ?? [];
+    $rank = static function (array $c) use ($focus): int {
+        $i = array_search($c['cat'], $focus, true);
+        return ($i === false ? 10 : $i * 2) + ($c['featured'] ? 0 : 1);
+    };
+    $list = CLIENTS;
+    usort($list, static fn($a, $b) => $rank($a) <=> $rank($b));
+    return array_slice($list, 0, $limit);
+}
+
+/** Slim "Trusted by" logo band placed straight under a product page hero. */
+function client_trust_strip(string $product): string
+{
+    $who = CLIENT_PRODUCT_FOCUS[$product][1] ?? 'healthcare providers';
+    return '<section class="trust-strip" aria-label="Some of our clients">'
+        . '<div class="container"><p class="trust-title">Trusted by <b>1,200+ ' . h($who) . '</b> across 8 countries</p></div>'
+        . client_marquee(clients_for($product, 14), false, 40, true)
+        . '<div class="container"><a class="trust-link" href="/our-clients">See all our clients <span aria-hidden="true">→</span></a></div>'
+        . '</section>';
+}
+
+/** Small "join these providers" badge for the demo form column. */
+function client_proof(string $product): string
+{
+    $list = clients_for($product, 30);
+    // Round badges only suit compact marks; wide wordmarks go in the sentence instead.
+    $badges = array_slice(array_values(array_filter($list, static fn($c) => $c['w'] / $c['h'] <= 1.5)), 0, 5);
+    $named  = array_slice(array_values(array_filter($list, static fn($c) => $c['featured'])), 0, 2);
+    $who    = CLIENT_PRODUCT_FOCUS[$product][1] ?? 'healthcare providers';
+    $html = '<div class="client-proof"><div class="proof-logos">';
+    foreach ($badges as $c) {
+        $html .= '<span title="' . h($c['name']) . '">' . client_logo_img($c, 1300, 40, 40) . '</span>';
+    }
+    $html .= '</div><p>Join <b>' . h($named[0]['name'] ?? '') . '</b>, <b>' . h($named[1]['name'] ?? '') . '</b>'
+        . ' and <b>1,200+ ' . h($who) . '</b> already on HealthO Pro.</p></div>';
+    return $html;
 }

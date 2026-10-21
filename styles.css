@@ -1332,3 +1332,26 @@ body.demo-open { overflow: hidden; }
     .logo-track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; }
     .logo-track [aria-hidden="true"] { display: none; }
 }
+
+/* Product landing pages — trust strip under hero + proof badge by the demo form */
+.trust-strip { padding: 34px 0 26px; background: #fff; border-bottom: 1px solid var(--line); }
+.trust-title { text-align: center; color: var(--text-soft); font-size: var(--text-sm); font-weight: 600; letter-spacing: .02em; margin-bottom: 14px; }
+.trust-title b { color: var(--navy); }
+.trust-link { display: table; margin: 14px auto 0; color: var(--cyan-dark); font-size: var(--text-sm); font-weight: 700; }
+.trust-link:hover { color: var(--navy); }
+.trust-link span { display: inline-block; transition: transform .25s var(--ease); }
+.trust-link:hover span { transform: translateX(4px); }
+.logo-marquee.is-compact .logo-chip { height: 84px; min-width: 164px; padding: 0 22px; box-shadow: none; }
+.logo-marquee.is-compact .logo-chip:hover { box-shadow: var(--e2); }
+
+.client-proof { display: flex; align-items: center; gap: 16px; margin: -6px 0 26px; padding: 14px 18px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-md); }
+.client-proof p { margin: 0; font-size: var(--text-sm); line-height: 1.5; color: var(--text); }
+.client-proof b { color: var(--ink); }
+.proof-logos { display: flex; flex: 0 0 auto; padding-left: 12px; }
+.proof-logos span { display: grid; place-items: center; width: 48px; height: 48px; margin-left: -12px; border-radius: 50%; background: #fff; border: 2px solid #fff; box-shadow: var(--e2); overflow: hidden; }
+.proof-logos img { max-width: 36px; max-height: 36px; width: auto; height: auto; }
+@media (max-width: 680px) {
+    .logo-marquee.is-compact .logo-chip { height: 72px; min-width: 132px; padding: 0 14px; }
+    .logo-marquee.is-compact .logo-chip img { max-height: 48px; }
+    .client-proof { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
