@@ -779,15 +779,27 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 800; line-height: 1.18; letter-
         transition: transform .35s var(--ease); overflow-y: auto;
     }
     .nav-menu.open { transform: translateX(0); }
-    .nav-link { padding: 14px 16px; font-size: var(--text-base); border-radius: var(--r-sm); }
-    .nav-item.has-drop .dropdown {
-        position: static; transform: none; opacity: 1; visibility: visible; box-shadow: none;
-        border: none; min-width: 0; padding: 4px 0 4px 14px; max-height: 0; overflow: hidden; transition: max-height .3s;
+    .nav-menu { height: calc(100dvh - var(--nav-h)); overscroll-behavior: contain; }
+    .nav-menu > li { width: 100%; min-width: 0; }
+    .nav-link { display: flex; align-items: center; width: 100%; padding: 14px 16px; font-size: var(--text-base); border-radius: var(--r-sm); white-space: normal; }
+    /* Touch taps fire :hover — keep the desktop hover styles from moving the submenu. */
+    .nav-item.has-drop .dropdown,
+    .nav-item.has-drop:hover .dropdown {
+        position: static; left: auto; transform: none; opacity: 1; visibility: visible; box-shadow: none;
+        border: none; min-width: 0; width: 100%; padding: 0 0 0 8px; max-height: 0; overflow: hidden; transition: max-height .3s;
     }
-    .nav-item.has-drop.open .dropdown { max-height: 600px; }
-    .has-drop > .nav-link::after { float: right; margin-top: 6px; }
+    .nav-item.has-drop.open .dropdown { max-height: 800px; padding-top: 4px; padding-bottom: 8px; }
+    .dropdown::before { display: none; }
+    .drop-item { padding: 10px 12px; min-width: 0; }
+    .drop-item > span:last-child { min-width: 0; }
+    .drop-tt { font-size: var(--text-base); }
+    .drop-ds { font-size: .82rem; }
+    .has-drop > .nav-link::after,
+    .has-drop:hover > .nav-link::after { margin-left: auto; transform: rotate(45deg) translateY(-2px); }
+    .has-drop.open > .nav-link::after { transform: rotate(225deg) translateY(0); }
     .nav-actions .nav-cta { display: none; }
     .nav-menu .mobile-cta { display: block !important; margin-top: 16px; text-align: center; }
+    .nav-actions { flex: none; }
     .nav-toggle { display: flex; }
     .timeline::before { left: 22px; }
     .tl-item { width: 100%; left: 0 !important; text-align: left !important; padding: 0 0 32px 56px; }
@@ -1359,3 +1371,9 @@ body.demo-open { overflow: hidden; }
 .logo-row .logo-chip { height: 84px; min-width: 180px; padding: 0 24px; box-shadow: none; }
 .logo-row .logo-chip:hover { box-shadow: var(--e2); }
 @media (max-width: 680px) { .logo-row { gap: 10px; } .logo-row .logo-chip { height: 72px; min-width: 0; flex: 1 1 100px; max-width: 160px; padding: 0 12px; } .logo-row .logo-chip img { max-height: 48px; width: auto; } }
+
+/* Phones: the menu drawer takes the full width. */
+@media (max-width: 480px) {
+    .nav-menu { width: 100%; padding: 16px; box-shadow: none; }
+    .nav-logo img { height: 32px; }
+}
