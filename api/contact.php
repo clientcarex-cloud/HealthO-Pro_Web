@@ -66,6 +66,27 @@ if (empty($fullName) || empty($email) || !filter_var($email, FILTER_VALIDATE_EMA
 }
 
 /**
+ * Readable CRM source name from source / medium, e.g. "Google Ads",
+ * "Facebook Social", "Google Organic", "Website (Direct)".
+ * The CRM creates each new name as a lead source on first use.
+ */
+function ho_crm_source_name(string $source, string $medium): string
+{
+    $source = strtolower(trim($source));
+    $medium = strtolower(trim($medium));
+    if ($source === '' || $source === 'direct') return 'Website (Direct)';
+    $names = ['google' => 'Google', 'facebook' => 'Facebook', 'fb' => 'Facebook', 'instagram' => 'Instagram',
+              'ig' => 'Instagram', 'linkedin' => 'LinkedIn', 'youtube' => 'YouTube', 'twitter' => 'Twitter',
+              'whatsapp' => 'WhatsApp', 'bing' => 'Bing', 'email' => 'Email', 'newsletter' => 'Email'];
+    $name = $names[$source] ?? ucfirst($source);
+    if (preg_match('/^(cpc|ppc|paid|paidsocial|paid_social|paid-social|ads?|display|cpm)$/', $medium)) return "$name Ads";
+    if ($medium === 'organic') return "$name Organic";
+    if ($medium === 'social')  return "$name Social";
+    if ($medium === 'referral') return "Referral: $name";
+    return $medium !== '' && $medium !== 'none' ? "$name (" . ucfirst($medium) . ')' : $name;
+}
+
+/**
  * Push the lead into the Pro Leads CRM (server-side, key from .env).
  * Fails soft: a CRM outage never blocks the email or the visitor's submit.
  */
@@ -80,7 +101,7 @@ function ho_send_to_crm(array $lead): void
             $env[$k] = trim($v, "\"'");
         }
     }
-    $url = $env['PRO_LEADS_API_URL'] ?? '';
+    $url = $env['PRO_LEADS_API_URL'] ?? '' ?: 'https://healtho.pro/pro_leads/pro_leads_api/add_lead';
     $key = $env['PRO_LEADS_API_KEY'] ?? '';
     if ($url === '' || $key === '' || !function_exists('curl_init')) return;
 
@@ -88,7 +109,7 @@ function ho_send_to_crm(array $lead): void
     curl_setopt_array($ch, [
         CURLOPT_POST           => true,
         CURLOPT_POSTFIELDS     => http_build_query($lead),
-        CURLOPT_HTTPHEADER     => ['Authorization: ' . $key, 'Accept: application/json'],
+        CURLOPT_HTTPHEADER     => ['X-Api-Key: ' . $key, 'Accept: application/json'],
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT        => 8,
         CURLOPT_CONNECTTIMEOUT => 4,
@@ -116,7 +137,8 @@ if ($orgType !== 'Job Application' && $formType === '') {
         'city'        => $city,
         'state'       => $state,
         'country'     => $country,
-        'source'      => $src['lead_source'] !== '' ? $src['lead_source'] : 'Website',
+        'source'      => ho_crm_source_name($src['utm_source'], $src['utm_medium']),
+        'tags'        => implode(',', array_filter(['Website', $src['utm_campaign']])),
     ] + $src);
 }
 
