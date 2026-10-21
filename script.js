@@ -17,6 +17,77 @@
         hidePreloader();
     }
 
+    /* ---------- Lead source tracking ----------
+       Remembers how the visitor arrived (UTM tags, ad click IDs, referrer) so
+       every lead form can tell the CRM where the lead came from. First touch
+       is kept for 90 days; last touch updates on every new campaign visit. */
+    var leadSource = (function () {
+        var KEY = 'ho_lead_src', TTL = 90 * 864e5;
+        var store = {
+            get: function () { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } },
+            set: function (v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) { /* storage blocked */ } }
+        };
+        var q = new URLSearchParams(location.search);
+        var ref = document.referrer, refHost = '';
+        try { refHost = ref ? new URL(ref).hostname.replace(/^www\./, '') : ''; } catch (e) { /* bad referrer */ }
+        if (refHost === location.hostname.replace(/^www\./, '')) refHost = ''; // internal navigation
+
+        var touch = null;
+        var utm = {};
+        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(function (k) {
+            if (q.get(k)) utm[k] = q.get(k).slice(0, 150);
+        });
+        var clickId = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'msclkid', 'li_fat_id'].filter(function (k) { return q.get(k); })[0];
+
+        if (utm.utm_source || clickId) {
+            touch = utm;
+            if (clickId) {
+                touch.click_id = clickId + ':' + q.get(clickId).slice(0, 200);
+                if (!touch.utm_source) touch.utm_source = /^(gclid|gbraid|wbraid)$/.test(clickId) ? 'google' : clickId === 'fbclid' ? 'facebook' : clickId === 'msclkid' ? 'bing' : 'linkedin';
+                if (!touch.utm_medium) touch.utm_medium = 'cpc';
+            }
+        } else if (refHost) {
+            var search = /(^|\.)(google|bing|yahoo|duckduckgo|yandex|baidu|ecosia)\./.exec(refHost);
+            var social = /(^|\.)(facebook|fb|instagram|linkedin|lnkd|t|twitter|x|youtube|whatsapp|pinterest|reddit|quora)\.(com|co|me|in)$/.exec(refHost);
+            touch = search ? { utm_source: search[2], utm_medium: 'organic' }
+                  : social ? { utm_source: social[2] === 'lnkd' ? 'linkedin' : social[2] === 't' ? 'twitter' : social[2], utm_medium: 'social' }
+                  : { utm_source: refHost, utm_medium: 'referral' };
+        }
+
+        var saved = store.get(), now = Date.now();
+        if (!saved.first || now - (saved.first.ts || 0) > TTL) {
+            saved.first = touch || { utm_source: 'direct', utm_medium: 'none' };
+            saved.first.ts = now;
+            saved.first.landing = location.pathname + location.search;
+            saved.first.referrer = ref.slice(0, 300);
+        }
+        if (touch) {
+            saved.last = touch;
+            saved.last.ts = now;
+            saved.last.landing = location.pathname + location.search;
+        }
+        store.set(saved);
+        if (!saved.last) saved.last = saved.first;
+
+        /** Hidden fields sent with every lead form. */
+        return function () {
+            var f = saved.first, l = saved.last;
+            return {
+                lead_source: (l.utm_source || 'direct') + ' / ' + (l.utm_medium || 'none'),
+                utm_source: l.utm_source || '',
+                utm_medium: l.utm_medium || '',
+                utm_campaign: l.utm_campaign || '',
+                utm_term: l.utm_term || '',
+                utm_content: l.utm_content || '',
+                click_id: l.click_id || '',
+                first_source: (f.utm_source || 'direct') + ' / ' + (f.utm_medium || 'none') + (f.utm_campaign ? ' / ' + f.utm_campaign : ''),
+                landing_page: f.landing || '',
+                referrer: f.referrer || '',
+                form_page: location.pathname
+            };
+        };
+    })();
+
     document.addEventListener('DOMContentLoaded', function () {
 
         /* ---------- Demo popup modal ----------
@@ -1314,6 +1385,8 @@
                 if (btn) { btn.disabled = true; btn.innerHTML = 'Sending…'; }
 
                 var data = new FormData(form);
+                var src = leadSource();
+                Object.keys(src).forEach(function (k) { if (!data.has(k)) data.append(k, src[k]); });
                 fetch('api/contact.php', { method: 'POST', body: data })
                     .then(function (r) {
                         return r.json().catch(function () {

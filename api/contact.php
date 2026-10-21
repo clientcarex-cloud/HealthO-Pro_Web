@@ -51,6 +51,13 @@ $country  = isset($_POST['country'])  ? strip_tags(trim($_POST['country'])) : ''
 $formType = isset($_POST['formType']) ? strip_tags(trim($_POST['formType'])) : '';
 $category = isset($_POST['category']) ? strip_tags(trim($_POST['category'])) : '';
 
+// Lead source tracking (UTM / ad click / referrer), captured by script.js
+$src = [];
+foreach (['lead_source', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+          'click_id', 'first_source', 'landing_page', 'referrer', 'form_page'] as $k) {
+    $src[$k] = isset($_POST[$k]) ? mb_substr(strip_tags(trim($_POST[$k])), 0, 300) : '';
+}
+
 // Mobile number is now mandatory alongside name & email
 if (empty($fullName) || empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL) || empty($phone)) {
     http_response_code(400);
@@ -98,6 +105,12 @@ try {
     if ($cvName !== '')   $rows[] = ['Resume / CV', $h($cvName) . ' <span style="color:#94a3b8;font-size:11px;">(attached)</span>'];
     if ($resume !== '')   $rows[] = ['Resume / CV', '<a href="' . $h($resume) . '" style="color:#0096B7;text-decoration:none;font-weight:600;">View / Download</a>'];
     $rows[] = ['Location', $h($location) . ' <span style="color:#94a3b8;font-size:11px;">(auto-detected)</span>'];
+    $srcLabels = ['lead_source' => 'Lead Source', 'utm_campaign' => 'Campaign', 'utm_term' => 'Keyword',
+                  'utm_content' => 'Ad / Content', 'click_id' => 'Ad Click ID', 'first_source' => 'First Visit Source',
+                  'landing_page' => 'Landing Page', 'referrer' => 'Referrer', 'form_page' => 'Form Page'];
+    foreach ($srcLabels as $k => $label) {
+        if ($src[$k] !== '') $rows[] = [$label, $h($src[$k])];
+    }
 
     $rowsHtml = '';
     $i = 0;
@@ -175,6 +188,9 @@ HTML;
     if ($cvName !== '')   $plain .= "Resume / CV: $cvName (attached)\n";
     if ($resume !== '')   $plain .= "Resume / CV: $resume\n";
     $plain .= "Location (auto-detected): $location\n";
+    foreach ($srcLabels as $k => $label) {
+        if ($src[$k] !== '') $plain .= "$label: {$src[$k]}\n";
+    }
     $plain .= str_repeat('-', 44) . "\n";
     $plain .= "Message:\n" . ($message !== '' ? $message : '— No message provided —') . "\n";
 
