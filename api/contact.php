@@ -65,8 +65,60 @@ if (empty($fullName) || empty($email) || !filter_var($email, FILTER_VALIDATE_EMA
     exit;
 }
 
+/**
+ * Push the lead into the Pro Leads CRM (server-side, key from .env).
+ * Fails soft: a CRM outage never blocks the email or the visitor's submit.
+ */
+function ho_send_to_crm(array $lead): void
+{
+    $env = [];
+    $envFile = __DIR__ . '/../.env';
+    if (is_readable($envFile)) {
+        foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+            if ($line[0] === '#' || strpos($line, '=') === false) continue;
+            [$k, $v] = array_map('trim', explode('=', $line, 2));
+            $env[$k] = trim($v, "\"'");
+        }
+    }
+    $url = $env['PRO_LEADS_API_URL'] ?? '';
+    $key = $env['PRO_LEADS_API_KEY'] ?? '';
+    if ($url === '' || $key === '' || !function_exists('curl_init')) return;
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => http_build_query($lead),
+        CURLOPT_HTTPHEADER     => ['Authorization: ' . $key, 'Accept: application/json'],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 8,
+        CURLOPT_CONNECTTIMEOUT => 4,
+    ]);
+    $body = curl_exec($ch);
+    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($body === false || $code >= 400) {
+        error_log("Pro Leads CRM push failed (HTTP $code): " . substr((string) $body, 0, 300));
+    }
+}
+
 $locationParts = array_filter([$city, $state, $country], function ($v) { return $v !== ''; });
 $location = !empty($locationParts) ? implode(', ', $locationParts) : 'Not detected';
+
+// Job applications and CEO messages are not sales leads — only enquiries go to the CRM.
+if ($orgType !== 'Job Application' && $formType === '') {
+    ho_send_to_crm([
+        'name'        => $fullName,
+        'email'       => $email,
+        'phonenumber' => $phone,
+        'company'     => $orgType,
+        'title'       => $interest,
+        'description' => $message,
+        'city'        => $city,
+        'state'       => $state,
+        'country'     => $country,
+        'source'      => $src['lead_source'] !== '' ? $src['lead_source'] : 'Website',
+    ] + $src);
+}
 
 $mail = new PHPMailer(true);
 
