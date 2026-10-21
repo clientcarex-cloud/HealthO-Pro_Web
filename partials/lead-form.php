@@ -10,7 +10,7 @@
 require_once __DIR__ . '/site.php';
 
 /** <select> in a .field wrapper. $options are plain strings. */
-function form_select(string $name, string $label, array $options, bool $required = false, string $placeholder = 'Select…'): string
+function form_select(string $name, string $label, array $options, bool $required = false, string $placeholder = 'Select…', string $error = ''): string
 {
     $out = '<div class="field"><label>' . h($label);
     if ($required) {
@@ -21,7 +21,11 @@ function form_select(string $name, string $label, array $options, bool $required
     foreach ($options as $o) {
         $out .= '<option>' . h($o) . '</option>';
     }
-    return $out . '</select></div>';
+    $out .= '</select>';
+    if ($error !== '') {
+        $out .= '<span class="err-msg">' . h($error) . '</span>';
+    }
+    return $out . '</div>';
 }
 
 /** <input> in a .field wrapper. */
@@ -74,7 +78,7 @@ function lead_form(array $o = []): void
       </div>
       <div class="form-row">
         <?= form_input('tel', 'phone', 'Mobile Number', '+91 ...', true) ?>
-        <?= $o['aside'] ?? form_select('orgType', 'Organization Type', ['Hospital', 'Laboratory', 'Clinic', 'Radiology Center', 'Other']) ?>
+        <?= $o['aside'] ?? form_select('orgType', 'Organization Type', ['Hospital', 'Laboratory', 'Clinic', 'Radiology Center', 'Other'], true, 'Select…', 'Please select your organization type.') ?>
       </div>
       <?= $o['interest'] ?? form_select('interest', 'Interested In', interest_options(), false, 'Select a solution…') ?>
       <?= $o['extra'] ?? '' ?>
