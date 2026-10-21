@@ -207,6 +207,11 @@ function lp_styles(): string
 .lp-incl b { display: block; color: var(--ink); }
 .lp-incl span { color: var(--text-soft); font-size: .88rem; }
 
+/* ---------- Video testimonials ---------- */
+.lp-vids { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1080px; margin: 0 auto; }
+.lp-vid { container-type: inline-size; background: #fff; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(15,27,51,.06); }
+.lp-vid iframe { display: block; width: 100%; height: 620px; height: calc(100cqw * 1.42 + 44px); border: 0; }
+
 .lp-sticky { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -216,6 +221,7 @@ function lp_styles(): string
 @media (max-width: 1024px) {
   .lp-ben, .lp-pains { grid-template-columns: repeat(2, 1fr); }
   .lp-incl { grid-template-columns: repeat(2, 1fr); }
+  .lp-vids { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 860px) {
   .lp-hero .hero-grid { grid-template-columns: 1fr; gap: 44px; }
@@ -232,6 +238,7 @@ function lp_styles(): string
   .lp-switch label { padding: 10px 14px; font-size: var(--text-sm); }
   .lp-panel { padding: 22px 16px; }
   .lp-ben, .lp-journey, .lp-pains, .lp-incl { grid-template-columns: 1fr; }
+  .lp-vids { grid-template-columns: 1fr; max-width: 400px; }
   .lp-idea { flex-direction: column; text-align: center; padding: 24px 20px; }
   .lp-leak-in, .lp-leak-out { padding: 28px 22px; }
   .lp-sticky { display: flex; gap: 10px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 950; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: rgba(255,255,255,.97); border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(15,27,51,.08); }
@@ -470,6 +477,23 @@ function lp_stats(string $title, array $stats): void
     <div class="stats">
 <?php foreach ($stats as $i => [$n, $pre, $suf, $show, $l]): ?>
       <div class="stat reveal<?= $i ? ' d' . $i : '' ?>"><div class="n"><span data-count="<?= $n ?>"<?= $pre !== '' ? ' data-prefix="' . h($pre) . '"' : '' ?> data-suffix="<?= h($suf) ?>"><?= h($show) ?></span></div><div class="l"><?= h($l) ?></div></div>
+<?php endforeach; ?>
+    </div>
+  </div>
+</section>
+    <?php
+}
+
+/** Instagram video testimonials. $posts: Instagram post IDs (the part after /p/). */
+function lp_videos(string $title, string $lead, array $posts): void
+{
+    ?>
+<section class="section section--soft">
+  <div class="container">
+    <?php lp_head('Client Stories', $title, $lead); ?>
+    <div class="lp-vids">
+<?php foreach ($posts as $i => $id): ?>
+      <div class="lp-vid reveal<?= $i ? ' d' . $i : '' ?>"><iframe src="https://www.instagram.com/p/<?= h($id) ?>/embed/" title="Client video testimonial <?= $i + 1 ?>" loading="lazy" allowtransparency="true" allow="encrypted-media; picture-in-picture" scrolling="no"></iframe></div>
 <?php endforeach; ?>
     </div>
   </div>

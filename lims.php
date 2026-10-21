@@ -119,6 +119,12 @@ lp_stats('What labs see after switching', [
     [24, '', '×7', '24×7', 'Support & uptime'],
 ]);
 
+lp_videos(
+    'Hear it from lab owners',
+    'Real labs talking about life after switching to HealthO Pro LIMS.',
+    ['DevmbT4qPgL', 'DetED2yKICo', 'DeqfDm7KiM7']
+);
+
 pricing_section('lims');
 
 faq_section($faqs, 'Questions? Simple answers.', 'section section--soft');
