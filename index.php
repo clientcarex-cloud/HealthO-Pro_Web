@@ -20,6 +20,7 @@ $faqs = [
 ];
 require __DIR__ . '/partials/lead-form.php';
 require __DIR__ . '/partials/contact-strip.php';
+require __DIR__ . '/partials/clients-data.php';
 require __DIR__ . '/partials/head.php';
 ?>
 <!-- ===== HERO ===== -->
@@ -189,6 +190,26 @@ require __DIR__ . '/partials/head.php';
       <div class="stat reveal d2"><div class="n"><span data-count="8" data-suffix="">8</span></div><div class="l">Countries served</div></div>
       <div class="stat reveal d3"><div class="n"><span data-count="99.9" data-suffix="%">99.9%</span></div><div class="l">Platform uptime</div></div>
     </div>
+  </div>
+</section>
+
+<!-- ===== TRUSTED BY (CLIENT LOGOS) ===== -->
+<?php [$rowA, $rowB] = client_featured_rows(); ?>
+<section class="section" style="overflow:hidden;">
+  <div class="container">
+    <div class="sec-head reveal" style="margin-bottom:40px;">
+      <span class="eyebrow">Our Clients</span>
+      <h2 class="h-sec">Trusted by leading <span class="text-grad">healthcare brands</span></h2>
+      <p class="lead">Hospitals, diagnostic labs, imaging centers and clinics run every day on HealthO Pro.</p>
+    </div>
+  </div>
+  <div class="reveal d1">
+    <?= client_marquee($rowA, false, 44) ?>
+    <?= client_marquee($rowB, true, 48) ?>
+  </div>
+  <div class="container">
+    <div class="trusted-meta reveal"><span>Hospitals</span><span>Diagnostic labs</span><span>Imaging &amp; scanning centres</span><span>Clinics &amp; polyclinics</span></div>
+    <div class="center" style="margin-top:32px;"><a href="our-clients" class="btn btn-outline">Meet all our clients</a></div>
   </div>
 </section>
 

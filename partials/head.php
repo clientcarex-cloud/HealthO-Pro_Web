@@ -116,6 +116,7 @@ $active = static fn(string $slug): string => $slug === $nav_active ? ' active' :
         </div>
       </li>
       <li class="nav-item"><a href="/pricing" class="nav-link<?= $active('pricing') ?>">Pricing</a></li>
+      <li class="nav-item"><a href="/our-clients" class="nav-link<?= $active('our-clients') ?>">Clients</a></li>
       <li class="nav-item"><a href="/testimonials" class="nav-link<?= $active('testimonials') ?>">Testimonials</a></li>
       <li class="nav-item"><a href="/blog" class="nav-link<?= $active('blog') ?>">Blog</a></li>
       <li class="nav-item"><a href="/careers" class="nav-link<?= $active('careers') ?>">Careers</a></li>

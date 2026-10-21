@@ -56,6 +56,7 @@ $demo_interest = PRODUCTS[$page ?? '']['short'] ?? '';
         <h5>Company</h5>
         <ul class="footer-links">
           <li><a href="/#solutions">About Us</a></li>
+          <li><a href="/our-clients">Our Clients</a></li>
           <li><a href="/testimonials">Testimonials</a></li>
           <li><a href="/blog">Blog</a></li>
           <li><a href="/partners">Channel Partners</a></li>

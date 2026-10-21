@@ -25,6 +25,7 @@ $pages = [
     'features'         => ['weekly',  '0.9', []],
     'blog'             => ['weekly',  '0.8', []],
     'pricing'          => ['weekly',  '0.9', []],
+    'our-clients'      => ['monthly', '0.7', []],
     'testimonials'     => ['monthly', '0.7', []],
     'partners'         => ['weekly',  '0.6', []],
     'careers'          => ['daily',   '0.7', []],

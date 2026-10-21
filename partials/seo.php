@@ -42,6 +42,7 @@ const PAGE_LABELS = [
     'features'         => 'Features',
     'blog'             => 'Blog',
     'pricing'          => 'Pricing',
+    'our-clients'      => 'Our Clients',
     'testimonials'     => 'Testimonials',
     'partners'         => 'Channel Partners',
     'verify-partner'   => 'Verify Partner',
