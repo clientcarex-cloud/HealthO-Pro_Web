@@ -38,6 +38,7 @@ $demo_interest = $demo_interest ?? (PRODUCTS[$page ?? '']['short'] ?? '');
     <form class="dm-pane dm-pane--1" data-pane="1" data-geo novalidate autocomplete="on">
       <div class="form-status"></div>
       <input type="hidden" name="source" value="Demo popup">
+      <input type="hidden" name="dedupe" value="1">
       <input type="hidden" name="interest" value="">
       <input type="hidden" name="message" value="Requested a demo from the website popup.">
       <div class="dm-grid">

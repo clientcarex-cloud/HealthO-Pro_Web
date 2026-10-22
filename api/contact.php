@@ -165,6 +165,8 @@ if ($orgType !== 'Job Application' && $formType === '') {
         'country'     => $country,
         'source'      => ho_crm_source_name($src['utm_source'], $src['utm_medium']),
         'tags'        => implode(',', array_filter(['Website', $src['utm_campaign']])),
+        // Demo popup: a returning visitor reuses their lead instead of a duplicate.
+        'dedupe'      => !empty($_POST['dedupe']) ? 1 : 0,
     ] + $src));
 }
 

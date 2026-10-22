@@ -643,7 +643,12 @@
                 data.append('slot', st.slot.start);
                 yes.disabled = true;
                 yes.innerHTML = 'Moving…';
-                fetch(API, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
+                // The visitor's lead, so the moved demo shows in its Demos tab.
+                Promise.race([st.leadRef || Promise.resolve(''), new Promise(function (r) { setTimeout(function () { r(''); }, 8000); })])
+                    .then(function (ref) {
+                        if (ref) data.append('lead_ref', ref);
+                        return fetch(API, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+                    })
                     .then(function (r) { return r.json(); })
                     .then(function (res) {
                         if (!res || !res.ok) {
