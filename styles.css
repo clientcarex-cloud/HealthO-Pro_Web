@@ -1389,3 +1389,4 @@ body.demo-open { overflow: hidden; }
 .city-card a { display: block; padding: 5px 0; font-size: .9rem; font-weight: 600; color: var(--text-soft); }
 .city-card a:hover { color: var(--navy); }
 .city-links { justify-content: center; max-width: 900px; margin: 0 auto; }
+.bl-figure { margin: 0; }

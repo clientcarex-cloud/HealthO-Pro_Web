@@ -9,7 +9,8 @@
  *   $schema    extra JSON-LD nodes (arrays, no @context)
  *   $crumbs    [name => url] between Home and this page, overriding the default
  *   $robots    robots meta, e.g. 'noindex, follow'
- *   $og_image  absolute URL of the share image
+ *   $og_image  absolute URL of the share image (blog covers: 1200×672)
+ *   $og_image_alt  alt text for the share image
  *   $og_type   defaults to 'website'
  */
 require_once __DIR__ . '/site.php';
@@ -286,16 +287,16 @@ function seo_head(array $o): string
         ['property', 'og:title', $title],
         ['property', 'og:description', $desc],
         ['property', 'og:image', $ogImage],
-        ['property', 'og:image:alt', BRAND_NAME . ' — cloud HIMS, LIMS, CIMS & RIS software'],
+        ['property', 'og:image:alt', ($o['og_image_alt'] ?? '') ?: BRAND_NAME . ' — cloud HIMS, LIMS, CIMS & RIS software'],
+        ['name', 'twitter:image:alt', ($o['og_image_alt'] ?? '') ?: BRAND_NAME . ' — cloud HIMS, LIMS, CIMS & RIS software'],
         ['name', 'twitter:card', 'summary_large_image'],
         ['name', 'twitter:title', $title],
         ['name', 'twitter:description', $desc],
         ['name', 'twitter:image', $ogImage],
     ];
-    if ($ogImage === OG_IMAGE) {
-        $meta[] = ['property', 'og:image:width', '1200'];
-        $meta[] = ['property', 'og:image:height', '630'];
-    }
+    // The default share image is 1200×630; blog covers are 1200×672.
+    $meta[] = ['property', 'og:image:width', '1200'];
+    $meta[] = ['property', 'og:image:height', $ogImage === OG_IMAGE ? '630' : '672'];
 
     $out = '';
     foreach ($meta as [$attr, $key, $value]) {

@@ -41,6 +41,11 @@ $description = $fill($cp['desc']);
 $canonical   = $url;
 $crumbs      = ['Blog' => blog_url('', true), $h1 => $url];
 $og_type     = 'article';
+$cover       = blog_image($citySlug);
+$place       = str_contains($cname, $c['state']) ? $cname : $cname . ', ' . $c['state'];
+$coverAlt    = 'Best ' . $cp['keyword'] . ' in ' . $place . ' — HealthO Pro ' . $short;
+$og_image    = blog_image($citySlug, 'share', true);
+$og_image_alt = $coverAlt;
 $schema      = [
     [
         '@type'            => 'BlogPosting',
@@ -53,7 +58,14 @@ $schema      = [
         'dateModified'     => CITY_PUBLISHED,
         'author'           => ['@type' => 'Organization', 'name' => BRAND_NAME . ' Team', 'url' => SITE_URL . '/'],
         'publisher'        => ['@id' => ORG_ID],
-        'image'            => OG_IMAGE,
+        'image'            => $og_image ? [
+            '@type'      => 'ImageObject',
+            'url'        => $og_image,
+            'width'      => 1200,
+            'height'     => 672,
+            'caption'    => $coverAlt,
+            'contentLocation' => $place,
+        ] : OG_IMAGE,
         'articleSection'   => $cp['keyword'],
         'keywords'         => implode(', ', [
             $cp['keyword'] . ' in ' . $cname,
@@ -105,6 +117,11 @@ require __DIR__ . '/head.php';
   <div class="container">
     <div class="bl-layout">
       <article class="bl-article">
+<?php if ($cover): ?>
+        <figure class="bl-figure">
+          <img class="bl-cover" src="<?= h($cover) ?>" alt="<?= h($coverAlt) ?>" title="<?= h($cp['keyword']) ?> in <?= h($cname) ?>" width="1200" height="672" fetchpriority="high" decoding="async">
+        </figure>
+<?php endif; ?>
         <p class="bl-lede"><?= h($fill($cp['intro'])) ?></p>
 
         <h2><?= h(ucfirst($cp['audience'])) ?> in <?= h($cname) ?></h2>

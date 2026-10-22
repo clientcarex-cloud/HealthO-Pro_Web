@@ -64,7 +64,7 @@ foreach (blog_posts() as $slug => $post) {
         'lastmod' => date('c', $blogMod),
         'freq'    => 'monthly',
         'prio'    => '0.7',
-        'images'  => [],
+        'images'  => array_filter([blog_image($slug, 'share', true)]),
     ];
 }
 
@@ -76,7 +76,7 @@ foreach (city_pages() as $slug => $_) {
         'lastmod' => date('c', $cityMod),
         'freq'    => 'monthly',
         'prio'    => '0.8',
-        'images'  => [],
+        'images'  => array_filter([blog_image($slug, 'share', true)]),
     ];
 }
 

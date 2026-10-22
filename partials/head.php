@@ -50,6 +50,7 @@ $active = static fn(string $slug): string => $slug === $nav_active ? ' active' :
     'crumbs'      => $crumbs ?? null,
     'robots'      => $robots ?? '',
     'og_image'    => $og_image ?? '',
+    'og_image_alt' => $og_image_alt ?? '',
     'og_type'     => $og_type ?? '',
     'page_type'   => $page_type ?? '',
 ]) ?>
