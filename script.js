@@ -90,33 +90,241 @@
 
     document.addEventListener('DOMContentLoaded', function () {
 
-        /* ---------- Demo popup modal ----------
-           The markup is rendered by partials/foot.php from the same lead_form()
-           the pages use, so its [data-ajax] form is picked up automatically
-           (validation, geo, AJAX submit all reuse the shared handlers). */
+        /* ---------- Demo popup: details → pick a time → confirmed ----------
+           Step 1 sends the lead to api/contact.php (CRM + team e-mail) in the
+           background and moves on at once. Step 2 shows live slots from the CRM
+           demo calendar (api/demo-booking.php), pre-loaded while the visitor
+           types, and books in place. The CRM links the booking to the same lead
+           (matched by e-mail / phone) and sends the calendar invite. */
         (function () {
             var modal = document.querySelector('.demo-modal');
             if (!modal) return;
 
-            var form = modal.querySelector('form');
-            var interestSel = form.querySelector('select[name="interest"]');
-            var statusEl = form.querySelector('.form-status');
-            var lastFocused = null;
-            var pageInterest = modal.getAttribute('data-page-interest') || '';
+            var API = '/api/demo-booking.php';
+            var FALLBACK_URL = 'https://healtho.pro/book/demo';
+            var STORE = 'ho_demo_lead';
+            var INTEREST_TO_ORG = { 'HIMS': 'Hospital', 'LIMS': 'Laboratory', 'CIMS': 'Clinic', 'RIS / RIMS': 'Radiology Center' };
+            var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-            var setInterest = function (val) {
-                if (!val || !interestSel) return;
-                for (var i = 0; i < interestSel.options.length; i++) {
-                    var o = interestSel.options[i];
-                    // data-auto: a page preset, so Organization Type may still change it.
-                    if (o.value === val || o.text === val) { interestSel.selectedIndex = i; interestSel.setAttribute('data-auto', ''); return; }
+            var dlg = modal.querySelector('.dm');
+            var f1 = modal.querySelector('[data-pane="1"]');
+            var f2 = modal.querySelector('[data-pane="2"]');
+            var p3 = modal.querySelector('[data-pane="3"]');
+            var sub = modal.querySelector('[data-sub]');
+            var daysEl = f2.querySelector('[data-days]');
+            var timesEl = f2.querySelector('[data-times]');
+            var pickedEl = f2.querySelector('[data-picked]');
+            var bookBtn = f2.querySelector('button[type="submit"]');
+            var pageInterest = modal.getAttribute('data-page-interest') || '';
+            var lastFocused = null;
+
+            var st = { step: 1, lead: null, slots: {}, page: null, loadedTo: '', day: '', slot: null, loading: null, loadedAt: 0, failed: false };
+
+            var esc = function (s) {
+                return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+                    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+                });
+            };
+            var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+            var ymd = function (d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+            var parseYmd = function (s) { var p = s.split('-'); return new Date(+p[0], p[1] - 1, +p[2]); };
+            var addDays = function (s, n) { var d = parseYmd(s); d.setDate(d.getDate() + n); return ymd(d); };
+            var prettyDay = function (s) { var d = parseYmd(s); return WD[d.getDay()] + ', ' + d.getDate() + ' ' + MON[d.getMonth()]; };
+
+            var status = function (form, type, msg) {
+                var el = form.querySelector('.form-status');
+                if (!el) return;
+                el.className = 'form-status' + (msg ? ' show ' + (type === 'ok' ? 'ok' : 'bad') : '');
+                el.innerHTML = msg || '';
+            };
+
+            /* ---- slots ---- */
+            var loadSlots = function (from, to) {
+                return fetch(API + '?from=' + from + '&to=' + to, { headers: { Accept: 'application/json' } })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (!res || !res.ok) throw new Error(res && res.error || 'unavailable');
+                        if (res.page) st.page = res.page;
+                        Object.keys(res.slots || {}).forEach(function (k) { st.slots[k] = res.slots[k]; });
+                        st.loadedTo = to;
+                        st.failed = false;
+                        return res;
+                    });
+            };
+            var prefetch = function (force) {
+                // Slots go stale as people book; refresh after two minutes.
+                if (!force && st.loading && Date.now() - st.loadedAt < 120000) return st.loading;
+                var from = ymd(new Date());
+                st.slots = {};
+                st.loadedAt = Date.now();
+                st.loading = loadSlots(from, addDays(from, 13)).catch(function (e) { st.failed = true; st.loading = null; throw e; });
+                return st.loading;
+            };
+
+            var renderDays = function () {
+                var today = ymd(new Date());
+                var html = '';
+                var firstFree = '';
+                for (var d = today; d <= st.loadedTo; d = addDays(d, 1)) {
+                    var list = st.slots[d] || [];
+                    var date = parseYmd(d);
+                    if (list.length && !firstFree) firstFree = d;
+                    html += '<button type="button" class="dm-day" role="option" data-day="' + d + '"'
+                        + (list.length ? '' : ' disabled') + ' aria-selected="' + (d === st.day) + '"'
+                        + ' aria-label="' + prettyDay(d) + (list.length ? ', ' + list.length + ' slots' : ', no slots') + '">'
+                        + '<small>' + (d === today ? 'Today' : WD[date.getDay()]) + '</small>'
+                        + '<b>' + date.getDate() + '</b>'
+                        + '<i>' + (list.length ? MON[date.getMonth()] : 'Full') + '</i></button>';
                 }
+                var last = st.page && st.page.last_date;
+                if (!last || st.loadedTo < last) {
+                    html += '<button type="button" class="dm-day dm-day--more" data-more><small>More</small><b>›</b><i>dates</i></button>';
+                }
+                daysEl.innerHTML = html;
+                return firstFree;
+            };
+
+            var renderTimes = function () {
+                var list = st.slots[st.day] || [];
+                if (!list.length) {
+                    timesEl.innerHTML = '<div class="dm-empty">No free slots on this day — try another date.</div>';
+                    return;
+                }
+                var groups = { Morning: [], Afternoon: [], Evening: [] };
+                list.forEach(function (s) {
+                    var h = parseInt(s.time, 10);
+                    groups[h < 12 ? 'Morning' : h < 17 ? 'Afternoon' : 'Evening'].push(s);
+                });
+                var html = '';
+                Object.keys(groups).forEach(function (g) {
+                    if (!groups[g].length) return;
+                    html += '<div class="dm-period">' + g + '</div><div class="dm-slots">';
+                    groups[g].forEach(function (s) {
+                        html += '<button type="button" class="dm-slot" data-start="' + esc(s.start) + '" aria-pressed="'
+                            + (st.slot && st.slot.start === s.start) + '">' + esc(s.label) + '</button>';
+                    });
+                    html += '</div>';
+                });
+                var tz = (st.page && st.page.timezone) || 'Asia/Kolkata';
+                html += '<p class="dm-tz">All times in ' + esc(tz === 'Asia/Kolkata' ? 'IST (India Standard Time)' : tz) + '</p>';
+                timesEl.innerHTML = html;
+            };
+
+            var setPicked = function () {
+                f2.querySelector('input[name="slot"]').value = st.slot ? st.slot.start : '';
+                bookBtn.disabled = !st.slot;
+                pickedEl.innerHTML = st.slot
+                    ? '<b>' + esc(prettyDay(st.day)) + ' · ' + esc(st.slot.label) + '</b>' + esc(((st.page && st.page.duration) || 30) + ' min · ' + ((st.page && st.page.platform) || 'Online meeting'))
+                    : 'Select a time slot above';
+            };
+
+            var selectDay = function (d) {
+                st.day = d;
+                daysEl.querySelectorAll('.dm-day').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-day') === d); });
+                renderTimes();
+            };
+
+            var renderQuestions = function () {
+                var box = f2.querySelector('[data-questions]');
+                var qs = (st.page && st.page.questions) || [];
+                box.innerHTML = qs.map(function (q, i) {
+                    var input = q.type === 'textarea'
+                        ? '<textarea name="q' + i + '" rows="2"' + (q.required ? ' required' : '') + '></textarea>'
+                        : '<input type="text" name="q' + i + '"' + (q.required ? ' required' : '') + '>';
+                    return '<div class="field"><label>' + esc(q.label) + (q.required ? ' <span class="req">*</span>' : '') + '</label>' + input + '</div>';
+                }).join('');
+                if (qs.some(function (q) { return q.required; })) f2.querySelector('.dm-more').open = true;
+            };
+
+            var showCalendar = function () {
+                status(f2, '', '');
+                timesEl.innerHTML = '<div class="dm-skel">' + new Array(10).join('<span></span>') + '</div>';
+                daysEl.innerHTML = '';
+                (st.loading || prefetch()).then(function () {
+                    renderQuestions();
+                    var first = renderDays();
+                    if (!first) {
+                        var hasMore = !(st.page && st.page.last_date) || st.loadedTo < st.page.last_date;
+                        timesEl.innerHTML = '<div class="dm-empty">No free slots in the next two weeks'
+                            + (hasMore ? ' — tap <b>More dates</b>.' : '.') + '<br>Or relax — our team will call you to fix a time.</div>';
+                        return;
+                    }
+                    selectDay(st.day && st.slots[st.day] ? st.day : first);
+                    var sel = daysEl.querySelector('[aria-selected="true"]');
+                    if (sel) daysEl.scrollLeft = Math.max(0, sel.offsetLeft - daysEl.offsetLeft - 8);
+                }).catch(function () {
+                    daysEl.innerHTML = '';
+                    timesEl.innerHTML = '<div class="dm-empty">We couldn\'t load the calendar just now.<br>'
+                        + 'Your details are saved — our team will call you within one business day.<br>'
+                        + '<a class="link-cyan" href="' + FALLBACK_URL + '" target="_blank" rel="noopener">Open the booking page →</a></div>';
+                });
+            };
+
+            /* ---- steps ---- */
+            var SUBS = {
+                1: 'Tell us about you, then pick a time that suits you.',
+                2: 'Pick a day and time — the invite reaches you instantly.',
+                3: 'All set. See you at the demo!'
+            };
+            var go = function (n) {
+                st.step = n;
+                dlg.setAttribute('data-step', n);
+                [f1, f2, p3].forEach(function (p, i) {
+                    p.hidden = i + 1 !== n;
+                    p.classList.toggle('dm-in', i + 1 === n);
+                    p.scrollTop = 0;
+                });
+                modal.querySelectorAll('[data-dot]').forEach(function (li) {
+                    var k = +li.getAttribute('data-dot');
+                    li.classList.toggle('on', k === n);
+                    li.classList.toggle('done', k < n || n === 3);
+                });
+                if (n === 2 && st.lead) {
+                    sub.textContent = 'Hi ' + st.lead.first + '! ' + SUBS[2];
+                } else {
+                    sub.textContent = SUBS[n];
+                }
+                if (n === 2) showCalendar();
+            };
+
+            var reset = function () {
+                st.slot = null; st.day = '';
+                f2.reset();
+                setPicked();
+                status(f1, '', ''); status(f2, '', '');
+                go(1);
+            };
+
+            /* ---- open / close ---- */
+            var setInterest = function (val) {
+                f1.querySelector('input[name="interest"]').value = val || '';
+                var org = INTEREST_TO_ORG[val];
+                if (!org) return;
+                var r = f1.querySelector('input[name="orgType"][value="' + org + '"]');
+                if (r && !f1.querySelector('input[name="orgType"]:checked')) r.checked = true;
+            };
+
+            var restore = function () {
+                try {
+                    var saved = JSON.parse(localStorage.getItem(STORE) || 'null');
+                    if (!saved) return;
+                    ['fullName', 'phone', 'email', 'company'].forEach(function (k) {
+                        var el = f1.elements[k];
+                        if (el && !el.value && saved[k]) el.value = saved[k];
+                    });
+                    if (saved.orgType && !f1.querySelector('input[name="orgType"]:checked')) {
+                        var r = f1.querySelector('input[name="orgType"][value="' + saved.orgType + '"]');
+                        if (r) r.checked = true;
+                    }
+                } catch (e) { /* storage blocked */ }
             };
 
             var openModal = function (interest) {
                 lastFocused = document.activeElement;
+                if (st.step === 3) reset();
+                restore();
                 setInterest(interest);
-                // Close the mobile menu if it happens to be open behind the modal
                 var menu = document.getElementById('navMenu');
                 var toggle = document.getElementById('navToggle');
                 if (menu && menu.classList.contains('open')) {
@@ -126,8 +334,12 @@
                 }
                 modal.classList.add('open');
                 document.body.classList.add('demo-open');
-                var first = form.querySelector('input, select, textarea');
-                if (first) setTimeout(function () { first.focus(); }, 90);
+                prefetch().catch(function () { /* shown on step 2 */ });
+                if (st.step === 1 && window.innerWidth > 600) {
+                    var first = f1.querySelector('input:not([type="hidden"])');
+                    // Phones: no auto-focus, so the keyboard doesn't cover the form on open.
+                    setTimeout(function () { if (first && !first.value) first.focus(); }, 120);
+                }
             };
             var closeModal = function () {
                 modal.classList.remove('open');
@@ -141,6 +353,8 @@
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
             });
+            p3.querySelector('[data-close]').addEventListener('click', closeModal);
+            f2.querySelector('[data-back]').addEventListener('click', function () { go(1); });
 
             // Intercept every demo trigger in the capture phase so neither the
             // smooth-scroll nor the mobile-menu handlers also fire.
@@ -153,14 +367,154 @@
                 openModal(trigger.getAttribute('data-demo-interest') || pageInterest);
             }, true);
 
-            // Auto-close shortly after a successful submission
-            if (statusEl) {
-                new MutationObserver(function () {
-                    if (statusEl.classList.contains('ok') && modal.classList.contains('open')) {
-                        setTimeout(closeModal, 2600);
-                    }
-                }).observe(statusEl, { attributes: true, attributeFilter: ['class'] });
-            }
+            /* ---- step 1: lead ---- */
+            f1.addEventListener('change', function (e) {
+                if (e.target.name === 'orgType') {
+                    f1.querySelector('input[name="interest"]').value = e.target.getAttribute('data-interest') || '';
+                    e.target.closest('.field').classList.remove('error');
+                }
+            });
+            [f1, f2].forEach(function (f) {
+                f.addEventListener('input', function (e) {
+                    var field = e.target.closest('.field');
+                    if (field) field.classList.remove('error');
+                });
+            });
+
+            f1.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var v = function (n) { return (f1.elements[n].value || '').trim(); };
+                var checks = {
+                    fullName: v('fullName').length >= 2,
+                    phone: v('phone').replace(/\D/g, '').length >= 7,
+                    email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('email'))
+                };
+                var bad = null;
+                Object.keys(checks).forEach(function (k) {
+                    var field = f1.elements[k].closest('.field');
+                    field.classList.toggle('error', !checks[k]);
+                    if (!checks[k] && !bad) bad = f1.elements[k];
+                });
+                var org = f1.querySelector('input[name="orgType"]:checked');
+                f1.querySelector('.dm-org').classList.toggle('error', !org);
+                if (!org && !bad) bad = f1.querySelector('input[name="orgType"]');
+                if (bad) { bad.focus(); return; }
+
+                st.lead = {
+                    name: v('fullName'), first: v('fullName').replace(/^(dr\.?|mr\.?|mrs\.?|ms\.?)\s+/i, '').split(/\s+/)[0],
+                    phone: v('phone'), email: v('email'), company: v('company'), orgType: org.value
+                };
+                try { localStorage.setItem(STORE, JSON.stringify({ fullName: st.lead.name, phone: st.lead.phone, email: st.lead.email, company: st.lead.company, orgType: org.value })); } catch (err) { /* storage blocked */ }
+
+                // Capture the lead now — even if they never pick a slot, sales can call.
+                var key = [st.lead.name, st.lead.phone, st.lead.email, st.lead.orgType, st.lead.company].join('|');
+                if (st.sentKey !== key) {
+                    st.sentKey = key;
+                    var data = new FormData(f1);
+                    var src = leadSource();
+                    Object.keys(src).forEach(function (k) { if (!data.has(k)) data.append(k, src[k]); });
+                    fetch('/api/contact.php', { method: 'POST', body: data, keepalive: true }).catch(function () { /* booking still creates the lead */ });
+                    var interest = data.get('interest') || '';
+                    if (window.fbq) window.fbq('track', 'Lead', { content_name: interest });
+                    if (window.gtag) window.gtag('event', 'generate_lead', { interest: interest, form: 'demo_popup' });
+                }
+                go(2);
+            });
+
+            /* ---- step 2: slot ---- */
+            daysEl.addEventListener('click', function (e) {
+                var b = e.target.closest('.dm-day');
+                if (!b || b.disabled) return;
+                if (b.hasAttribute('data-more')) {
+                    b.disabled = true;
+                    b.querySelector('b').textContent = '…';
+                    var from = addDays(st.loadedTo, 1);
+                    var x = daysEl.scrollLeft;
+                    loadSlots(from, addDays(from, 13)).then(function () {
+                        var hadDay = st.day;
+                        var first = renderDays();
+                        daysEl.scrollLeft = x;
+                        if (!hadDay && first) selectDay(first); else if (hadDay) selectDay(hadDay);
+                        var next = daysEl.querySelector('[data-day="' + from + '"]');
+                        if (next) daysEl.scrollTo({ left: next.offsetLeft - daysEl.offsetLeft - 8, behavior: 'smooth' });
+                    }).catch(function () { b.disabled = false; b.querySelector('b').textContent = '›'; });
+                    return;
+                }
+                selectDay(b.getAttribute('data-day'));
+            });
+            f2.querySelectorAll('[data-scroll]').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    daysEl.scrollBy({ left: +b.getAttribute('data-scroll') * 296, behavior: 'smooth' });
+                });
+            });
+            timesEl.addEventListener('click', function (e) {
+                var b = e.target.closest('.dm-slot');
+                if (!b) return;
+                var start = b.getAttribute('data-start');
+                st.slot = (st.slots[st.day] || []).filter(function (s) { return s.start === start; })[0] || null;
+                timesEl.querySelectorAll('.dm-slot').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+                setPicked();
+                status(f2, '', '');
+            });
+
+            f2.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (!st.slot || !st.lead) return;
+                var missing = null;
+                f2.querySelectorAll('[data-questions] [required]').forEach(function (q) {
+                    var ok = q.value.trim() !== '';
+                    q.closest('.field').classList.toggle('error', !ok);
+                    if (!ok && !missing) missing = q;
+                });
+                if (missing) { f2.querySelector('.dm-more').open = true; missing.focus(); return; }
+
+                var data = new FormData(f2);
+                data.append('name', st.lead.name);
+                data.append('email', st.lead.email);
+                data.append('phone', st.lead.phone);
+                data.append('company', st.lead.company || st.lead.orgType);
+                var label = bookBtn.innerHTML;
+                bookBtn.disabled = true;
+                bookBtn.innerHTML = 'Booking…';
+
+                fetch(API, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (res && res.ok) { done(res.meeting || {}); return; }
+                        if (res && res.slot_gone) {
+                            st.slot = null; setPicked();
+                            status(f2, 'bad', 'Someone just took that slot — please pick another time.');
+                            prefetch(true).then(function () { renderDays(); selectDay(st.slots[st.day] ? st.day : (Object.keys(st.slots).sort()[0] || st.day)); });
+                            return;
+                        }
+                        throw new Error(res && res.error);
+                    })
+                    .catch(function (err) {
+                        status(f2, 'bad', esc(err && err.message || 'Booking failed.') + ' <a class="link-cyan" href="' + FALLBACK_URL + '" target="_blank" rel="noopener">Book on our calendar page →</a>');
+                    })
+                    .finally(function () { bookBtn.innerHTML = label; bookBtn.disabled = !st.slot; });
+            });
+
+            /* ---- step 3: confirmed ---- */
+            var done = function (m) {
+                var when = st.slot ? prettyDay(st.day) + ' · ' + st.slot.label : m.start_time;
+                var rows = [['When', when + ' IST'], ['Duration', (m.duration || (st.page && st.page.duration) || 30) + ' minutes'],
+                    ['Where', m.platform || (st.page && st.page.platform) || 'Online meeting'], ['With', m.host || 'A HealthO Pro specialist'],
+                    ['Ref', m.reference || '']];
+                p3.querySelector('[data-done-title]').textContent = 'You\'re booked, ' + st.lead.first + '!';
+                p3.querySelector('[data-done-text]').innerHTML = 'A calendar invite with the joining link is on its way to <b>' + esc(st.lead.email) + '</b>.';
+                p3.querySelector('[data-ticket]').innerHTML = rows.filter(function (r) { return r[1]; }).map(function (r) {
+                    return '<div><span>' + r[0] + '</span><b>' + esc(r[1]) + '</b></div>';
+                }).join('');
+                var acts = '';
+                if (m.ics_url) acts += '<a class="btn btn-primary" href="' + esc(m.ics_url) + '">Add to calendar</a>';
+                if (m.manage_url) acts += '<a class="btn btn-outline" href="' + esc(m.manage_url) + '" target="_blank" rel="noopener">Reschedule / cancel</a>';
+                p3.querySelector('[data-actions]').innerHTML = acts;
+                if (window.fbq) window.fbq('track', 'Schedule');
+                if (window.gtag) window.gtag('event', 'book_demo', { slot: st.slot && st.slot.start });
+                st.loading = null; // the booked slot is gone from the feed
+                go(3);
+            };
         })();
 
         /* ---------- Organization Type ⇄ Interested In ----------
@@ -1317,7 +1671,7 @@
 
         /* ---------- Auto-detect location (city / state / country) from IP ---------- */
         (function () {
-            var geoForms = document.querySelectorAll('form[data-ajax]');
+            var geoForms = document.querySelectorAll('form[data-ajax], form[data-geo]');
             if (!geoForms.length) return;
 
             // Ensure each form carries hidden geo fields

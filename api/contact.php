@@ -19,6 +19,7 @@ $email    = isset($_POST['email'])    ? filter_var(trim($_POST['email']), FILTER
 $phone    = isset($_POST['phone'])    ? strip_tags(trim($_POST['phone'])) : '';
 $orgType  = isset($_POST['orgType'])  ? strip_tags(trim($_POST['orgType'])) : '';
 $interest = isset($_POST['interest']) ? strip_tags(trim($_POST['interest'])) : '';
+$company  = isset($_POST['company'])  ? mb_substr(strip_tags(trim($_POST['company'])), 0, 160) : ''; // organization name (demo popup)
 $resume   = isset($_POST['resume'])   ? filter_var(trim($_POST['resume']), FILTER_SANITIZE_URL) : '';
 
 // Optional uploaded CV (general career application) — attached to the email.
@@ -131,9 +132,9 @@ if ($orgType !== 'Job Application' && $formType === '') {
         'name'        => $fullName,
         'email'       => $email,
         'phonenumber' => $phone,
-        'company'     => $orgType,
+        'company'     => $company !== '' ? $company : $orgType,
         'title'       => $interest,
-        'description' => $message,
+        'description' => $company !== '' && $orgType !== '' ? trim($message . "\nOrganization type: " . $orgType) : $message,
         'city'        => $city,
         'state'       => $state,
         'country'     => $country,
@@ -173,6 +174,7 @@ try {
     $rows[] = ['Name', $h($fullName)];
     $rows[] = ['Email', '<a href="mailto:' . $h($email) . '" style="color:#0096B7;text-decoration:none;font-weight:600;">' . $h($email) . '</a>'];
     $rows[] = ['Mobile Number', '<a href="tel:' . $h(preg_replace('/[^0-9+]/', '', $phone)) . '" style="color:#0096B7;text-decoration:none;font-weight:600;">' . $h($phone) . '</a>'];
+    if ($company !== '')  $rows[] = ['Organization Name', $h($company)];
     if ($orgType !== '')  $rows[] = ['Organization / Type', $h($orgType)];
     if ($category !== '') $rows[] = ['Type of Message', $h($category)];
     if ($interest !== '') $rows[] = ['Interested In / Position', $h($interest)];
@@ -256,6 +258,7 @@ HTML;
     $plain .= "Name: $fullName\n";
     $plain .= "Email: $email\n";
     $plain .= "Mobile Number: $phone\n";
+    if ($company !== '')  $plain .= "Organization Name: $company\n";
     if ($orgType !== '')  $plain .= "Organization / Type: $orgType\n";
     if ($category !== '') $plain .= "Type of Message: $category\n";
     if ($interest !== '') $plain .= "Interested In / Position: $interest\n";

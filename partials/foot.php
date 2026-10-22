@@ -14,17 +14,110 @@ $foot_scripts = $foot_scripts ?? [];
 // On a product page (or a page that sets $demo_interest) the popup pre-selects that product.
 $demo_interest = $demo_interest ?? (PRODUCTS[$page ?? '']['short'] ?? '');
 ?>
-<!-- Demo popup — script.js opens this on any [data-demo] click. -->
-<div class="demo-modal" role="dialog" aria-modal="true" aria-label="Book a free demo" data-page-interest="<?= h($demo_interest) ?>">
-  <div class="demo-modal__dialog">
+<!-- Demo popup — script.js opens this on any [data-demo] click.
+     Step 1 captures the lead (api/contact.php → CRM), step 2 books a live slot
+     on the CRM demo calendar (api/demo-booking.php), step 3 confirms. -->
+<div class="demo-modal" role="dialog" aria-modal="true" aria-labelledby="dmTitle" data-page-interest="<?= h($demo_interest) ?>">
+  <div class="demo-modal__dialog dm" data-step="1">
     <button type="button" class="demo-modal__close" aria-label="Close">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
-    <div class="demo-modal__head"><div>
-      <h3 class="h-card">Book a free demo</h3>
-      <p>Fill in the form and our team will reach out shortly.</p>
-    </div></div>
-    <?php lead_form(['hidden' => ['source' => 'Demo popup']]); ?>
+
+    <div class="dm-top">
+      <span class="dm-eyebrow"><span class="dm-live"></span>Free · 30-min live demo</span>
+      <h3 class="dm-title" id="dmTitle">Book your free demo</h3>
+      <p class="dm-sub" data-sub>Tell us about you, then pick a time that suits you.</p>
+      <ol class="dm-steps" aria-label="Progress">
+        <li data-dot="1"><span>1</span>Details</li>
+        <li data-dot="2"><span>2</span>Pick a time</li>
+        <li data-dot="3"><span>3</span>Confirmed</li>
+      </ol>
+    </div>
+
+    <!-- Step 1: who are you -->
+    <form class="dm-pane dm-pane--1" data-pane="1" data-geo novalidate autocomplete="on">
+      <div class="form-status"></div>
+      <input type="hidden" name="source" value="Demo popup">
+      <input type="hidden" name="interest" value="">
+      <input type="hidden" name="message" value="Requested a demo from the website popup.">
+      <div class="dm-grid">
+        <div class="field dm-full">
+          <label for="dmName">Full name <span class="req">*</span></label>
+          <input id="dmName" type="text" name="fullName" placeholder="Dr. Anjali Rao" autocomplete="name" required>
+          <span class="err-msg">Please enter your name.</span>
+        </div>
+        <div class="field">
+          <label for="dmPhone">Mobile number <span class="req">*</span></label>
+          <input id="dmPhone" type="tel" name="phone" placeholder="98765 43210" inputmode="tel" autocomplete="tel" required>
+          <span class="err-msg">Enter a valid mobile number.</span>
+        </div>
+        <div class="field">
+          <label for="dmEmail">Work email <span class="req">*</span></label>
+          <input id="dmEmail" type="email" name="email" placeholder="you@hospital.com" inputmode="email" autocomplete="email" required>
+          <span class="err-msg">Enter a valid email — the invite goes here.</span>
+        </div>
+      </div>
+      <div class="field dm-org">
+        <label>You run a <span class="req">*</span></label>
+        <div class="dm-chips" role="radiogroup" aria-label="Organization type">
+<?php foreach (['Hospital' => 'HIMS', 'Laboratory' => 'LIMS', 'Clinic' => 'CIMS', 'Radiology Center' => 'RIS / RIMS', 'Other' => 'Multiple / Not sure'] as $org => $prod): ?>
+          <label class="dm-chip"><input type="radio" name="orgType" value="<?= h($org) ?>" data-interest="<?= h($prod) ?>" required><span><?= h($org === 'Radiology Center' ? 'Radiology' : $org) ?></span></label>
+<?php endforeach; ?>
+        </div>
+        <span class="err-msg">Please pick one.</span>
+      </div>
+      <div class="field">
+        <label for="dmCompany">Organization name</label>
+        <input id="dmCompany" type="text" name="company" placeholder="e.g. City Care Hospital" autocomplete="organization">
+      </div>
+      <div class="dm-foot">
+        <button type="submit" class="btn btn-primary btn-block btn-lg dm-cta">
+          Continue — pick a time
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+        <p class="dm-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>No spam. By continuing you agree to our <a href="/privacy-policy" class="link-cyan">Privacy Policy</a>.</p>
+      </div>
+    </form>
+
+    <!-- Step 2: pick a slot -->
+    <form class="dm-pane dm-pane--2" data-pane="2" novalidate hidden>
+      <div class="form-status"></div>
+      <div class="dm-hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <input type="hidden" name="slot" value="">
+      <button type="button" class="dm-link" data-back>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>Edit my details
+      </button>
+      <div class="dm-cal-head">
+        <span class="dm-label">Choose a day</span>
+        <div class="dm-cal-nav">
+          <button type="button" data-scroll="-1" aria-label="Earlier days"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m15 18-6-6 6-6"/></svg></button>
+          <button type="button" data-scroll="1" aria-label="Later days"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 18 6-6-6-6"/></svg></button>
+        </div>
+      </div>
+      <div class="dm-days" data-days role="listbox" aria-label="Available days"></div>
+      <div class="dm-times" data-times aria-live="polite"></div>
+      <details class="dm-more">
+        <summary>Add a note for our specialist <span>(optional)</span></summary>
+        <div data-questions></div>
+        <div class="field"><textarea name="notes" rows="3" placeholder="e.g. We are a 50-bed hospital and want to see billing &amp; pharmacy."></textarea></div>
+      </details>
+      <div class="dm-foot dm-foot--sticky">
+        <div class="dm-picked" data-picked>Select a time slot above</div>
+        <button type="submit" class="btn btn-primary btn-lg dm-cta" disabled>Confirm booking</button>
+      </div>
+    </form>
+
+    <!-- Step 3: done -->
+    <div class="dm-pane dm-pane--3" data-pane="3" hidden>
+      <div class="dm-done">
+        <div class="dm-tick"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="m15 27 7 7 15-16"/></svg></div>
+        <h4 data-done-title>You're booked!</h4>
+        <p data-done-text></p>
+        <div class="dm-ticket" data-ticket></div>
+        <div class="dm-actions" data-actions></div>
+        <button type="button" class="btn btn-outline dm-close-btn" data-close>Done</button>
+      </div>
+    </div>
   </div>
 </div>
 
