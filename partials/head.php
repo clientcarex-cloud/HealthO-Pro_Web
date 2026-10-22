@@ -34,8 +34,12 @@ $active = static fn(string $slug): string => $slug === $nav_active ? ' active' :
 <meta name="description" content="<?= h($description) ?>">
 <meta name="theme-color" content="#122B5C">
 <link rel="canonical" href="<?= h($canonical) ?>">
-<link rel="icon" type="image/png" href="/assets/images/favicon.png">
-<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+<!-- Google needs a square favicon that is a multiple of 48px, or it shows a letter icon. -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/images/favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
 <?= seo_head([
     'page'        => $page,
     'title'       => $title,
