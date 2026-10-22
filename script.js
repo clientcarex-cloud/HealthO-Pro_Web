@@ -340,7 +340,7 @@
                 try {
                     var saved = JSON.parse(localStorage.getItem(STORE) || 'null');
                     if (!saved) return;
-                    ['fullName', 'phone', 'email', 'company'].forEach(function (k) {
+                    ['fullName', 'phone', 'email', 'company', 'position'].forEach(function (k) {
                         var el = f1.elements[k];
                         if (el && !el.value && saved[k]) el.value = saved[k];
                     });
@@ -422,6 +422,7 @@
                 var v = function (n) { return (f1.elements[n].value || '').trim(); };
                 var checks = {
                     fullName: v('fullName').length >= 2,
+                    position: v('position').length >= 2,
                     phone: v('phone').replace(/\D/g, '').length >= 7,
                     email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('email'))
                 };
@@ -438,17 +439,17 @@
 
                 st.lead = {
                     name: v('fullName'), first: v('fullName').replace(/^(dr\.?|mr\.?|mrs\.?|ms\.?)\s+/i, '').split(/\s+/)[0],
-                    phone: v('phone'), email: v('email'), company: v('company'), orgType: org.value
+                    phone: v('phone'), email: v('email'), company: v('company'), position: v('position'), orgType: org.value
                 };
                 var prev = getBooking();
                 if (prev && !st.forOther && ((prev.email && prev.email.toLowerCase() === st.lead.email.toLowerCase()) || (prev.phone && prev.phone === digits(st.lead.phone)))) {
                     showBooked(prev);
                     return;
                 }
-                try { localStorage.setItem(STORE, JSON.stringify({ fullName: st.lead.name, phone: st.lead.phone, email: st.lead.email, company: st.lead.company, orgType: org.value })); } catch (err) { /* storage blocked */ }
+                try { localStorage.setItem(STORE, JSON.stringify({ fullName: st.lead.name, phone: st.lead.phone, email: st.lead.email, company: st.lead.company, position: st.lead.position, orgType: org.value })); } catch (err) { /* storage blocked */ }
 
                 // Capture the lead now — even if they never pick a slot, sales can call.
-                var key = [st.lead.name, st.lead.phone, st.lead.email, st.lead.orgType, st.lead.company].join('|');
+                var key = [st.lead.name, st.lead.phone, st.lead.email, st.lead.orgType, st.lead.company, st.lead.position].join('|');
                 if (st.sentKey !== key) {
                     st.sentKey = key;
                     var data = new FormData(f1);
@@ -518,6 +519,7 @@
                 data.append('email', st.lead.email);
                 data.append('phone', st.lead.phone);
                 data.append('company', st.lead.company || st.lead.orgType);
+                data.append('position', st.lead.position);
                 var label = bookBtn.innerHTML;
                 bookBtn.disabled = true;
                 bookBtn.innerHTML = 'Booking…';
@@ -532,7 +534,8 @@
                     .then(function (res) {
                         if (res && res.ok) { done(res.meeting || {}); return; }
                         if (res && res.already_booked) {
-                            showBooked({ first: st.lead.first, when: res.already_booked.label, email: '' }, res.error);
+                            if (res.already_booked.can_reschedule && st.slot) askMove(res.already_booked);
+                            else showBooked({ first: st.lead.first, when: res.already_booked.label, email: '' }, res.error);
                             return;
                         }
                         if (res && res.rate_limited) {
@@ -556,7 +559,20 @@
             /* ---- step 3: confirmed ---- */
             /* b: { first, email, when, duration, platform, host, ref, ics_url, manage_url, fresh }
                note: shown instead of the usual line (e.g. the CRM's "already booked" message). */
+            var setAskMode = function (on) {
+                p3.querySelector('[data-tick]').hidden = on;
+                p3.querySelector('[data-ask-ico]').hidden = !on;
+                p3.querySelector('[data-move]').hidden = !on;
+                p3.querySelector('[data-close]').hidden = on;
+                if (on) {
+                    p3.querySelector('[data-ticket]').innerHTML = '';
+                    p3.querySelector('[data-actions]').innerHTML = '';
+                    p3.querySelector('[data-other]').hidden = true;
+                }
+            };
+
             var showBooked = function (b, note) {
+                setAskMode(false);
                 var rows = [['When', b.when ? b.when + ' IST' : ''], ['Duration', b.duration ? b.duration + ' minutes' : ''],
                     ['Where', b.platform || ''], ['With', b.host || ''], ['Ref', b.ref || '']];
                 p3.querySelector('[data-done-title]').textContent = b.fresh
@@ -597,6 +613,71 @@
                 if (window.gtag) window.gtag('event', 'book_demo', { slot: st.slot && st.slot.start });
                 st.loading = null; // the booked slot is gone from the feed
             };
+
+            /* ---- "We found your demo — move it to the slot you picked?" ---- */
+            var askMove = function (existing) {
+                st.moveFrom = existing;
+                setAskMode(true);
+                p3.querySelector('[data-done-title]').textContent = 'We found your demo, ' + st.lead.first + '!';
+                p3.querySelector('[data-done-text]').textContent = 'You already have a demo scheduled. Would you like to move it to the time you just picked?';
+                p3.querySelector('[data-move-from]').textContent = existing.label + ' IST';
+                p3.querySelector('[data-move-to]').textContent = prettyDay(st.day) + ' · ' + st.slot.label + ' IST';
+                status(p3.querySelector('[data-move]'), '', '');
+                go(3);
+                sub.textContent = 'One click and your demo moves — no new booking needed.';
+                p3.querySelector('[data-move-yes]').focus();
+            };
+
+            p3.querySelector('[data-move-no]').addEventListener('click', function () {
+                showBooked({ first: st.lead.first, when: st.moveFrom.label, email: '' },
+                    'No problem — your demo stays as it is. Use the link in your invite e-mail if you need to change it later.');
+            });
+
+            p3.querySelector('[data-move-yes]').addEventListener('click', function () {
+                var yes = this, box = p3.querySelector('[data-move]'), label = yes.innerHTML;
+                var data = new FormData();
+                data.append('action', 'reschedule');
+                data.append('name', st.lead.name);
+                data.append('email', st.lead.email);
+                data.append('phone', st.lead.phone);
+                data.append('slot', st.slot.start);
+                yes.disabled = true;
+                yes.innerHTML = 'Moving…';
+                fetch(API, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        if (!res || !res.ok) {
+                            if (res && res.slot_gone) {
+                                // That slot went meanwhile: back to the picker.
+                                st.slot = null; setPicked(); go(2);
+                                status(f2, 'bad', 'That slot was just taken — pick another time and we\'ll move your demo there.');
+                                return;
+                            }
+                            throw new Error(res && res.error);
+                        }
+                        var m = res.meeting || {};
+                        var startMs = slotMs(m.start_time || st.slot.start);
+                        var dur = m.duration || 30;
+                        var b = {
+                            first: st.lead.first, email: st.lead.email, phone: digits(st.lead.phone),
+                            when: prettyDay(st.day) + ' · ' + st.slot.label, duration: dur,
+                            platform: m.platform || (st.page && st.page.platform) || 'Online meeting',
+                            host: m.host || 'A HealthO Pro specialist', ref: m.reference || '',
+                            until: (startMs || Date.now() + 864e5) + dur * 60000
+                        };
+                        saveBooking(b);
+                        showBooked(b, 'Your demo has been moved. An updated invite is on its way to ' + st.lead.email + '.');
+                        p3.querySelector('[data-done-title]').textContent = 'Rescheduled, ' + st.lead.first + '!';
+                        p3.querySelector('[data-other]').hidden = true;
+                        sub.textContent = 'All set. See you at the demo!';
+                        if (window.gtag) window.gtag('event', 'reschedule_demo', { slot: st.slot.start });
+                        st.loading = null;
+                    })
+                    .catch(function (err) {
+                        status(box, 'bad', esc(err && err.message || 'Could not move your demo.'));
+                    })
+                    .finally(function () { yes.disabled = false; yes.innerHTML = label; });
+            });
 
             // A colleague may book their own demo — with their own e-mail/phone.
             p3.querySelector('[data-other]').addEventListener('click', function () {

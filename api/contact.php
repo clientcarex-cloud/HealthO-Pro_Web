@@ -19,6 +19,7 @@ $email    = isset($_POST['email'])    ? filter_var(trim($_POST['email']), FILTER
 $phone    = isset($_POST['phone'])    ? strip_tags(trim($_POST['phone'])) : '';
 $orgType  = isset($_POST['orgType'])  ? strip_tags(trim($_POST['orgType'])) : '';
 $interest = isset($_POST['interest']) ? strip_tags(trim($_POST['interest'])) : '';
+$position = isset($_POST['position']) ? mb_substr(strip_tags(trim($_POST['position'])), 0, 100) : ''; // job title (demo popup)
 $company  = isset($_POST['company'])  ? mb_substr(strip_tags(trim($_POST['company'])), 0, 160) : ''; // organization name (demo popup)
 $resume   = isset($_POST['resume'])   ? filter_var(trim($_POST['resume']), FILTER_SANITIZE_URL) : '';
 
@@ -153,8 +154,12 @@ if ($orgType !== 'Job Application' && $formType === '') {
         'email'       => $email,
         'phonenumber' => $phone,
         'company'     => $company !== '' ? $company : $orgType,
-        'title'       => $interest,
-        'description' => $company !== '' && $orgType !== '' ? trim($message . "\nOrganization type: " . $orgType) : $message,
+        // Lead "title" is the CRM's Position field. Forms that don't ask for a
+        // position keep the old behaviour (interest in that field).
+        'title'       => $position !== '' ? $position : $interest,
+        'description' => trim($message
+            . ($company !== '' && $orgType !== '' ? "\nOrganization type: " . $orgType : '')
+            . ($position !== '' && $interest !== '' ? "\nInterested in: " . $interest : '')),
         'city'        => $city,
         'state'       => $state,
         'country'     => $country,
@@ -194,6 +199,7 @@ try {
     $rows[] = ['Name', $h($fullName)];
     $rows[] = ['Email', '<a href="mailto:' . $h($email) . '" style="color:#0096B7;text-decoration:none;font-weight:600;">' . $h($email) . '</a>'];
     $rows[] = ['Mobile Number', '<a href="tel:' . $h(preg_replace('/[^0-9+]/', '', $phone)) . '" style="color:#0096B7;text-decoration:none;font-weight:600;">' . $h($phone) . '</a>'];
+    if ($position !== '') $rows[] = ['Position', $h($position)];
     if ($company !== '')  $rows[] = ['Organization Name', $h($company)];
     if ($orgType !== '')  $rows[] = ['Organization / Type', $h($orgType)];
     if ($category !== '') $rows[] = ['Type of Message', $h($category)];
@@ -278,6 +284,7 @@ HTML;
     $plain .= "Name: $fullName\n";
     $plain .= "Email: $email\n";
     $plain .= "Mobile Number: $phone\n";
+    if ($position !== '') $plain .= "Position: $position\n";
     if ($company !== '')  $plain .= "Organization Name: $company\n";
     if ($orgType !== '')  $plain .= "Organization / Type: $orgType\n";
     if ($category !== '') $plain .= "Type of Message: $category\n";

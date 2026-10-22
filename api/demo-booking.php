@@ -171,10 +171,15 @@ $post = [
     'email'   => $clean('email', 160),
     'phone'   => $clean('phone', 30),
     'company' => $clean('company', 160),
+    'position'=> $clean('position', 100),
     'notes'   => $clean('notes', 2000),
     'slot'    => $clean('slot', 25),
     'website' => $clean('website', 100), // honeypot, checked by the CRM
 ];
+// "Move my existing demo to this slot" — the CRM re-checks e-mail + phone.
+if (($_POST['action'] ?? '') === 'reschedule') {
+    $post['psl_action'] = 'reschedule_existing';
+}
 for ($i = 0; $i < 10; $i++) {
     if (isset($_POST["q$i"])) $post["q$i"] = $clean("q$i", 1000);
 }
@@ -204,5 +209,5 @@ $res = db_call("$base/json/$slug", $post, $headers);
 if ($res === null) {
     db_out(['ok' => false, 'error' => 'We could not reach our booking system. Please try again in a moment.'], 502);
 }
-if (!empty($res['ok'])) db_rate_limit(true);
+if (!empty($res['ok']) && empty($res['rescheduled'])) db_rate_limit(true);
 db_out($res, empty($res['ok']) ? 422 : 200);

@@ -1003,6 +1003,22 @@ body.demo-open { overflow: hidden; }
 .dm-actions .btn { padding: 12px 20px; font-size: var(--text-sm); }
 .dm-close-btn { margin-top: 14px; padding: 12px 34px; }
 .dm-other { display: flex; margin: 10px auto 0; }
+/* "We found your demo — move it?" */
+.dm-ask-ico { width: 74px; height: 74px; margin: 0 auto; border-radius: 50%; display: grid; place-items: center; background: #FEF3C7; color: #D97706; animation: dmIn .35s var(--ease) both; }
+.dm-ask-ico svg { width: 36px; height: 36px; }
+.dm-ask-ico[hidden], .dm-tick[hidden], .dm-move[hidden], .dm-close-btn[hidden] { display: none; }
+.dm-move { margin: 20px 0 4px; text-align: left; }
+.dm-move__row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border: 1.5px solid var(--line); border-radius: var(--r-md); font-size: var(--text-sm); }
+.dm-move__row span { width: 70px; flex: none; color: var(--text-mute); font-weight: 600; }
+.dm-move__row b { color: var(--text-soft); text-decoration: line-through; text-decoration-color: rgba(100, 116, 139, .5); }
+.dm-move__row--new { border-color: var(--cyan); background: var(--cyan-tint); }
+.dm-move__row--new b { color: var(--navy); text-decoration: none; }
+.dm-move__arrow { display: grid; place-items: center; height: 28px; color: var(--cyan-dark); }
+.dm-move__arrow svg { width: 18px; height: 18px; }
+.dm-move .form-status { margin: 14px 0 0; }
+.dm-move__btns { display: flex; gap: 10px; margin-top: 18px; }
+.dm-move__btns .btn { flex: 1; padding: 14px 18px; }
+@media (max-width: 600px) { .dm-move__btns { flex-direction: column; } }
 .dm-other[hidden] { display: none; }
 
 /* wider card while picking a time on desktop */

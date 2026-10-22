@@ -66,9 +66,21 @@ $demo_interest = $demo_interest ?? (PRODUCTS[$page ?? '']['short'] ?? '');
         </div>
         <span class="err-msg">Please pick one.</span>
       </div>
-      <div class="field">
-        <label for="dmCompany">Organization name</label>
-        <input id="dmCompany" type="text" name="company" placeholder="e.g. City Care Hospital" autocomplete="organization">
+      <div class="dm-grid">
+        <div class="field">
+          <label for="dmPosition">Your position <span class="req">*</span></label>
+          <input id="dmPosition" type="text" name="position" placeholder="e.g. Owner / Director" list="dmPositions" autocomplete="organization-title" required>
+          <datalist id="dmPositions">
+<?php foreach (['Owner / Director', 'Managing Director / CEO', 'Doctor / Consultant', 'Hospital Administrator', 'Medical Superintendent', 'Lab Manager', 'Pathologist', 'Radiologist', 'IT Head / Manager', 'Operations Manager', 'Finance / Accounts Head', 'Purchase Manager'] as $pos): ?>
+            <option value="<?= h($pos) ?>">
+<?php endforeach; ?>
+          </datalist>
+          <span class="err-msg">Please tell us your role.</span>
+        </div>
+        <div class="field">
+          <label for="dmCompany">Organization name</label>
+          <input id="dmCompany" type="text" name="company" placeholder="e.g. City Care Hospital" autocomplete="organization">
+        </div>
       </div>
       <div class="dm-foot">
         <button type="submit" class="btn btn-primary btn-block btn-lg dm-cta">
@@ -110,10 +122,21 @@ $demo_interest = $demo_interest ?? (PRODUCTS[$page ?? '']['short'] ?? '');
     <!-- Step 3: done -->
     <div class="dm-pane dm-pane--3" data-pane="3" hidden>
       <div class="dm-done">
-        <div class="dm-tick"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="m15 27 7 7 15-16"/></svg></div>
+        <div class="dm-tick" data-tick><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="m15 27 7 7 15-16"/></svg></div>
+        <div class="dm-ask-ico" data-ask-ico hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><path d="m9.5 15 2 2 3.5-3.5"/></svg></div>
         <h4 data-done-title>You're booked!</h4>
         <p data-done-text></p>
         <div class="dm-ticket" data-ticket></div>
+        <div class="dm-move" data-move hidden>
+          <div class="dm-move__row"><span>Current</span><b data-move-from></b></div>
+          <div class="dm-move__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+          <div class="dm-move__row dm-move__row--new"><span>New time</span><b data-move-to></b></div>
+          <div class="form-status"></div>
+          <div class="dm-move__btns">
+            <button type="button" class="btn btn-primary" data-move-yes>Yes, reschedule</button>
+            <button type="button" class="btn btn-outline" data-move-no>No, keep it</button>
+          </div>
+        </div>
         <div class="dm-actions" data-actions></div>
         <button type="button" class="btn btn-outline dm-close-btn" data-close>Done</button>
         <button type="button" class="dm-link dm-other" data-other hidden>Booking for a colleague? Use their details</button>
