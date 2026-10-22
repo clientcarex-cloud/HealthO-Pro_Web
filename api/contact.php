@@ -91,7 +91,7 @@ function ho_crm_source_name(string $source, string $medium): string
  * Push the lead into the Pro Leads CRM (server-side, key from .env).
  * Fails soft: a CRM outage never blocks the email or the visitor's submit.
  */
-function ho_send_to_crm(array $lead): void
+function ho_send_to_crm(array $lead): int
 {
     $env = [];
     $envFile = __DIR__ . '/../.env';
@@ -104,7 +104,7 @@ function ho_send_to_crm(array $lead): void
     }
     $url = $env['PRO_LEADS_API_URL'] ?? '' ?: 'https://healtho.pro/pro_leads/pro_leads_api/add_lead';
     $key = $env['PRO_LEADS_API_KEY'] ?? '';
-    if ($url === '' || $key === '' || !function_exists('curl_init')) return;
+    if ($url === '' || $key === '' || !function_exists('curl_init')) return 0;
 
     $ch = curl_init($url);
     curl_setopt_array($ch, [
@@ -120,15 +120,35 @@ function ho_send_to_crm(array $lead): void
     curl_close($ch);
     if ($body === false || $code >= 400) {
         error_log("Pro Leads CRM push failed (HTTP $code): " . substr((string) $body, 0, 300));
+        return 0;
     }
+    $res = json_decode((string) $body, true);
+    return (int) ($res['lead_id'] ?? 0);
+}
+
+/**
+ * "id.signature" for a CRM lead, so the demo popup can hand the booking step
+ * the exact lead it just created without a visitor being able to swap the id.
+ * Verified by api/demo-booking.php with the same server-side key.
+ */
+function ho_lead_ref(int $leadId): string
+{
+    $key = '';
+    $envFile = __DIR__ . '/../.env';
+    if ($leadId <= 0 || !is_readable($envFile)) return '';
+    foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        if (strpos($line, 'PRO_LEADS_API_KEY=') === 0) $key = trim(substr($line, 18), "\"' ");
+    }
+    return $key === '' ? '' : $leadId . '.' . substr(hash_hmac('sha256', 'lead:' . $leadId, $key), 0, 32);
 }
 
 $locationParts = array_filter([$city, $state, $country], function ($v) { return $v !== ''; });
 $location = !empty($locationParts) ? implode(', ', $locationParts) : 'Not detected';
 
 // Job applications and CEO messages are not sales leads — only enquiries go to the CRM.
+$leadRef = '';
 if ($orgType !== 'Job Application' && $formType === '') {
-    ho_send_to_crm([
+    $leadRef = ho_lead_ref(ho_send_to_crm([
         'name'        => $fullName,
         'email'       => $email,
         'phonenumber' => $phone,
@@ -140,7 +160,7 @@ if ($orgType !== 'Job Application' && $formType === '') {
         'country'     => $country,
         'source'      => ho_crm_source_name($src['utm_source'], $src['utm_medium']),
         'tags'        => implode(',', array_filter(['Website', $src['utm_campaign']])),
-    ] + $src);
+    ] + $src));
 }
 
 $mail = new PHPMailer(true);
@@ -278,9 +298,10 @@ HTML;
 
     $mail->send();
     http_response_code(200);
-    echo json_encode(['status' => 'success', 'message' => 'Your message has been sent successfully.']);
+    echo json_encode(['status' => 'success', 'message' => 'Your message has been sent successfully.', 'lead_ref' => $leadRef]);
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => "Could not send your message. Please email digicarelynx@gmail.com directly."]);
+    // The lead is already in the CRM even if the e-mail failed.
+    echo json_encode(['status' => 'error', 'message' => "Could not send your message. Please email digicarelynx@gmail.com directly.", 'lead_ref' => $leadRef]);
 }
 ?>

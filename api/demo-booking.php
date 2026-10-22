@@ -44,7 +44,7 @@ function db_out(array $payload, int $code = 200): void
 }
 
 /** One request to the CRM. Returns the decoded JSON, or null when it is unreachable. */
-function db_call(string $url, ?array $post = null): ?array
+function db_call(string $url, ?array $post = null, array $headers = []): ?array
 {
     if (!function_exists('curl_init')) return null;
     $ch = curl_init($url);
@@ -52,7 +52,7 @@ function db_call(string $url, ?array $post = null): ?array
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT        => 15,
         CURLOPT_CONNECTTIMEOUT => 5,
-        CURLOPT_HTTPHEADER     => ['Accept: application/json'],
+        CURLOPT_HTTPHEADER     => array_merge(['Accept: application/json'], $headers),
         CURLOPT_USERAGENT      => 'HealthO-Pro-Website/1.0',
     ];
     if ($post !== null) {
@@ -134,7 +134,20 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/', $post['slot'])) {
     db_out(['ok' => false, 'error' => 'Please choose a time slot.'], 400);
 }
 
-$res = db_call("$base/json/$slug", $post);
+// Book onto the exact lead step 1 created. The id arrives signed by
+// api/contact.php; the API key proves to the CRM that this call is ours.
+$apiKey  = $env['PRO_LEADS_API_KEY'] ?? '';
+$headers = [];
+if ($apiKey !== '') {
+    $headers[] = 'X-Api-Key: ' . $apiKey;
+    $ref = explode('.', (string) ($_POST['lead_ref'] ?? ''), 2);
+    if (count($ref) === 2 && ctype_digit($ref[0])
+        && hash_equals(substr(hash_hmac('sha256', 'lead:' . $ref[0], $apiKey), 0, 32), $ref[1])) {
+        $post['lead_id'] = (int) $ref[0];
+    }
+}
+
+$res = db_call("$base/json/$slug", $post, $headers);
 if ($res === null) {
     db_out(['ok' => false, 'error' => 'We could not reach our booking system. Please try again in a moment.'], 502);
 }

@@ -413,7 +413,11 @@
                     var data = new FormData(f1);
                     var src = leadSource();
                     Object.keys(src).forEach(function (k) { if (!data.has(k)) data.append(k, src[k]); });
-                    fetch('/api/contact.php', { method: 'POST', body: data, keepalive: true }).catch(function () { /* booking still creates the lead */ });
+                    // lead_ref = the CRM lead just created; the booking is attached to it.
+                    st.leadRef = fetch('/api/contact.php', { method: 'POST', body: data, keepalive: true })
+                        .then(function (r) { return r.json(); })
+                        .then(function (res) { return (res && res.lead_ref) || ''; })
+                        .catch(function () { return ''; /* booking then matches / creates the lead */ });
                     var interest = data.get('interest') || '';
                     if (window.fbq) window.fbq('track', 'Lead', { content_name: interest });
                     if (window.gtag) window.gtag('event', 'generate_lead', { interest: interest, form: 'demo_popup' });
@@ -477,7 +481,12 @@
                 bookBtn.disabled = true;
                 bookBtn.innerHTML = 'Booking…';
 
-                fetch(API, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
+                // Wait (briefly) for step 1's lead so the demo lands on that lead.
+                var leadRef = Promise.race([st.leadRef || Promise.resolve(''), new Promise(function (r) { setTimeout(function () { r(''); }, 8000); })]);
+                leadRef.then(function (ref) {
+                    if (ref) data.append('lead_ref', ref);
+                    return fetch(API, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+                })
                     .then(function (r) { return r.json(); })
                     .then(function (res) {
                         if (res && res.ok) { done(res.meeting || {}); return; }

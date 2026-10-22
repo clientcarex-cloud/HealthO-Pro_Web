@@ -10,7 +10,7 @@ const CLARITY_ID = 'xc1duel6z4';
 const META_PIXEL_ID = '';
 
 /** Bump to bust the browser cache for styles.css / script.js. */
-const ASSET_VER = '38';
+const ASSET_VER = '39';
 
 /** Only Plus Jakarta Sans is used by the stylesheet; only these weights appear in it. */
 const FONT_CSS = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap';
