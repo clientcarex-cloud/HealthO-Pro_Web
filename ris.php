@@ -418,6 +418,8 @@ $volume  = form_select('orgType', 'Monthly Scan Volume', ['Under 500 scans/month
 </section>
 
 <!-- ===== 6. FAQ ===== -->
+<?php require_once __DIR__ . '/partials/city-data.php'; city_links_section('ris'); ?>
+
 <?php faq_section($faqs, 'Questions? Simple answers.', 'section section--soft'); ?>
 
 <!-- ===== 7. FINAL CTA + FORM ===== -->

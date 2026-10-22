@@ -13,6 +13,7 @@
  */
 require __DIR__ . '/partials/careers-data.php';   // pulls in partials/site.php
 require __DIR__ . '/partials/blog-data.php';
+require __DIR__ . '/partials/city-data.php';
 
 /** slug => [changefreq, priority, images[]] */
 $pages = [
@@ -63,6 +64,18 @@ foreach (blog_posts() as $slug => $post) {
         'lastmod' => date('c', $blogMod),
         'freq'    => 'monthly',
         'prio'    => '0.7',
+        'images'  => [],
+    ];
+}
+
+// City guides: one per product per city.
+$cityMod = max(strtotime(CITY_PUBLISHED), $shared, filemtime(__DIR__ . '/blog-post.php'));
+foreach (city_pages() as $slug => $_) {
+    $urls[] = [
+        'loc'     => blog_url($slug, true),
+        'lastmod' => date('c', $cityMod),
+        'freq'    => 'monthly',
+        'prio'    => '0.8',
         'images'  => [],
     ];
 }

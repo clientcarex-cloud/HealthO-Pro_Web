@@ -127,6 +127,9 @@ lp_videos(
 
 pricing_section('lims');
 
+require_once __DIR__ . '/partials/city-data.php';
+city_links_section('lims');
+
 faq_section($faqs, 'Questions? Simple answers.', 'section section--soft');
 
 lp_demo([

@@ -122,6 +122,9 @@ lp_stats('What hospitals see after switching', [
 
 pricing_section('hims');
 
+require_once __DIR__ . '/partials/city-data.php';
+city_links_section('hims');
+
 faq_section($faqs, 'Questions? Simple answers.', 'section section--soft');
 
 lp_demo([

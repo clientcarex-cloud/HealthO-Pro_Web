@@ -123,6 +123,9 @@ lp_stats('What clinics see after switching', [
 
 pricing_section('cims');
 
+require_once __DIR__ . '/partials/city-data.php';
+city_links_section('cims');
+
 faq_section($faqs, 'Questions? Simple answers.', 'section section--soft');
 
 lp_demo([

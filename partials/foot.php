@@ -11,8 +11,8 @@ require_once __DIR__ . '/lead-form.php';
 
 $foot_scripts = $foot_scripts ?? [];
 
-// On a product page the popup pre-selects that product.
-$demo_interest = PRODUCTS[$page ?? '']['short'] ?? '';
+// On a product page (or a page that sets $demo_interest) the popup pre-selects that product.
+$demo_interest = $demo_interest ?? (PRODUCTS[$page ?? '']['short'] ?? '');
 ?>
 <!-- Demo popup — script.js opens this on any [data-demo] click. -->
 <div class="demo-modal" role="dialog" aria-modal="true" aria-label="Book a free demo" data-page-interest="<?= h($demo_interest) ?>">

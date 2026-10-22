@@ -10,6 +10,17 @@ $slug  = trim((string) ($_GET['s'] ?? ''));
 $posts = blog_posts();
 $post  = $posts[$slug] ?? null;
 
+// City guides (e.g. hospital-management-software-hyderabad) have their own template.
+require_once __DIR__ . '/partials/city-data.php';
+if (!$post && isset(city_pages()[$slug])) {
+    if (BLOG_PRETTY_URLS && !preg_match('#^/blog/#', (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH))) {
+        header('Location: ' . blog_url($slug, true), true, 301);
+        exit;
+    }
+    require __DIR__ . '/partials/city-post.php';
+    exit;
+}
+
 if (!$post) {
     http_response_code(404);
     $page        = 'blog';

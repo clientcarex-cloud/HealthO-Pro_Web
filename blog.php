@@ -5,6 +5,7 @@
  * filters only hide and show them (js/blog.js).
  */
 require __DIR__ . '/partials/blog-data.php';
+require __DIR__ . '/partials/city-data.php';
 require_once __DIR__ . '/partials/seo.php';
 
 $posts = blog_posts();
@@ -73,6 +74,27 @@ require __DIR__ . '/partials/head.php';
 <?php endforeach; ?>
     </div>
     <p class="bl-empty" id="blEmpty" hidden>No articles match your search. <a href="/features">Browse all features</a>.</p>
+  </div>
+</section>
+
+<!-- ===== CITY GUIDES ===== -->
+<section class="section" id="cities">
+  <div class="container">
+    <div class="center">
+      <span class="eyebrow">By city</span>
+      <h2 class="h-sec">Healthcare software <span class="text-grad">in your city</span></h2>
+      <p class="lead" style="margin:12px auto 32px;max-width:640px;">Local guides to HealthO Pro for hospitals, labs, clinics and scan centres in <?= count(CITIES) ?> cities across India.</p>
+    </div>
+    <div class="city-dir">
+<?php foreach (CITIES as $cityKey => $c): ?>
+      <div class="city-card">
+        <h3><?= h($c['name']) ?><small><?= h($c['state']) ?></small></h3>
+<?php foreach (CITY_PRODUCTS as $product => $p): ?>
+        <a href="<?= h(blog_url(city_slug($product, $cityKey))) ?>"><?= h($p['keyword']) ?></a>
+<?php endforeach; ?>
+      </div>
+<?php endforeach; ?>
+    </div>
   </div>
 </section>
 
