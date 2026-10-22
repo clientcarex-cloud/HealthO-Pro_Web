@@ -91,10 +91,6 @@ $head_extra = <<<'HTML'
 <style>
 /* ---------- Hero ---------- */
 .ris-hero { padding-bottom: 88px; }
-.ris-launch { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; padding: 8px 16px; border-radius: var(--r-pill); background: rgba(244,63,94,.12); border: 1px solid rgba(244,63,94,.4); color: #fff; font-size: var(--text-sm); text-decoration: none; transition: background .2s; }
-.ris-launch:hover { background: rgba(244,63,94,.22); color: #fff; }
-.ris-launch b { color: #FDA4AF; }
-.ris-launch-dot { width: 8px; height: 8px; border-radius: 50%; background: #F43F5E; animation: risBeat 1.6s ease-in-out infinite; }
 .ris-hero h1 { font-size: clamp(2.3rem, 4.6vw, 3.6rem); line-height: 1.1; }
 .ris-hero h1 .text-grad { display: inline; }
 .ris-hero p.ris-sub { max-width: 520px; }
@@ -266,7 +262,6 @@ $volume  = form_select('orgType', 'Monthly Scan Volume', ['Under 500 scans/month
   <div class="container">
     <div class="hero-grid">
       <div class="reveal">
-        <a href="/HealthO-Pro-Launch-24-oct-2026" class="ris-launch"><span class="ris-launch-dot"></span><b>World premiere · 24 Oct, 11 AM</b> AI reports in 60 seconds — reserve your seat →</a>
         <span class="eyebrow">For Ultrasound &amp; Imaging Centres</span>
         <h1>Scan done.<br><span class="text-grad">Report ready.</span></h1>
         <p class="ris-sub">HealthO Pro RIS connects your ultrasound machine to your computer. It <b>reads every number</b> from the scan, <b>writes the report</b> with charts and photos, and <b>sends it to the patient's WhatsApp</b>. Your doctor just checks and signs.</p>

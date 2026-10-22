@@ -14,8 +14,6 @@ date_default_timezone_set('Asia/Kolkata');
 
 $page        = LAUNCH_SLUG;
 $canonical   = SITE_URL . '/' . LAUNCH_SLUG;
-$title       = 'World Premiere 24 Oct 2026 — HealthO Pro for Ultrasound Reporting | AI Reports in 60 Seconds';
-$description = 'On 24 October 2026 at 11:00 AM IST, HealthO Pro unveils the world\'s first AI-driven engine that auto-creates Sonography, Ultrasound, X-Ray, CT and MRI reports within 1 minute. Reserve your front-row seat.';
 $crumbs      = ['World Premiere — 24 Oct 2026' => $canonical];
 $og_type     = 'website';
 
@@ -36,10 +34,22 @@ if ($is_preview) {
     header('X-Robots-Tag: noindex, nofollow');
     header('Cache-Control: no-store');
 }
+
+// Until the page is unlocked for this visitor, NOTHING about the product may
+// leak — not in the body, the <title>, meta description, structured data,
+// share text or calendar file. Search engines and link previews see this too.
+if ($unlocked) {
+    $title       = 'HealthO Pro for Ultrasound Reporting — AI Reports in 60 Seconds | World Premiere';
+    $description = 'HealthO Pro for Ultrasound Reporting: the world\'s first AI-driven engine that auto-creates Sonography, Ultrasound, X-Ray, CT and MRI reports within 1 minute.';
+} else {
+    $title       = 'Something Big Is Coming — World Premiere 24 Oct 2026, 11:00 AM IST | HealthO Pro';
+    $description = 'A first in healthcare, anywhere in the world. Revealed on 24 October 2026 at 11:00 AM IST — only to the people on the list. Reserve your seat.';
+}
+
 $count      = launch_subscriber_count();
 $show_count = $count !== null && $count >= LAUNCH_COUNT_MIN;
 
-$faqs = [
+$faq_list = [
     'When exactly is the reveal?' =>
         'Saturday, 24 October 2026 at 11:00 AM India time (IST). The countdown on this page runs on our server clock, so it is the same for everyone, wherever you are.',
     'Who can see it first?' =>
@@ -53,10 +63,14 @@ $faqs = [
     'Will you spam me?' =>
         'No. We use your number and e-mail only for the launch invite and HealthO Pro updates. You can opt out any time by replying STOP.',
 ];
+// FAQ answers describe the product, so they (and their FAQ schema) only
+// appear once unlocked.
+$faqs = $unlocked ? $faq_list : [];
+
 $schema = [[
     '@type'       => 'Event',
     '@id'         => $canonical . '#event',
-    'name'        => 'World Premiere — HealthO Pro for Ultrasound Reporting',
+    'name'        => $unlocked ? 'World Premiere — HealthO Pro for Ultrasound Reporting' : 'HealthO Pro — World Premiere',
     'description' => $description,
     'startDate'   => date('c', $launch_ts),
     'endDate'     => date('c', $launch_ts + 3600),
@@ -152,7 +166,9 @@ $perks = [
 // Teaser reels (Instagram post IDs), embedded in the "Sneak peek" section.
 $reels = ['DelZO0kqK9W', 'DeliU11qmw9'];
 
-$wa_share = 'https://wa.me/?text=' . rawurlencode("🔥 World first in healthcare: AI that auto-creates Sonography, Ultrasound, X-Ray, CT & MRI reports in 60 seconds. Reveal on 24 Oct 2026, 11 AM. Reserve your seat: " . $canonical);
+$wa_share = 'https://wa.me/?text=' . rawurlencode($unlocked
+    ? "🔥 World first in healthcare: AI that auto-creates Sonography, Ultrasound, X-Ray, CT & MRI reports in 60 seconds. See it: " . $canonical
+    : "🔥 Something big is coming to healthcare — a world first. Revealed on 24 Oct 2026, 11 AM IST, only to people on the list. Reserve your seat: " . $canonical);
 $wa_talk  = WHATSAPP_URL . '?text=' . rawurlencode('Hi, I want to know more about HealthO Pro for Ultrasound Reporting.');
 
 $head_extra = <<<'HTML'
@@ -548,124 +564,128 @@ $sub_name = $subscriber ? $subscriber['name'] : '';
 </section>
 
 <?php else: ?>
-<!-- ═════════════ TEASER HERO ═════════════ -->
-<header class="lx-hero">
+<!-- ═════════════ TEASER (minimal on purpose: nothing about the product) ═════════════ -->
+<header class="lx-hero lx-mini" id="reserve">
   <div class="lx-stars"></div><div class="lx-grid"></div>
   <div class="lx-orb o1"></div><div class="lx-orb o2"></div><div class="lx-orb o3"></div>
   <div class="container">
     <div class="lx-hero-grid">
       <div class="reveal">
 <?php if ($is_live): ?>
-        <span class="lx-badge-live"><i></i> It's live — for subscribers only</span>
+        <span class="lx-badge-live"><i></i> It's live — for the people on the list</span>
+        <h1>It's here.<br><span class="lx-grad">Are you in?</span></h1>
+        <p class="lx-lead">The reveal is happening right now — and it opens only for the people on the list. Add your details and <b>it unlocks instantly.</b></p>
 <?php else: ?>
         <span class="lx-kicker"><i></i> World premiere · Sat, 24 Oct 2026 · 11:00 AM IST</span>
-<?php endif; ?>
-        <h1>Every scan.<br>Every report.<br><span class="lx-grad lx-60">In 60 seconds.</span></h1>
-        <div class="lx-first"><?= lx_ic('globe') ?> First time ever in healthcare, worldwide</div>
-        <p class="lx-lead">HealthO Pro is about to unveil an <b>AI-driven engine that auto-creates Sonography, Ultrasound, X-Ray, CT &amp; MRI reports within 1 minute</b>. No typing. No copying numbers. No waiting room.
-<?php if ($is_live): ?>
-          The reveal is happening right now — <b>only for people on the list.</b>
-<?php else: ?>
-          What it is — and how it works — stays classified until the countdown hits zero. <b>Only people on the list will see it first.</b>
-<?php endif; ?>
-        </p>
-
-<?php if (!$is_live): ?>
+        <h1>Something big<br>is coming to<br><span class="lx-grad">healthcare.</span></h1>
+        <div class="lx-first"><?= lx_ic('globe') ?> First time ever, anywhere in the world</div>
+        <p class="lx-lead">We can't tell you more yet. When the clock hits zero, it's revealed — <b>only to the people on this list.</b></p>
         <?= lx_countdown('lx-count-hero') ?>
         <div class="lx-when">
           <span><b>Saturday, 24 October 2026</b> · 11:00 AM IST</span>
           <a href="#" class="lx-cal-btn"><?= lx_ic('cal') ?> Add to calendar</a>
         </div>
 <?php endif; ?>
-
-        <div class="lx-actions">
-<?php if ($subscriber && !$is_live): ?>
-          <span class="lx-btn lx-btn-ghost" style="cursor:default;border-color:rgba(52,232,158,.5);color:#34E89E;"><?= lx_ic('check') ?> You're on the list<?= $sub_name !== '' ? ', ' . h($sub_name) : '' ?></span>
-          <a href="<?= h($wa_share) ?>" target="_blank" rel="noopener" class="lx-btn lx-btn-ghost"><?= lx_ic('wa') ?> Invite a colleague</a>
-<?php else: ?>
-          <a href="#reserve" class="lx-btn lx-btn-main"><?= lx_ic('ticket') ?> <?= $is_live ? 'Unlock the reveal now' : 'Reserve my front-row seat' ?></a>
-          <a href="#inside" class="lx-btn lx-btn-ghost"><?= lx_ic('eye') ?> What we can tell you</a>
-<?php endif; ?>
-        </div>
 <?php if ($show_count): ?>
         <div class="lx-social-proof">
           <span class="lx-avatars"><span style="background:#22D3EE">Dr</span><span style="background:#34E89E">R</span><span style="background:#A78BFA">S</span><span style="background:#FBBF24">+</span></span>
-          <span><b><?= number_format($count) ?></b> healthcare professionals already have a seat</span>
+          <span><b><?= number_format($count) ?></b> people are already on the list</span>
         </div>
 <?php endif; ?>
       </div>
 
-      <div class="reveal d1">
-        <div class="lx-device" aria-label="A blurred preview of the product, classified until launch">
-          <div class="lx-screen">
-            <div class="lx-fan"></div><div class="lx-blob"></div><div class="lx-beam"></div>
-            <div class="lx-tags"><span class="lx-tag">BPD ██.█ mm</span><span class="lx-tag">FL ██.█ mm</span><span class="lx-tag">EFW ███ g</span><span class="lx-tag">AFI ██.█</span></div>
+      <div class="reveal d1" id="lx-form-wrap">
+<?php if ($subscriber && !$is_live): ?>
+        <div class="lx-ticket">
+          <div class="big"><?= lx_ic('check') ?></div>
+          <h3>Seat confirmed<?= $sub_name !== '' ? ', ' . h($sub_name) : '' ?>!</h3>
+          <div class="lx-ticket-no">FRONT ROW · 24.10.2026 · 11:00 IST</div>
+          <p>Come back to this page at 11:00 AM on 24 October — it unlocks for you automatically. We'll also send you the invite.</p>
+          <div class="lx-actions">
+            <a href="#" class="lx-btn lx-btn-main lx-cal-btn"><?= lx_ic('cal') ?> Add to calendar</a>
+            <a href="<?= h($wa_share) ?>" target="_blank" rel="noopener" class="lx-btn lx-btn-ghost"><?= lx_ic('wa') ?> Invite a colleague</a>
           </div>
-          <div class="lx-report"><span class="lx-bar"></span><span class="lx-bar"></span><span class="lx-bar"></span><span class="lx-bar"></span></div>
-          <div class="lx-timer60"><svg viewBox="0 0 92 92"><circle class="trk" cx="46" cy="46" r="40"/><circle class="prg" cx="46" cy="46" r="40"/></svg><b>60</b><span>SEC</span></div>
-          <div class="lx-stamp">Classified<small>Reveal 24.10.2026 · 11:00</small></div>
         </div>
+<?php else: ?>
+        <form class="lx-form-card" id="lx-form" novalidate>
+          <h3><?= $is_live ? 'Unlock it now' : 'Reserve your seat' ?></h3>
+          <p><?= $is_live ? 'It opens the moment you submit.' : 'Free. Only people on this list see it first.' ?> Already signed up on another device? Fill it again — you won't be added twice.</p>
+          <div class="lx-f"><label for="lx-name">Full name <i>*</i></label><input id="lx-name" name="name" autocomplete="name" placeholder="Dr. Ravi Kumar" required maxlength="120"></div>
+          <div class="lx-f">
+            <label for="lx-phone">WhatsApp / Mobile <i>*</i></label>
+            <div class="lx-phone">
+              <select name="country_code" aria-label="Country code">
+                <option value="91" selected>🇮🇳 +91</option><option value="971">🇦🇪 +971</option><option value="966">🇸🇦 +966</option><option value="974">🇶🇦 +974</option><option value="968">🇴🇲 +968</option><option value="965">🇰🇼 +965</option><option value="973">🇧🇭 +973</option><option value="977">🇳🇵 +977</option><option value="880">🇧🇩 +880</option><option value="94">🇱🇰 +94</option><option value="1">🇺🇸 +1</option><option value="44">🇬🇧 +44</option><option value="61">🇦🇺 +61</option><option value="65">🇸🇬 +65</option>
+              </select>
+              <input id="lx-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="98765 43210" required maxlength="16">
+            </div>
+          </div>
+          <div class="lx-row">
+            <div class="lx-f"><label for="lx-email">E-mail</label><input id="lx-email" name="email" type="email" autocomplete="email" placeholder="you@hospital.com" maxlength="150"></div>
+            <div class="lx-f"><label for="lx-city">City</label><input id="lx-city" name="city" autocomplete="address-level2" placeholder="Hyderabad" maxlength="80"></div>
+          </div>
+          <div class="lx-row">
+            <div class="lx-f"><label for="lx-org">Hospital / Centre</label><input id="lx-org" name="organisation" autocomplete="organization" placeholder="Sunrise Hospital" maxlength="150"></div>
+            <div class="lx-f"><label for="lx-role">I am a</label>
+              <select id="lx-role" name="role">
+                <option value="">Select…</option><option>Doctor</option><option>Hospital / Clinic Owner</option><option>Centre Owner / Director</option><option>Administrator / Manager</option><option>Healthcare Staff</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <input class="lx-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label class="lx-consent" id="lx-consent-wrap"><input type="checkbox" name="consent" value="1" checked> Send me the launch invite and HealthO Pro updates on WhatsApp, SMS and e-mail. Reply STOP any time.</label>
+          <button type="submit" class="lx-btn lx-btn-main lx-submit"><?= lx_ic('bolt') ?> <span><?= $is_live ? 'Unlock the reveal' : 'Reserve my front-row seat' ?></span></button>
+          <div class="lx-msg" id="lx-msg" role="status" aria-live="polite"></div>
+          <div class="lx-safe"><?= lx_ic('shield') ?> Your details stay with HealthO Pro. No spam, ever.</div>
+        </form>
+<?php endif; ?>
       </div>
     </div>
   </div>
 </header>
 
-<div class="lx-marquee" aria-hidden="true"><div class="lx-track">
-<?php for ($i = 0; $i < 2; $i++): foreach ($modalities as $m): ?><span><?= $m[0] ?></span><span>Auto report &lt; 60s</span><?php endforeach; endfor; ?>
-</div></div>
-
-<?php if ($is_live): ?>
-<!-- ═════════════ GATE (live, not subscribed) ═════════════ -->
-<section class="lx-sec" id="gate">
-  <div class="container">
-    <div class="lx-gate reveal">
-      <div class="lx-lockbig"><?= lx_ic('lock') ?></div>
-      <span class="lx-kicker">Subscribers only</span>
-      <h2 style="font-size:clamp(2rem,4vw,3rem);font-weight:800;margin:16px 0;">The reveal is behind this door.</h2>
-      <p style="font-size:1.1rem;">Add your details below and it unlocks <b style="color:#fff;">instantly</b> — the full product, how it works for all six modalities, and the launch-day benefits.</p>
-    </div>
-  </div>
-</section>
-<?php endif; ?>
-
-<!-- ═════════════ PROBLEM ═════════════ -->
-<section class="lx-sec">
+<!-- ═════════════ SNEAK PEEK REELS (all states) ═════════════ -->
+<section class="lx-sec lx-sec-reels" id="reels">
   <div class="container">
     <div class="lx-head reveal">
-      <span class="lx-kicker">The problem nobody solved</span>
-      <h2>The scan takes minutes.<br><span class="lx-grad">The report takes forever.</span></h2>
-      <p>Every imaging centre in the world runs the same tired routine — and the patient pays for it with their time.</p>
+      <span class="lx-kicker"><?= lx_ic('play') ?> Sneak peek</span>
+      <h2>Watch the <span class="lx-grad">teasers</span></h2>
+      <p>A glimpse of what's coming. Tap to play.</p>
     </div>
-    <div class="lx-problem">
-      <div class="lx-pain reveal"><span class="ic"><?= lx_ic('keyboard') ?></span><h3>Typed by hand</h3><p>Doctors read numbers off the screen and type them, one by one, into a Word file — report after report, all day.</p></div>
-      <div class="lx-pain reveal d1"><span class="ic"><?= lx_ic('copy') ?></span><h3>One wrong digit</h3><p>45 becomes 54. A copy-paste carries the last patient's line. Small slips, big consequences.</p></div>
-      <div class="lx-pain reveal d2"><span class="ic"><?= lx_ic('hourglass') ?></span><h3>A full waiting room</h3><p>Patients wait for paper. Doctors stay late. Centres turn patients away at peak hours.</p></div>
+    <div class="lx-reels">
+<?php foreach ($reels as $i => $code): $ig = 'https://www.instagram.com/p/' . $code . '/'; ?>
+      <div class="lx-reel reveal<?= $i ? ' d1' : '' ?>">
+        <blockquote class="instagram-media" data-instgrm-permalink="<?= h($ig) ?>?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14">
+          <a href="<?= h($ig) ?>" target="_blank" rel="noopener" class="lx-reel-ph"><?= lx_ic('play') ?><span>Watch on Instagram</span></a>
+        </blockquote>
+      </div>
+<?php endforeach; ?>
     </div>
-    <p class="lx-whatif reveal">What if the report was ready<br><span class="lx-grad">before the patient got off the table?</span></p>
   </div>
 </section>
 
-<!-- ═════════════ WORLD FIRST ═════════════ -->
-<section class="lx-sec lx-sec--alt" id="inside">
+<?php endif; ?>
+
+<?php if ($unlocked): ?>
+<!-- ═════════════ SNEAK PEEK REELS (all states) ═════════════ -->
+<section class="lx-sec lx-sec-reels" id="reels">
   <div class="container">
-    <div class="lx-world">
-      <div class="reveal">
-        <div class="lx-globe"><span class="lx-ring"></span><div class="lx-globe-in"><span>World's</span><b class="lx-grad">1st</b><span>All-modality AI</span></div></div>
+    <div class="lx-head reveal">
+      <span class="lx-kicker"><?= lx_ic('play') ?> Sneak peek</span>
+      <h2>Watch the <span class="lx-grad">teasers</span></h2>
+      <p>A glimpse of what's coming. Tap to play.</p>
+    </div>
+    <div class="lx-reels">
+<?php foreach ($reels as $i => $code): $ig = 'https://www.instagram.com/p/' . $code . '/'; ?>
+      <div class="lx-reel reveal<?= $i ? ' d1' : '' ?>">
+        <blockquote class="instagram-media" data-instgrm-permalink="<?= h($ig) ?>?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14">
+          <a href="<?= h($ig) ?>" target="_blank" rel="noopener" class="lx-reel-ph"><?= lx_ic('play') ?><span>Watch on Instagram</span></a>
+        </blockquote>
       </div>
-      <div class="reveal d1">
-        <span class="lx-kicker"><?= lx_ic('globe') ?> First time ever. Anywhere.</span>
-        <h2 style="font-size:clamp(2rem,4vw,3rem);line-height:1.1;letter-spacing:-.02em;font-weight:800;margin:16px 0;">One engine. Six modalities.<br><span class="lx-grad">Every report under a minute.</span></h2>
-        <p style="font-size:1.08rem;">Reporting tools have helped with one scan type at a time. Never before has a single AI-driven engine auto-created reports across the entire imaging department — in under 60 seconds, in your own format.</p>
-        <div class="lx-mods">
-<?php foreach ($modalities as $m): ?>
-          <div class="lx-mod"><b class="lx-grad"><?= $m[1] ?></b><span><?= $m[0] ?></span><small><?= $m[2] ?></small><em>Auto report &lt; 60s</em></div>
 <?php endforeach; ?>
-        </div>
-      </div>
     </div>
   </div>
 </section>
-<?php endif; ?>
 
 <!-- ═════════════ 60-SECOND TIMELINE (both states) ═════════════ -->
 <section class="lx-sec">
@@ -690,49 +710,6 @@ $sub_name = $subscriber ? $subscriber['name'] : '';
   </div>
 </section>
 
-<!-- ═════════════ SNEAK PEEK REELS (all states) ═════════════ -->
-<section class="lx-sec lx-sec-reels" id="reels">
-  <div class="container">
-    <div class="lx-head reveal">
-      <span class="lx-kicker"><?= lx_ic('play') ?> Sneak peek</span>
-      <h2>Watch the <span class="lx-grad">teasers</span></h2>
-      <p>A glimpse of what's coming. Tap to play.</p>
-    </div>
-    <div class="lx-reels">
-<?php foreach ($reels as $i => $code): $ig = 'https://www.instagram.com/p/' . $code . '/'; ?>
-      <div class="lx-reel reveal<?= $i ? ' d1' : '' ?>">
-        <blockquote class="instagram-media" data-instgrm-permalink="<?= h($ig) ?>?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14">
-          <a href="<?= h($ig) ?>" target="_blank" rel="noopener" class="lx-reel-ph"><?= lx_ic('play') ?><span>Watch on Instagram</span></a>
-        </blockquote>
-      </div>
-<?php endforeach; ?>
-    </div>
-  </div>
-</section>
-
-<?php if (!$unlocked): ?>
-<!-- ═════════════ LOCKED DOSSIER ═════════════ -->
-<section class="lx-sec lx-sec--alt">
-  <div class="container">
-    <div class="lx-head reveal">
-      <span class="lx-kicker"><?= lx_ic('lock') ?> The locked dossier</span>
-      <h2>Six secrets. <span class="lx-grad">One unlock date.</span></h2>
-      <p>We can give you the clues. The answers are reserved for the people on the list — at 11:00 AM, 24 October.</p>
-    </div>
-    <div class="lx-dossier">
-<?php foreach ($dossier as $i => [$ic, $hint]): ?>
-      <article class="lx-file reveal<?= $i % 3 ? ' d' . ($i % 3) : '' ?>">
-        <span class="ic"><?= lx_ic($ic) ?></span>
-        <p class="hint"><?= h($hint) ?></p>
-        <div class="lx-redacts"><?= lx_redact(22) ?><?= lx_redact(30) ?><?= lx_redact(16) ?></div>
-        <div class="lx-file-lock"><?= lx_ic('lock') ?> Unlocks 24 Oct · 11:00 AM</div>
-      </article>
-<?php endforeach; ?>
-    </div>
-  </div>
-</section>
-<?php endif; ?>
-
 <!-- ═════════════ WHO IT'S FOR ═════════════ -->
 <section class="lx-sec">
   <div class="container">
@@ -748,7 +725,6 @@ $sub_name = $subscriber ? $subscriber['name'] : '';
   </div>
 </section>
 
-<?php if ($unlocked): ?>
 <!-- ═════════════ REVEALED: next steps ═════════════ -->
 <section class="lx-sec lx-sec--alt" id="reserve">
   <div class="container">
@@ -764,114 +740,18 @@ $sub_name = $subscriber ? $subscriber['name'] : '';
     </div>
   </div>
 </section>
-<?php else: ?>
-<!-- ═════════════ RESERVE ═════════════ -->
-<section class="lx-sec lx-sec--alt" id="reserve">
-  <div class="lx-orb o2" style="top:auto;bottom:-260px;"></div>
-  <div class="container">
-    <div class="lx-reserve">
-      <div class="reveal">
-        <span class="lx-kicker"><?= lx_ic('ticket') ?> Free · takes 20 seconds</span>
-        <h2><?= $is_live ? 'Unlock the reveal' : 'Get your front-row seat' ?> <span class="lx-grad">to the future of reporting.</span></h2>
-        <p style="font-size:1.08rem;">Seats are free. What you get for being early is not something we'll put on a public page.</p>
-        <div class="lx-perks">
-<?php foreach ($perks as [$ic, $t, $d]): ?>
-          <div class="lx-perk"><span class="ic"><?= lx_ic($ic) ?></span><div><b><?= h($t) ?></b><span><?= h($d) ?></span></div></div>
-<?php endforeach; ?>
-        </div>
-      </div>
-
-      <div class="reveal d1" id="lx-form-wrap">
-<?php if ($subscriber && !$is_live): ?>
-        <div class="lx-ticket">
-          <div class="big"><?= lx_ic('check') ?></div>
-          <h3>Seat confirmed<?= $sub_name !== '' ? ', ' . h($sub_name) : '' ?>!</h3>
-          <div class="lx-ticket-no">FRONT ROW · 24.10.2026 · 11:00 IST</div>
-          <p>Come back to this page at 11:00 AM on 24 October — it unlocks for you automatically. We'll also send you the invite.</p>
-          <div class="lx-actions">
-            <a href="#" class="lx-btn lx-btn-main lx-cal-btn"><?= lx_ic('cal') ?> Add to calendar</a>
-            <a href="<?= h($wa_share) ?>" target="_blank" rel="noopener" class="lx-btn lx-btn-ghost"><?= lx_ic('wa') ?> Invite a colleague</a>
-          </div>
-        </div>
-<?php else: ?>
-        <form class="lx-form-card" id="lx-form" novalidate>
-          <h3><?= $is_live ? 'Unlock instantly' : 'Reserve my seat' ?></h3>
-          <p>Already reserved on another device? Just fill this again — you won't be added twice.</p>
-          <div class="lx-f"><label for="lx-name">Full name <i>*</i></label><input id="lx-name" name="name" autocomplete="name" placeholder="Dr. Ravi Kumar" required maxlength="120"></div>
-          <div class="lx-f">
-            <label for="lx-phone">WhatsApp / Mobile <i>*</i></label>
-            <div class="lx-phone">
-              <select name="country_code" aria-label="Country code">
-                <option value="91" selected>🇮🇳 +91</option><option value="971">🇦🇪 +971</option><option value="966">🇸🇦 +966</option><option value="974">🇶🇦 +974</option><option value="968">🇴🇲 +968</option><option value="965">🇰🇼 +965</option><option value="973">🇧🇭 +973</option><option value="977">🇳🇵 +977</option><option value="880">🇧🇩 +880</option><option value="94">🇱🇰 +94</option><option value="1">🇺🇸 +1</option><option value="44">🇬🇧 +44</option><option value="61">🇦🇺 +61</option><option value="65">🇸🇬 +65</option>
-              </select>
-              <input id="lx-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="98765 43210" required maxlength="16">
-            </div>
-          </div>
-          <div class="lx-row">
-            <div class="lx-f"><label for="lx-email">E-mail</label><input id="lx-email" name="email" type="email" autocomplete="email" placeholder="you@centre.com" maxlength="150"></div>
-            <div class="lx-f"><label for="lx-city">City</label><input id="lx-city" name="city" autocomplete="address-level2" placeholder="Hyderabad" maxlength="80"></div>
-          </div>
-          <div class="lx-row">
-            <div class="lx-f"><label for="lx-org">Centre / Hospital</label><input id="lx-org" name="organisation" autocomplete="organization" placeholder="Sunrise Diagnostics" maxlength="150"></div>
-            <div class="lx-f"><label for="lx-role">I am a</label>
-              <select id="lx-role" name="role">
-                <option value="">Select…</option><option>Radiologist</option><option>Sonologist</option><option>Centre Owner / Director</option><option>Hospital Administrator</option><option>Gynecologist / Obstetrician</option><option>Technician / Staff</option><option>Other</option>
-              </select>
-            </div>
-          </div>
-          <div class="lx-f">
-            <label>Modalities you report</label>
-            <div class="lx-chips">
-<?php foreach (['Ultrasound', 'Doppler', 'X-Ray', 'CT', 'MRI'] as $m): ?>
-              <label class="lx-chip"><input type="checkbox" name="modalities[]" value="<?= $m ?>"<?= $m === 'Ultrasound' ? ' checked' : '' ?>><span><?= $m ?></span></label>
-<?php endforeach; ?>
-            </div>
-          </div>
-          <input class="lx-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="lx-consent" id="lx-consent-wrap"><input type="checkbox" name="consent" value="1" checked> Send me the launch invite and HealthO Pro updates on WhatsApp, SMS and e-mail. Reply STOP any time.</label>
-          <button type="submit" class="lx-btn lx-btn-main lx-submit"><?= lx_ic('bolt') ?> <span><?= $is_live ? 'Unlock the reveal' : 'Reserve my front-row seat' ?></span></button>
-          <div class="lx-msg" id="lx-msg" role="status" aria-live="polite"></div>
-          <div class="lx-safe"><?= lx_ic('shield') ?> Your details stay with HealthO Pro. No spam, ever.</div>
-        </form>
-<?php endif; ?>
-      </div>
-    </div>
-  </div>
-</section>
-<?php endif; ?>
-
 <!-- ═════════════ FAQ ═════════════ -->
 <section class="lx-sec">
   <div class="container">
     <div class="lx-head reveal"><span class="lx-kicker">Questions</span><h2>Before you <span class="lx-grad">take your seat</span></h2></div>
     <div class="lx-faq">
-<?php foreach ($faqs as $q => $a): ?>
+<?php foreach ($faq_list as $q => $a): ?>
       <details class="reveal"><summary><?= h($q) ?></summary><p><?= h($a) ?></p></details>
 <?php endforeach; ?>
     </div>
   </div>
 </section>
 
-<?php if (!$unlocked): ?>
-<!-- ═════════════ FINAL COUNTDOWN ═════════════ -->
-<section class="lx-sec lx-sec--alt">
-  <div class="lx-grid"></div>
-  <div class="container lx-final reveal">
-    <span class="lx-kicker"><i></i> <?= $is_live ? 'Happening now' : 'The clock is running' ?></span>
-    <h2>Radiology reporting<br><span class="lx-grad">changes forever.</span></h2>
-<?php if (!$is_live): ?>
-    <?= lx_countdown('lx-count-final') ?>
-<?php endif; ?>
-    <div class="lx-actions">
-<?php if ($subscriber && !$is_live): ?>
-      <a href="<?= h($wa_share) ?>" target="_blank" rel="noopener" class="lx-btn lx-btn-main"><?= lx_ic('wa') ?> Invite a colleague</a>
-<?php else: ?>
-      <a href="#reserve" class="lx-btn lx-btn-main"><?= lx_ic('ticket') ?> <?= $is_live ? 'Unlock now' : 'Reserve my seat' ?></a>
-      <a href="<?= h($wa_share) ?>" target="_blank" rel="noopener" class="lx-btn lx-btn-ghost"><?= lx_ic('wa') ?> Share on WhatsApp</a>
-<?php endif; ?>
-    </div>
-  </div>
-</section>
 <?php endif; ?>
 
 </main>
@@ -919,8 +799,8 @@ $sub_name = $subscriber ? $subscriber['name'] : '';
     var url = '<?= h($canonical) ?>';
     var body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//HealthO Pro//Launch//EN', 'BEGIN:VEVENT',
       'UID:launch-24oct2026@healtho.pro', 'DTSTAMP:' + f(Date.now()), 'DTSTART:' + f(LAUNCH), 'DTEND:' + f(LAUNCH + 36e5),
-      'SUMMARY:World Premiere — HealthO Pro for Ultrasound Reporting',
-      'DESCRIPTION:AI auto-creates Sonography / Ultrasound / X-Ray / CT / MRI reports within 1 minute. Open ' + url,
+      'SUMMARY:HealthO Pro — World Premiere',
+      'DESCRIPTION:Something big is coming to healthcare. The reveal opens at 11:00 AM IST: ' + url,
       'URL:' + url, 'BEGIN:VALARM', 'TRIGGER:-PT15M', 'ACTION:DISPLAY', 'DESCRIPTION:HealthO Pro reveal in 15 minutes', 'END:VALARM',
       'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
     var a = document.createElement('a');
