@@ -23,6 +23,19 @@ $launch_ts  = launch_ts();
 $is_live    = launch_is_live();
 $subscriber = launch_subscriber();
 $unlocked   = $is_live && $subscriber !== null;
+
+// Team preview: ?success=<LAUNCH_PREVIEW_KEY> shows the revealed page before
+// launch. A plain ?success (or a wrong code) changes nothing.
+$preview_key = launch_env()['LAUNCH_PREVIEW_KEY'] ?? '';
+$is_preview  = $preview_key !== '' && isset($_GET['success']) && is_string($_GET['success'])
+    && hash_equals($preview_key, $_GET['success']);
+if ($is_preview) {
+    $unlocked = true;
+    $is_live  = true;
+    $robots   = 'noindex, nofollow';
+    header('X-Robots-Tag: noindex, nofollow');
+    header('Cache-Control: no-store');
+}
 $count      = launch_subscriber_count();
 $show_count = $count !== null && $count >= LAUNCH_COUNT_MIN;
 
@@ -456,6 +469,9 @@ function lx_countdown(string $id): string
 $sub_name = $subscriber ? $subscriber['name'] : '';
 ?>
 <main class="lx">
+<?php if ($is_preview): ?>
+<div style="position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:1500;padding:10px 18px;border-radius:999px;background:#FBBF24;color:#1f1300;font-weight:800;font-size:.85rem;box-shadow:0 10px 30px rgba(0,0,0,.4);white-space:nowrap;">PREVIEW — how subscribers see this page after 24 Oct, 11:00 AM</div>
+<?php endif; ?>
 
 <?php if ($unlocked): ?>
 <!-- ═════════════ REVEALED (launch is live + subscriber) ═════════════ -->
