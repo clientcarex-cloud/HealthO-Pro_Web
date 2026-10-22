@@ -121,6 +121,37 @@
 
             var st = { step: 1, lead: null, slots: {}, page: null, loadedTo: '', day: '', slot: null, loading: null, loadedAt: 0, failed: false };
 
+            /* ---- booking memory ----
+               A confirmed booking is kept (localStorage + cookie) until the demo
+               is over, so reopening the popup shows that booking instead of a
+               fresh form. The CRM enforces one upcoming demo per e-mail/phone
+               anyway — this just saves an honest visitor a confusing retry. */
+            var BOOKED = 'ho_demo_booked';
+            var readCookie = function (n) {
+                var m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)'));
+                return m ? decodeURIComponent(m[1]) : '';
+            };
+            var getBooking = function () {
+                var raw = '';
+                try { raw = localStorage.getItem(BOOKED) || ''; } catch (e) { /* storage blocked */ }
+                if (!raw) raw = readCookie(BOOKED);
+                try {
+                    var b = JSON.parse(raw || 'null');
+                    return b && b.until > Date.now() ? b : null;
+                } catch (e) { return null; }
+            };
+            var saveBooking = function (b) {
+                var json = JSON.stringify(b);
+                try { localStorage.setItem(BOOKED, json); } catch (e) { /* storage blocked */ }
+                document.cookie = BOOKED + '=' + encodeURIComponent(json) + '; expires=' + new Date(b.until).toUTCString() + '; path=/; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+            };
+            // CRM times are wall-clock in the calendar's zone (IST for this site).
+            var slotMs = function (str) {
+                var tz = (st.page && st.page.timezone) || 'Asia/Kolkata';
+                return Date.parse(String(str).replace(' ', 'T') + (tz === 'Asia/Kolkata' ? '+05:30' : ''));
+            };
+            var digits = function (v) { return String(v || '').replace(/\D/g, '').slice(-10); };
+
             var esc = function (s) {
                 return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
                     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -322,9 +353,14 @@
 
             var openModal = function (interest) {
                 lastFocused = document.activeElement;
-                if (st.step === 3) reset();
-                restore();
-                setInterest(interest);
+                var booked = st.forOther ? null : getBooking();
+                if (booked) {
+                    showBooked(booked);
+                } else {
+                    if (st.step === 3) reset();
+                    restore();
+                    setInterest(interest);
+                }
                 var menu = document.getElementById('navMenu');
                 var toggle = document.getElementById('navToggle');
                 if (menu && menu.classList.contains('open')) {
@@ -334,8 +370,8 @@
                 }
                 modal.classList.add('open');
                 document.body.classList.add('demo-open');
-                prefetch().catch(function () { /* shown on step 2 */ });
-                if (st.step === 1 && window.innerWidth > 600) {
+                if (!booked) prefetch().catch(function () { /* shown on step 2 */ });
+                if (!booked && st.step === 1 && window.innerWidth > 600) {
                     var first = f1.querySelector('input:not([type="hidden"])');
                     // Phones: no auto-focus, so the keyboard doesn't cover the form on open.
                     setTimeout(function () { if (first && !first.value) first.focus(); }, 120);
@@ -404,6 +440,11 @@
                     name: v('fullName'), first: v('fullName').replace(/^(dr\.?|mr\.?|mrs\.?|ms\.?)\s+/i, '').split(/\s+/)[0],
                     phone: v('phone'), email: v('email'), company: v('company'), orgType: org.value
                 };
+                var prev = getBooking();
+                if (prev && !st.forOther && ((prev.email && prev.email.toLowerCase() === st.lead.email.toLowerCase()) || (prev.phone && prev.phone === digits(st.lead.phone)))) {
+                    showBooked(prev);
+                    return;
+                }
                 try { localStorage.setItem(STORE, JSON.stringify({ fullName: st.lead.name, phone: st.lead.phone, email: st.lead.email, company: st.lead.company, orgType: org.value })); } catch (err) { /* storage blocked */ }
 
                 // Capture the lead now — even if they never pick a slot, sales can call.
@@ -490,6 +531,14 @@
                     .then(function (r) { return r.json(); })
                     .then(function (res) {
                         if (res && res.ok) { done(res.meeting || {}); return; }
+                        if (res && res.already_booked) {
+                            showBooked({ first: st.lead.first, when: res.already_booked.label, email: '' }, res.error);
+                            return;
+                        }
+                        if (res && res.rate_limited) {
+                            status(f2, 'bad', esc(res.error));
+                            return;
+                        }
                         if (res && res.slot_gone) {
                             st.slot = null; setPicked();
                             status(f2, 'bad', 'Someone just took that slot — please pick another time.');
@@ -505,25 +554,58 @@
             });
 
             /* ---- step 3: confirmed ---- */
-            var done = function (m) {
-                var when = st.slot ? prettyDay(st.day) + ' · ' + st.slot.label : m.start_time;
-                var rows = [['When', when + ' IST'], ['Duration', (m.duration || (st.page && st.page.duration) || 30) + ' minutes'],
-                    ['Where', m.platform || (st.page && st.page.platform) || 'Online meeting'], ['With', m.host || 'A HealthO Pro specialist'],
-                    ['Ref', m.reference || '']];
-                p3.querySelector('[data-done-title]').textContent = 'You\'re booked, ' + st.lead.first + '!';
-                p3.querySelector('[data-done-text]').innerHTML = 'A calendar invite with the joining link is on its way to <b>' + esc(st.lead.email) + '</b>.';
+            /* b: { first, email, when, duration, platform, host, ref, ics_url, manage_url, fresh }
+               note: shown instead of the usual line (e.g. the CRM's "already booked" message). */
+            var showBooked = function (b, note) {
+                var rows = [['When', b.when ? b.when + ' IST' : ''], ['Duration', b.duration ? b.duration + ' minutes' : ''],
+                    ['Where', b.platform || ''], ['With', b.host || ''], ['Ref', b.ref || '']];
+                p3.querySelector('[data-done-title]').textContent = b.fresh
+                    ? 'You\'re booked, ' + b.first + '!'
+                    : 'You already have a demo booked' + (b.first ? ', ' + b.first : '') + '!';
+                p3.querySelector('[data-done-text]').innerHTML = note ? esc(note)
+                    : b.fresh ? 'A calendar invite with the joining link is on its way to <b>' + esc(b.email) + '</b>.'
+                    : 'Need a different time? Reschedule it below — no need to book again.';
                 p3.querySelector('[data-ticket]').innerHTML = rows.filter(function (r) { return r[1]; }).map(function (r) {
                     return '<div><span>' + r[0] + '</span><b>' + esc(r[1]) + '</b></div>';
                 }).join('');
                 var acts = '';
-                if (m.ics_url) acts += '<a class="btn btn-primary" href="' + esc(m.ics_url) + '">Add to calendar</a>';
-                if (m.manage_url) acts += '<a class="btn btn-outline" href="' + esc(m.manage_url) + '" target="_blank" rel="noopener">Reschedule / cancel</a>';
+                if (b.ics_url) acts += '<a class="btn btn-primary" href="' + esc(b.ics_url) + '">Add to calendar</a>';
+                if (b.manage_url) acts += '<a class="btn btn-outline" href="' + esc(b.manage_url) + '" target="_blank" rel="noopener">Reschedule / cancel</a>';
                 p3.querySelector('[data-actions]').innerHTML = acts;
+                p3.querySelector('[data-other]').hidden = !!b.fresh;
+                go(3);
+                if (!b.fresh) sub.textContent = 'Your demo is already scheduled.';
+            };
+
+            var done = function (m) {
+                var startMs = slotMs(m.start_time || (st.slot && st.slot.start));
+                var dur = m.duration || (st.page && st.page.duration) || 30;
+                var b = {
+                    first: st.lead.first, email: st.lead.email, phone: digits(st.lead.phone),
+                    when: st.slot ? prettyDay(st.day) + ' · ' + st.slot.label : m.start_time,
+                    duration: dur, platform: m.platform || (st.page && st.page.platform) || 'Online meeting',
+                    host: m.host || 'A HealthO Pro specialist', ref: m.reference || '',
+                    ics_url: m.ics_url || '', manage_url: m.manage_url || '',
+                    // Remembered until the demo is over (fallback: a day).
+                    until: (startMs || Date.now() + 864e5) + dur * 60000
+                };
+                saveBooking(b);
+                st.forOther = false;
+                b.fresh = true;
+                showBooked(b);
                 if (window.fbq) window.fbq('track', 'Schedule');
                 if (window.gtag) window.gtag('event', 'book_demo', { slot: st.slot && st.slot.start });
                 st.loading = null; // the booked slot is gone from the feed
-                go(3);
             };
+
+            // A colleague may book their own demo — with their own e-mail/phone.
+            p3.querySelector('[data-other]').addEventListener('click', function () {
+                st.forOther = true;
+                st.sentKey = '';
+                reset();
+                f1.reset();
+                f1.querySelector('input[name="fullName"]').focus();
+            });
         })();
 
         /* ---------- Organization Type ⇄ Interested In ----------

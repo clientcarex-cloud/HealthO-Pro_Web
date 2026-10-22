@@ -1002,6 +1002,8 @@ body.demo-open { overflow: hidden; }
 .dm-actions:empty { display: none; }
 .dm-actions .btn { padding: 12px 20px; font-size: var(--text-sm); }
 .dm-close-btn { margin-top: 14px; padding: 12px 34px; }
+.dm-other { display: flex; margin: 10px auto 0; }
+.dm-other[hidden] { display: none; }
 
 /* wider card while picking a time on desktop */
 @media (min-width: 761px) { .dm[data-step="2"] { max-width: 640px; } }

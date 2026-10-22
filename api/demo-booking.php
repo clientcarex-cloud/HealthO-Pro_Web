@@ -72,6 +72,55 @@ function db_call(string $url, ?array $post = null, array $headers = []): ?array
     return $json;
 }
 
+/**
+ * Per-IP limits on booking attempts, kept in small files in the temp dir.
+ * Bookings are the expensive thing (a host's time + an invite), so they get a
+ * tight cap; plain attempts get a looser one to stop scripted hammering.
+ *
+ * @param bool $record_booking  true after a successful booking
+ * @return string  '' when allowed, else the message to show
+ */
+function db_rate_limit(bool $record_booking = false): string
+{
+    $ip  = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? '';
+    $dir = sys_get_temp_dir() . '/ho_demo_rl';
+    if ($ip === '' || (!is_dir($dir) && !@mkdir($dir, 0700, true))) return '';
+    $file = $dir . '/' . sha1('ho-demo|' . $ip) . '.json';
+    $now  = time();
+
+    $fh = @fopen($file, 'c+');
+    if (!$fh) return '';
+    flock($fh, LOCK_EX);
+    $log = json_decode(stream_get_contents($fh) ?: '', true) ?: [];
+    $tries = array_values(array_filter($log['tries'] ?? [], function ($t) use ($now) { return $t > $now - 3600; }));
+    $books = array_values(array_filter($log['books'] ?? [], function ($t) use ($now) { return $t > $now - 86400; }));
+
+    $msg = '';
+    if ($record_booking) {
+        $books[] = $now;
+    } elseif (count($books) >= 2) {
+        $msg = 'You have already booked demos from this connection today. Please use the link in your invite e-mail to reschedule, or call us.';
+    } elseif (count($tries) >= 12) {
+        $msg = 'Too many attempts. Please wait a while and try again.';
+    } else {
+        $tries[] = $now;
+    }
+
+    ftruncate($fh, 0);
+    rewind($fh);
+    fwrite($fh, json_encode(['tries' => $tries, 'books' => $books]));
+    flock($fh, LOCK_UN);
+    fclose($fh);
+
+    // Occasionally sweep files nobody has touched for a day.
+    if (mt_rand(1, 50) === 1) {
+        foreach ((array) glob($dir . '/*.json') as $f) {
+            if (@filemtime($f) < $now - 86400) @unlink($f);
+        }
+    }
+    return $msg;
+}
+
 $env  = db_env();
 $base = rtrim(getenv('DEMO_BOOKING_URL') ?: ($env['DEMO_BOOKING_URL'] ?? '') ?: 'https://healtho.pro/book', '/');
 $slug = rawurlencode(getenv('DEMO_BOOKING_SLUG') ?: ($env['DEMO_BOOKING_SLUG'] ?? '') ?: 'demo');
@@ -107,6 +156,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 /* ---------------------------------------------------------------- book */
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     db_out(['ok' => false, 'error' => 'Method not allowed.'], 405);
+}
+
+if (($limited = db_rate_limit()) !== '') {
+    db_out(['ok' => false, 'rate_limited' => true, 'error' => $limited], 429);
 }
 
 $clean = function ($k, $max = 300) {
@@ -151,4 +204,5 @@ $res = db_call("$base/json/$slug", $post, $headers);
 if ($res === null) {
     db_out(['ok' => false, 'error' => 'We could not reach our booking system. Please try again in a moment.'], 502);
 }
+if (!empty($res['ok'])) db_rate_limit(true);
 db_out($res, empty($res['ok']) ? 422 : 200);

@@ -116,6 +116,7 @@ $demo_interest = $demo_interest ?? (PRODUCTS[$page ?? '']['short'] ?? '');
         <div class="dm-ticket" data-ticket></div>
         <div class="dm-actions" data-actions></div>
         <button type="button" class="btn btn-outline dm-close-btn" data-close>Done</button>
+        <button type="button" class="dm-link dm-other" data-other hidden>Booking for a colleague? Use their details</button>
       </div>
     </div>
   </div>
