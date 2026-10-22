@@ -22,6 +22,13 @@ RewriteCond %{THE_REQUEST} \s/+[A-Za-z0-9\-]+\.php[\s?]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^([A-Za-z0-9\-]+)\.php$ /$1 [R=301,L]
 
+# Launch page (24 Oct 2026). The file name is the canonical URL; any other
+# letter case and the short /launch alias 301 to it. Linux paths are
+# case-sensitive, so without this /healtho-pro-launch-24-oct-2026 would 404.
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+RewriteCond %{REQUEST_URI} !^/HealthO-Pro-Launch-24-oct-2026/?$
+RewriteRule ^(healtho-pro-launch-24-oct-2026|launch)/?$ /HealthO-Pro-Launch-24-oct-2026 [NC,R=301,L]
+
 # Sitemap is generated live (new job openings included).
 RewriteRule ^sitemap\.xml$ sitemap.php [L]
 

@@ -33,6 +33,12 @@ if (preg_match('#^/careers/([A-Za-z0-9\-]+)/?$#', $path, $m)) {
     return true;
 }
 
+// Launch page aliases — mirrors the .htaccess 301.
+if (preg_match('#^/(healtho-pro-launch-24-oct-2026|launch)/?$#i', $path) && $path !== '/HealthO-Pro-Launch-24-oct-2026') {
+    header('Location: /HealthO-Pro-Launch-24-oct-2026', true, 301);
+    return true;
+}
+
 $target = $root . $path;
 
 if (is_file($target)) {

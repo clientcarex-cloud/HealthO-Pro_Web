@@ -30,6 +30,7 @@ $pages = [
     'partners'         => ['weekly',  '0.6', []],
     'careers'          => ['daily',   '0.7', []],
     'contact'          => ['monthly', '0.8', []],
+    'HealthO-Pro-Launch-24-oct-2026' => ['daily', '0.9', ['og-image.jpg']],
     'message-to-ceo'   => ['yearly',  '0.4', []],
     'privacy-policy'   => ['yearly',  '0.2', []],
     'terms-conditions' => ['yearly',  '0.2', []],
