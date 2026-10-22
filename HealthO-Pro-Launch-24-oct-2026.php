@@ -149,6 +149,9 @@ $perks = [
     ['star',   'Priority onboarding',             'Early sign-ups are set up first, with your machine and your format.'],
 ];
 
+// Teaser reels (Instagram post IDs), embedded in the "Sneak peek" section.
+$reels = ['DelZO0kqK9W', 'DeliU11qmw9'];
+
 $wa_share = 'https://wa.me/?text=' . rawurlencode("🔥 World first in healthcare: AI that auto-creates Sonography, Ultrasound, X-Ray, CT & MRI reports in 60 seconds. Reveal on 24 Oct 2026, 11 AM. Reserve your seat: " . $canonical);
 $wa_talk  = WHATSAPP_URL . '?text=' . rawurlencode('Hi, I want to know more about HealthO Pro for Ultrasound Reporting.');
 
@@ -409,6 +412,16 @@ $head_extra = <<<'HTML'
 .lx-gate { max-width: 720px; margin: 0 auto; text-align: center; }
 .lx-gate .lx-lockbig { width: 110px; height: 110px; margin: 0 auto 24px; border-radius: 32px; display: grid; place-items: center; color: var(--lx-amber); background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.35); box-shadow: 0 0 60px rgba(251,191,36,.2); animation: lxBreath 2.6s ease-in-out infinite; }
 .lx-gate .lx-lockbig svg { width: 52px; height: 52px; }
+
+/* ---- Reels ---- */
+.lx-sec-reels { background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,.22), transparent 60%), radial-gradient(ellipse at 50% 100%, rgba(8,145,178,.2), transparent 60%), #050A17; border-block: 1px solid var(--lx-line); }
+.lx-reels { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
+.lx-reel { position: relative; width: 100%; max-width: 360px; padding: 10px; border-radius: 26px; background: linear-gradient(160deg, rgba(34,211,238,.35), rgba(167,139,250,.35)); box-shadow: 0 30px 80px rgba(0,0,0,.5), 0 0 60px rgba(34,211,238,.15); }
+.lx-reel .instagram-media { margin: 0 !important; min-width: 0 !important; width: 100% !important; max-width: 100% !important; border-radius: 18px !important; border: 0 !important; }
+.lx-reel-ph { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 520px; border-radius: 18px; background: #0A1328; color: #fff; text-decoration: none; font-weight: 800; }
+.lx-reel-ph svg { width: 54px; height: 54px; color: var(--lx-pink); }
+.lx-reel-ph:hover { color: #fff; }
+.lx-reels-follow { text-align: center; margin-top: 30px; }
 
 /* ---- Sticky mobile CTA ---- */
 .lx-sticky { display: none; }
@@ -677,6 +690,26 @@ $sub_name = $subscriber ? $subscriber['name'] : '';
   </div>
 </section>
 
+<!-- ═════════════ SNEAK PEEK REELS (all states) ═════════════ -->
+<section class="lx-sec lx-sec-reels" id="reels">
+  <div class="container">
+    <div class="lx-head reveal">
+      <span class="lx-kicker"><?= lx_ic('play') ?> Sneak peek</span>
+      <h2>Watch the <span class="lx-grad">teasers</span></h2>
+      <p>A glimpse of what's coming. Tap to play.</p>
+    </div>
+    <div class="lx-reels">
+<?php foreach ($reels as $i => $code): $ig = 'https://www.instagram.com/p/' . $code . '/'; ?>
+      <div class="lx-reel reveal<?= $i ? ' d1' : '' ?>">
+        <blockquote class="instagram-media" data-instgrm-permalink="<?= h($ig) ?>?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14">
+          <a href="<?= h($ig) ?>" target="_blank" rel="noopener" class="lx-reel-ph"><?= lx_ic('play') ?><span>Watch on Instagram</span></a>
+        </blockquote>
+      </div>
+<?php endforeach; ?>
+    </div>
+  </div>
+</section>
+
 <?php if (!$unlocked): ?>
 <!-- ═════════════ LOCKED DOSSIER ═════════════ -->
 <section class="lx-sec lx-sec--alt">
@@ -920,6 +953,19 @@ $sub_name = $subscriber ? $subscriber['name'] : '';
   } else if (tl) {
     tl.classList.add('go'); tl.querySelectorAll('.lx-tl-step').forEach(function (s) { s.classList.add('on'); });
     if (clock) clock.textContent = '01:00';
+  }
+
+  /* ---- Instagram reels: load Instagram's script only when the section is near ---- */
+  var reels = document.getElementById('reels');
+  if (reels) {
+    var loadIg = function () {
+      if (window.instgrm) { window.instgrm.Embeds.process(); return; }
+      var sc = document.createElement('script'); sc.async = true; sc.src = 'https://www.instagram.com/embed.js';
+      document.body.appendChild(sc);
+    };
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es, io) { if (es[0].isIntersecting) { io.disconnect(); loadIg(); } }, { rootMargin: '600px' }).observe(reels);
+    } else { loadIg(); }
   }
 
   /* ---- Sign-up ---- */
