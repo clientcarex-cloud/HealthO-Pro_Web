@@ -10,6 +10,9 @@ const BOOK_URL   = 'https://healtho.pro/book/get-your-90-day-lab-automation-road
 const PRICE_FULL  = 3999;
 const PRICE_OFFER = 999;
 
+/** Instagram post IDs shown under "Recent work" (instagram.com/p/{id}). */
+const IG_POSTS = ['DTA8DIfkgYB', 'DTA75AOkuUV', 'DS-X1Olktji', 'DS-XIwLkilU', 'DS-WHxeEvIf', 'DS-Uo8mEjuo'];
+
 $page        = 'fahad-ahmed-consultation';
 $title       = '1:1 Consultation with Fahad Ahmed — 90-Day Lab Automation Roadmap | HealthO Pro';
 $description = 'Book a one-hour 1:1 consultation with Fahad Ahmed, healthcare lab automation expert who has helped 120+ labs, and get a complete 90-day lab automation roadmap & guide. Regular price ₹3,999 — limited-time offer ₹999.';
@@ -23,17 +26,13 @@ $inr = static fn(int $n): string => '₹' . number_format($n);
 
 $faqs = [
     'What happens after I book?' =>
-        'You pick a time slot and complete the payment on the booking page. You get an instant confirmation with the meeting link. Before the call we send a short questionnaire about your lab so the full hour is spent on solutions, not on basics.',
+        'You pick a time slot and complete the payment on the booking page. You get an instant confirmation with the meeting link.',
     'Is this a software sales call?' =>
         'No. This is a paid, independent consultation. The roadmap covers what your lab needs — process, people and technology — whichever software you use or choose. You get honest, practical advice from someone who has automated 120+ labs.',
-    'Who is Fahad Ahmed?' =>
-        'Fahad Ahmed is a healthcare lab automation expert with 5+ years of hands-on experience. He has helped 120+ pathology labs and diagnostic centres move from paper and manual entry to automated, profitable operations.',
     'What exactly do I receive?' =>
         'A live one-hour 1:1 video call with Fahad Ahmed, followed by your written 90-day lab automation roadmap and an implementation guide: priorities week by week, quick wins, tool and analyser-interfacing checklist, and the KPIs to track.',
     'Who is this consultation for?' =>
         'Owners, directors and managers of pathology labs, diagnostic centres, collection-centre networks, hospital labs and imaging centres — whether you are starting a new lab, still on paper and Excel, or outgrowing your current software.',
-    'Can I reschedule?' =>
-        'Yes. You can reschedule from the confirmation you receive, as long as you do it before the call starts.',
     'Why is it ₹' . number_format(PRICE_OFFER) . ' instead of ₹' . number_format(PRICE_FULL) . '?' =>
         'The regular fee for this consultation is ₹' . number_format(PRICE_FULL) . ' per hour. The current launch offer brings it down to ₹' . number_format(PRICE_OFFER) . ' with the complete roadmap and guide included. The offer can end at any time — the price shown on the booking page when you book is the price you pay.',
 ];
@@ -79,10 +78,6 @@ $head_extra = <<<'HTML'
 .fc-mini b { display: block; color: #fff; font-size: 1.35rem; font-weight: 800; }
 .fc-mini span { font-size: .78rem; color: rgba(255,255,255,.65); }
 
-.fc-stats { background: var(--surface); border-bottom: 1px solid var(--line); }
-.fc-stats .container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-top: 34px; padding-bottom: 34px; text-align: center; }
-.fc-stats b { display: block; font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 800; color: var(--navy); }
-.fc-stats span { color: var(--text-soft); font-size: var(--text-sm); }
 
 .fc-sec { padding: var(--section-y) 0; }
 .fc-sec--soft { background: var(--bg-soft); }
@@ -98,27 +93,19 @@ $head_extra = <<<'HTML'
 .fc-pain .fc-ic { background: linear-gradient(135deg, #F87171, #EF4444); }
 
 .fc-split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
-.fc-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
-.fc-tags span { padding: 8px 14px; border-radius: var(--r-pill); background: var(--navy-tint); color: var(--navy); font-weight: 600; font-size: .88rem; }
 .fc-quote { background: var(--grad-brand); color: #fff; border-radius: var(--r-xl); padding: 40px 36px; box-shadow: var(--e-navy); }
 .fc-quote p { font-size: 1.18rem; line-height: 1.65; font-style: italic; color: rgba(255,255,255,.92); }
 .fc-quote .by { margin-top: 20px; font-weight: 700; color: var(--cyan-light); font-style: normal; }
 
+.fc-ig { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: start; }
+.fc-ig .instagram-media { min-width: 0 !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; border-radius: var(--r-lg) !important; box-shadow: var(--e1) !important; background: var(--surface) !important; min-height: 420px; }
+.fc-ig blockquote.instagram-media a { display: grid; place-items: center; min-height: 420px; color: var(--navy); font-weight: 700; }
 .fc-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; counter-reset: st; }
 .fc-step { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 30px 26px; box-shadow: var(--e1); }
 .fc-step::before { counter-increment: st; content: counter(st); width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; background: var(--grad-brand); margin-bottom: 16px; }
 .fc-step h3 { font-size: 1.12rem; margin-bottom: 8px; }
 .fc-step p { color: var(--text-soft); font-size: .96rem; }
 
-.fc-fit { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
-.fc-fit > div { border-radius: var(--r-lg); padding: 30px 28px; border: 1px solid var(--line); background: var(--surface); }
-.fc-fit .yes { border-top: 4px solid var(--green); }
-.fc-fit .no { border-top: 4px solid #F87171; }
-.fc-fit h3 { font-size: 1.15rem; margin-bottom: 16px; }
-.fc-fit li { display: flex; gap: 10px; padding: 7px 0; color: var(--text); font-size: .97rem; }
-.fc-fit li svg { width: 18px; height: 18px; flex: none; margin-top: 3px; }
-.fc-fit .yes svg { color: var(--green-dark); }
-.fc-fit .no svg { color: #EF4444; }
 
 .fc-offer { max-width: 760px; margin: 0 auto; background: var(--surface); border: 2px solid var(--cyan); border-radius: var(--r-xl); box-shadow: 0 30px 70px rgba(18,43,92,.14); overflow: hidden; }
 .fc-offer-top { background: var(--grad-brand); color: #fff; padding: 26px 32px; text-align: center; }
@@ -151,15 +138,19 @@ $head_extra = <<<'HTML'
 
 @media (max-width: 980px) {
   .fc-hero .container, .fc-split { grid-template-columns: 1fr; gap: 40px; }
-  .fc-grid, .fc-steps { grid-template-columns: 1fr 1fr; }
+  .fc-grid, .fc-steps, .fc-ig { grid-template-columns: 1fr 1fr; }
   .fc-by { display: flex; }
-  .fc-stats .container { grid-template-columns: repeat(2, 1fr); }
-}
+  }
 @media (max-width: 680px) {
   :root { --section-y: 64px; }
   .container { padding: 0 16px; }
   .fc-hero { padding: calc(var(--nav-h) + 36px) 0 60px; }
-  .fc-grid, .fc-steps, .fc-fit { grid-template-columns: 1fr; }
+  .fc-grid, .fc-steps { grid-template-columns: 1fr; }
+  /* Recent work: swipe sideways instead of six stacked posts */
+  .fc-ig { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; margin: 0 -16px; padding: 4px 16px 16px; scrollbar-width: none; }
+  .fc-ig::-webkit-scrollbar { display: none; }
+  .fc-ig > * { flex: 0 0 86% !important; width: 86% !important; scroll-snap-align: center; }
+  .fc-swipe { display: block !important; }
   .fc-hero .fc-cta { width: 100%; }
   .fc-profile { padding: 28px 22px; }
   .fc-offer-body, .fc-offer-top { padding-left: 20px; padding-right: 20px; }
@@ -223,16 +214,6 @@ $assure = '<div class="fc-assure">'
   </div>
 </header>
 
-<!-- ===== PROOF STRIP ===== -->
-<section class="fc-stats" aria-label="Track record">
-  <div class="container">
-    <div><b>120+</b><span>labs helped to automate</span></div>
-    <div><b>5+ yrs</b><span>in healthcare lab automation</span></div>
-    <div><b>1:1</b><span>personal, focused on your lab</span></div>
-    <div><b>90-day</b><span>step-by-step roadmap &amp; guide</span></div>
-  </div>
-</section>
-
 <!-- ===== PAIN ===== -->
 <section class="fc-sec">
   <div class="container">
@@ -245,9 +226,6 @@ $assure = '<div class="fc-assure">'
       <div class="fc-card reveal"><div class="fc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Slow turnaround</h3><p>Results typed by hand, reports printed and re-checked — patients and doctors keep calling for status.</p></div>
       <div class="fc-card reveal d1"><div class="fc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div><h3>Errors &amp; re-work</h3><p>Transcription mistakes, mixed-up samples and missed critical values put your reputation at risk.</p></div>
       <div class="fc-card reveal d2"><div class="fc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h3>Revenue leaks</h3><p>Unbilled tests, untracked B2B dues, discounts with no control — money slips out without anyone noticing.</p></div>
-      <div class="fc-card reveal"><div class="fc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg></div><h3>Paper, Excel &amp; WhatsApp chaos</h3><p>Data lives in five places, so nothing adds up at month-end and decisions are guesswork.</p></div>
-      <div class="fc-card reveal d1"><div class="fc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></div><h3>Can't scale</h3><p>Adding a branch, collection centre or home-collection service multiplies the chaos instead of the profit.</p></div>
-      <div class="fc-card reveal d2"><div class="fc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg></div><h3>Unsure where to start</h3><p>Dozens of software vendors, analyser interfaces and promises — and no clear plan for your lab.</p></div>
     </div>
   </div>
 </section>
@@ -280,14 +258,6 @@ $assure = '<div class="fc-assure">'
       <div class="role" style="color:var(--cyan-dark);font-weight:700;margin-top:6px;">Healthcare Lab Automation Expert</div>
       <p class="lead" style="margin:16px 0;color:var(--text-soft);">Fahad Ahmed is a healthcare expert who has spent the last 5+ years doing one thing: helping labs run on automation instead of manual work. He has worked hands-on with 120+ pathology labs, diagnostic centres, collection-centre networks and hospital labs — from single-room labs going digital for the first time to multi-branch chains.</p>
       <p style="color:var(--text-soft);line-height:1.7;margin-bottom:12px;">He has set up LIMS, connected analysers, automated reports and WhatsApp delivery, fixed billing and B2B revenue leaks, and trained teams to actually use the system. He knows what works, what fails, and the order to do it in — so your lab doesn't waste months and money learning the hard way.</p>
-      <ul class="checks" style="margin:18px 0 6px;">
-        <li><span class="ck"><?= $check ?></span><span><b>120+ labs</b> helped with automation &amp; digital transformation</span></li>
-        <li><span class="ck"><?= $check ?></span><span><b>5+ years</b> of hands-on healthcare lab automation experience</span></li>
-        <li><span class="ck"><?= $check ?></span><span>Practical, vendor-neutral advice you can act on the next day</span></li>
-      </ul>
-      <div class="fc-tags">
-        <span>Lab automation (LIMS)</span><span>Analyser interfacing</span><span>Workflow design</span><span>Report automation</span><span>Billing &amp; revenue</span><span>Multi-branch &amp; collection centres</span><span>Home collection</span><span>B2B / referral labs</span><span>Hospital (HIMS)</span><span>Radiology (RIS)</span><span>AI in diagnostics</span><span>Go-live &amp; staff adoption</span>
-      </div>
     </div>
     <div class="reveal d1">
     <img class="fc-photo" src="/assets/images/fahad-ahmed.jpg" alt="Fahad Ahmed, Healthcare Lab Automation Expert" width="320" height="320" loading="lazy">
@@ -299,8 +269,36 @@ $assure = '<div class="fc-assure">'
   </div>
 </section>
 
+<!-- ===== RECENT WORK (Instagram) ===== -->
+<section class="fc-sec fc-sec--soft" id="work">
+  <div class="container">
+    <div class="fc-head reveal">
+      <span class="eyebrow">Recent work</span>
+      <h2 class="h-sec">Labs Fahad has helped recently</h2>
+      <p class="lead">Real labs, real automation — straight from Fahad's Instagram.</p>
+      <p class="fc-swipe" style="display:none;margin-top:10px;font-size:.85rem;font-weight:600;color:var(--cyan-dark);">Swipe to see more →</p>
+    </div>
+    <div class="fc-ig">
+<?php foreach (IG_POSTS as $id): ?>
+      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/<?= h($id) ?>/" data-instgrm-version="14"><a href="https://www.instagram.com/p/<?= h($id) ?>/" target="_blank" rel="noopener">View this post on Instagram</a></blockquote>
+<?php endforeach; ?>
+    </div>
+  </div>
+</section>
+<script>
+/* Load Instagram's embed script only when the section is close to view. */
+(function () {
+  var sec = document.getElementById('work'), done = false;
+  function load() { if (done) return; done = true; var s = document.createElement('script'); s.async = true; s.src = 'https://www.instagram.com/embed.js'; document.body.appendChild(s); }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '600px' });
+    io.observe(sec);
+  } else { load(); }
+})();
+</script>
+
 <!-- ===== HOW IT WORKS ===== -->
-<section class="fc-sec fc-sec--soft">
+<section class="fc-sec">
   <div class="container">
     <div class="fc-head reveal">
       <span class="eyebrow">How it works</span>
@@ -312,36 +310,6 @@ $assure = '<div class="fc-assure">'
       <div class="fc-step reveal d2"><h3>Get your roadmap</h3><p>Receive your complete 90-day lab automation roadmap &amp; guide, ready to put into action from day one.</p></div>
     </div>
     <div style="text-align:center;margin-top:40px;" class="reveal"><?= $book('Reserve My Session') ?></div>
-  </div>
-</section>
-
-<!-- ===== WHO IT'S FOR ===== -->
-<section class="fc-sec">
-  <div class="container">
-    <div class="fc-head reveal">
-      <span class="eyebrow">Is this for you?</span>
-      <h2 class="h-sec">Built for lab owners who want results</h2>
-    </div>
-    <div class="fc-fit">
-      <div class="yes reveal">
-        <h3>Perfect for you if…</h3>
-        <ul>
-          <li><?= $check ?><span>You own or run a pathology lab, diagnostic centre or hospital lab</span></li>
-          <li><?= $check ?><span>You still rely on paper, Excel or manual result entry</span></li>
-          <li><?= $check ?><span>You're planning a new lab, branch or collection network</span></li>
-          <li><?= $check ?><span>You're outgrowing your current software</span></li>
-          <li><?= $check ?><span>You want a clear plan before spending on software or machines</span></li>
-        </ul>
-      </div>
-      <div class="no reveal d1">
-        <h3>Not for you if…</h3>
-        <ul>
-          <li><?= $cross ?><span>You're looking for a free software demo (book one on our homepage)</span></li>
-          <li><?= $cross ?><span>You want ideas but have no plan to act on them</span></li>
-          <li><?= $cross ?><span>You need clinical or medical advice — this is about operations &amp; technology</span></li>
-        </ul>
-      </div>
-    </div>
   </div>
 </section>
 
