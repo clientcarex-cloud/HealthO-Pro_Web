@@ -12,8 +12,10 @@ const PRICE_OFFER = 999;
 
 $page        = 'fahad-ahmed-consultation';
 $title       = '1:1 Consultation with Fahad Ahmed — 90-Day Lab Automation Roadmap | HealthO Pro';
-$description = 'Book a one-hour 1:1 consultation with Fahad Ahmed and get a complete 90-day lab automation roadmap & guide. Regular price ₹3,999 — limited-time offer ₹999.';
+$description = 'Book a one-hour 1:1 consultation with Fahad Ahmed, healthcare lab automation expert who has helped 120+ labs, and get a complete 90-day lab automation roadmap & guide. Regular price ₹3,999 — limited-time offer ₹999.';
 $og_type     = 'website';
+$og_image    = SITE_URL . '/assets/images/fahad-ahmed.jpg';
+$og_image_alt = 'Fahad Ahmed — Healthcare Lab Automation Expert';
 $crumbs      = ['Consultation with Fahad Ahmed' => SITE_URL . '/' . $page];
 
 $off = (int) round((1 - PRICE_OFFER / PRICE_FULL) * 100);
@@ -22,8 +24,10 @@ $inr = static fn(int $n): string => '₹' . number_format($n);
 $faqs = [
     'What happens after I book?' =>
         'You pick a time slot and complete the payment on the booking page. You get an instant confirmation with the meeting link. Before the call we send a short questionnaire about your lab so the full hour is spent on solutions, not on basics.',
-    'Is this a sales call for HealthO Pro?' =>
-        'No. This is a paid, independent consultation. The roadmap covers what your lab needs — process, people and technology — whichever software you use or choose. If HealthO Pro is a good fit you will hear why; if it is not, you will hear that too.',
+    'Is this a software sales call?' =>
+        'No. This is a paid, independent consultation. The roadmap covers what your lab needs — process, people and technology — whichever software you use or choose. You get honest, practical advice from someone who has automated 120+ labs.',
+    'Who is Fahad Ahmed?' =>
+        'Fahad Ahmed is a healthcare lab automation expert with 5+ years of hands-on experience. He has helped 120+ pathology labs and diagnostic centres move from paper and manual entry to automated, profitable operations.',
     'What exactly do I receive?' =>
         'A live one-hour 1:1 video call with Fahad Ahmed, followed by your written 90-day lab automation roadmap and an implementation guide: priorities week by week, quick wins, tool and analyser-interfacing checklist, and the KPIs to track.',
     'Who is this consultation for?' =>
@@ -58,7 +62,14 @@ $head_extra = <<<'HTML'
 .fc-assure svg { width: 16px; height: 16px; color: #2ECC71; }
 
 .fc-profile { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.16); border-radius: var(--r-xl); padding: 34px 30px; backdrop-filter: blur(10px); box-shadow: 0 30px 60px rgba(0,0,0,.25); }
-.fc-avatar { width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; font-size: 2rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #00B4D8, #2ECC71); box-shadow: 0 0 0 6px rgba(255,255,255,.1); margin-bottom: 18px; }
+.fc-avatar { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; display: block; border: 3px solid #48CAE4; box-shadow: 0 0 0 6px rgba(255,255,255,.1), 0 12px 30px rgba(0,0,0,.3); margin-bottom: 18px; }
+.fc-badge { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 700; color: #06371C; background: #2ECC71; padding: 4px 10px; border-radius: var(--r-pill); margin-bottom: 10px; }
+.fc-badge svg { width: 13px; height: 13px; flex: none; }
+.fc-by { display: none; align-items: center; gap: 12px; margin-bottom: 18px; }
+.fc-by img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid #48CAE4; }
+.fc-by b { display: block; color: #fff; font-size: 1rem; }
+.fc-by span { font-size: .82rem; color: var(--cyan-light); font-weight: 600; }
+.fc-photo { width: 100%; max-width: 340px; aspect-ratio: 1; object-fit: cover; border-radius: var(--r-xl); box-shadow: var(--e-navy); display: block; margin: 0 auto 28px; }
 .fc-profile h2 { color: #fff; font-size: 1.6rem; margin-bottom: 4px; }
 .fc-profile .role { color: var(--cyan-light); font-weight: 600; margin-bottom: 18px; }
 .fc-profile ul { display: grid; gap: 12px; margin-bottom: 22px; }
@@ -141,6 +152,7 @@ $head_extra = <<<'HTML'
 @media (max-width: 980px) {
   .fc-hero .container, .fc-split { grid-template-columns: 1fr; gap: 40px; }
   .fc-grid, .fc-steps { grid-template-columns: 1fr 1fr; }
+  .fc-by { display: flex; }
   .fc-stats .container { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 680px) {
@@ -179,9 +191,10 @@ $assure = '<div class="fc-assure">'
 <header class="fc-hero">
   <div class="container">
     <div class="reveal">
+      <div class="fc-by"><img src="/assets/images/fahad-ahmed.jpg" alt="" width="52" height="52"><div><b>Fahad Ahmed</b><span>Healthcare Lab Automation Expert · 120+ labs</span></div></div>
       <span class="fc-pill"><i></i>Limited-time offer · <?= $off ?>% off</span>
       <h1>Automate your lab in <span class="hl">90 days</span> — with a 1:1 roadmap from Fahad Ahmed</h1>
-      <p class="sub">One focused hour on your lab: your workflows, your bottlenecks, your growth plan. You leave with a complete, step-by-step 90-day lab automation roadmap &amp; guide — built from 15+ years of digitising 1,200+ healthcare providers.</p>
+      <p class="sub">One focused hour on your lab: your workflows, your bottlenecks, your growth plan. You leave with a complete, step-by-step 90-day lab automation roadmap &amp; guide — from a healthcare lab automation expert who has already helped 120+ labs do it.</p>
       <div class="fc-price">
         <span class="now"><?= $inr(PRICE_OFFER) ?><small>/ 1 hour</small></span>
         <span class="was"><?= $inr(PRICE_FULL) ?></span>
@@ -192,18 +205,19 @@ $assure = '<div class="fc-assure">'
     </div>
 
     <aside class="fc-profile reveal d1" aria-label="About Fahad Ahmed">
-      <div class="fc-avatar" aria-hidden="true">FA</div>
+      <img class="fc-avatar" src="/assets/images/fahad-ahmed.jpg" alt="Fahad Ahmed" width="112" height="112" fetchpriority="high">
+      <div><span class="fc-badge"><?= $check ?>Verified lab automation expert</span></div>
       <h2>Fahad Ahmed</h2>
-      <div class="role">Founder · HealthO Pro</div>
+      <div class="role">Healthcare Lab Automation Expert</div>
       <ul>
-        <li><?= $check ?><span>Healthcare software builder since 2011 — HIMS, LIMS, CIMS &amp; RIS</span></li>
-        <li><?= $check ?><span>Has helped labs, hospitals &amp; imaging centres in 8 countries go digital</span></li>
-        <li><?= $check ?><span>Specialist in lab workflow, analyser interfacing &amp; report automation</span></li>
+        <li><?= $check ?><span>Helped 120+ pathology labs &amp; diagnostic centres automate</span></li>
+        <li><?= $check ?><span>5+ years hands-on in healthcare lab automation</span></li>
+        <li><?= $check ?><span>Specialist in LIMS, analyser interfacing, report automation &amp; lab revenue</span></li>
       </ul>
       <div class="fc-mini">
-        <div><b>15+</b><span>Years</span></div>
-        <div><b>1,200+</b><span>Clients</span></div>
-        <div><b>8</b><span>Countries</span></div>
+        <div><b>120+</b><span>Labs helped</span></div>
+        <div><b>5+</b><span>Years</span></div>
+        <div><b>90</b><span>Day roadmap</span></div>
       </div>
     </aside>
   </div>
@@ -212,10 +226,10 @@ $assure = '<div class="fc-assure">'
 <!-- ===== PROOF STRIP ===== -->
 <section class="fc-stats" aria-label="Track record">
   <div class="container">
-    <div><b>15+ yrs</b><span>building healthcare software</span></div>
-    <div><b>1,200+</b><span>healthcare providers served</span></div>
-    <div><b>8</b><span>countries — India to Canada</span></div>
-    <div><b>4</b><span>platforms: HIMS · LIMS · CIMS · RIS</span></div>
+    <div><b>120+</b><span>labs helped to automate</span></div>
+    <div><b>5+ yrs</b><span>in healthcare lab automation</span></div>
+    <div><b>1:1</b><span>personal, focused on your lab</span></div>
+    <div><b>90-day</b><span>step-by-step roadmap &amp; guide</span></div>
   </div>
 </section>
 
@@ -263,15 +277,24 @@ $assure = '<div class="fc-assure">'
     <div class="reveal">
       <span class="eyebrow">Meet your consultant</span>
       <h2 class="h-sec">Fahad Ahmed</h2>
-      <p class="lead" style="margin:16px 0;color:var(--text-soft);">Fahad has spent more than 15 years building and rolling out healthcare software. As the founder behind HealthO Pro — a cloud suite of HIMS, LIMS, CIMS and RIS — he has worked hands-on with diagnostic labs, hospitals, clinics and imaging centres across India, the UAE, Qatar, Saudi Arabia, Bahrain, Kuwait, Egypt and Canada.</p>
-      <p style="color:var(--text-soft);line-height:1.7;">He has seen what makes digital transformation succeed — and the mistakes that make labs waste months and money. In this session, that experience goes to work on your lab.</p>
+      <div class="role" style="color:var(--cyan-dark);font-weight:700;margin-top:6px;">Healthcare Lab Automation Expert</div>
+      <p class="lead" style="margin:16px 0;color:var(--text-soft);">Fahad Ahmed is a healthcare expert who has spent the last 5+ years doing one thing: helping labs run on automation instead of manual work. He has worked hands-on with 120+ pathology labs, diagnostic centres, collection-centre networks and hospital labs — from single-room labs going digital for the first time to multi-branch chains.</p>
+      <p style="color:var(--text-soft);line-height:1.7;margin-bottom:12px;">He has set up LIMS, connected analysers, automated reports and WhatsApp delivery, fixed billing and B2B revenue leaks, and trained teams to actually use the system. He knows what works, what fails, and the order to do it in — so your lab doesn't waste months and money learning the hard way.</p>
+      <ul class="checks" style="margin:18px 0 6px;">
+        <li><span class="ck"><?= $check ?></span><span><b>120+ labs</b> helped with automation &amp; digital transformation</span></li>
+        <li><span class="ck"><?= $check ?></span><span><b>5+ years</b> of hands-on healthcare lab automation experience</span></li>
+        <li><span class="ck"><?= $check ?></span><span>Practical, vendor-neutral advice you can act on the next day</span></li>
+      </ul>
       <div class="fc-tags">
         <span>Lab automation (LIMS)</span><span>Analyser interfacing</span><span>Workflow design</span><span>Report automation</span><span>Billing &amp; revenue</span><span>Multi-branch &amp; collection centres</span><span>Home collection</span><span>B2B / referral labs</span><span>Hospital (HIMS)</span><span>Radiology (RIS)</span><span>AI in diagnostics</span><span>Go-live &amp; staff adoption</span>
       </div>
     </div>
-    <div class="fc-quote reveal d1">
+    <div class="reveal d1">
+    <img class="fc-photo" src="/assets/images/fahad-ahmed.jpg" alt="Fahad Ahmed, Healthcare Lab Automation Expert" width="320" height="320" loading="lazy">
+    <div class="fc-quote">
       <p>"Most labs don't fail at automation because of the software — they fail because they automate in the wrong order. Give me one hour, and you'll know exactly what to do first, what to do next, and what to ignore."</p>
-      <div class="by">— Fahad Ahmed</div>
+      <div class="by">— Fahad Ahmed, Healthcare Lab Automation Expert</div>
+    </div>
     </div>
   </div>
 </section>
@@ -359,7 +382,7 @@ $assure = '<div class="fc-assure">'
   <div class="container">
     <span class="fc-pill"><i></i>Offer price — <?= $inr(PRICE_OFFER) ?> instead of <?= $inr(PRICE_FULL) ?></span>
     <h2 style="margin-top:20px;">Your lab can run faster, cleaner and more profitably in 90 days</h2>
-    <p>One hour with Fahad Ahmed is all it takes to get the plan. Book now while the offer lasts.</p>
+    <p>One hour with Fahad Ahmed — the expert behind 120+ lab automations — is all it takes to get the plan. Book now while the offer lasts.</p>
     <?= $book() ?>
   </div>
 </section>
