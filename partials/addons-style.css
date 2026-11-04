@@ -87,12 +87,10 @@
     .ao-grid, .ao-types { grid-template-columns: 1fr; }
     .ao-ch-head h3 { font-size: 1.3rem; }
     .ao-ch-count { display: none; }
-    .ao-jump { margin-top: -28px; }
 }
 
 /* Pricing PDF button (reuses the pricing page's .pb-brochure look) */
 .ao-pdf { display: flex; justify-content: center; margin: -24px 0 34px; }
-.ao-pdf + .ao-jump { margin-top: 0; }
 
 /* Copy for WhatsApp (sales team) */
 .ao-copy { display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; width: 100%; padding: 9px 14px; border: 1px dashed #86EFAC; border-radius: var(--r-pill); background: #F0FDF4; color: #15803D; font: inherit; font-size: var(--text-sm); font-weight: 700; cursor: pointer; transition: background .2s, border-color .2s, color .2s; }
@@ -109,3 +107,20 @@
 .ao-manual-in { background: #fff; border-radius: var(--r-md); padding: 20px; width: min(520px, 100%); box-shadow: var(--e4); display: grid; gap: 12px; }
 .ao-manual-in p { color: var(--navy); font-weight: 700; margin: 0; }
 .ao-manual-in textarea { width: 100%; font: inherit; font-size: var(--text-sm); padding: 10px; border: 1px solid var(--line); border-radius: var(--r-sm); resize: vertical; }
+
+/* Sticky channel tabs (JS adds .ao-tabbed; without it every channel shows) */
+.ao-tabs-bar { position: sticky; top: var(--nav-h); z-index: 870; margin: 0 -16px 36px; padding: 10px 16px; background: rgba(255, 255, 255, .96); border-bottom: 1px solid transparent; transition: box-shadow .2s, border-color .2s; }
+.ao-tabs-bar.is-stuck { border-bottom-color: var(--line); box-shadow: 0 10px 24px rgba(6, 11, 25, .07); }
+.ao-tabs-bar .ao-jump { margin: 0; }
+.ao-jump a.is-active { background: var(--cc); border-color: var(--cc); color: #fff; box-shadow: 0 8px 20px color-mix(in srgb, var(--cc) 35%, transparent); }
+.ao-jump a.is-active .ao-jump-ic { background: rgba(255, 255, 255, .22); }
+.ao-tabbed .ao-channel { display: none; scroll-margin-top: 170px; }
+.ao-tabbed .ao-channel.is-active { display: block; animation: ao-fade .25s ease; }
+@keyframes ao-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 720px) {
+    .ao-tabs-bar { padding: 8px 0; margin: 0 -16px 24px; }
+    .ao-tabs-bar .ao-jump { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; padding: 2px 16px; scroll-behavior: smooth; }
+    .ao-tabs-bar .ao-jump::-webkit-scrollbar { display: none; }
+    .ao-jump a { flex: none; padding: 7px 14px 7px 8px; font-size: var(--text-sm); }
+    .ao-jump-ic { width: 24px; height: 24px; }
+}

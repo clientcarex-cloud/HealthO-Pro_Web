@@ -124,17 +124,19 @@ $card = static function (array $c, string $cta, string $href, string $copy) use 
       </button>
     </div>
 
-    <nav class="ao-jump" aria-label="Jump to a channel">
+    <div class="ao-tabs-bar" id="aoTabsBar">
+    <nav class="ao-jump" id="aoTabs" role="tablist" aria-label="Choose a channel">
 <?php foreach ($catalog['channels'] as $ch): ?>
-      <a href="#<?= h($ch['slug']) ?>" style="--cc: <?= h($ch['colour']) ?>"><span class="ao-jump-ic"><?= $icons[$ch['icon']] ?></span><?= h($ch['label']) ?></a>
+      <a href="#<?= h($ch['slug']) ?>" role="tab" data-tab="<?= h($ch['slug']) ?>" style="--cc: <?= h($ch['colour']) ?>"><span class="ao-jump-ic"><?= $icons[$ch['icon']] ?></span><?= h($ch['label']) ?></a>
 <?php endforeach; ?>
 <?php if ($catalog['setup']): ?>
-      <a href="#setup" style="--cc: #EA580C"><span class="ao-jump-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76Z"/></svg></span>One-time setup</a>
+      <a href="#setup" role="tab" data-tab="setup" style="--cc: #EA580C"><span class="ao-jump-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76Z"/></svg></span>One-time setup</a>
 <?php endif; ?>
     </nav>
+    </div>
 
 <?php foreach ($catalog['channels'] as $ch): ?>
-    <div class="ao-channel" id="<?= h($ch['slug']) ?>">
+    <div class="ao-channel" id="<?= h($ch['slug']) ?>" role="tabpanel">
       <div class="ao-ch-head" style="--cc: <?= h($ch['colour']) ?>">
         <span class="ao-ch-ic"><?= $icons[$ch['icon']] ?></span>
         <h3><?= h($ch['label']) ?></h3>
@@ -157,7 +159,7 @@ $card = static function (array $c, string $cta, string $href, string $copy) use 
 <?php endforeach; ?>
 
 <?php if ($catalog['setup']): ?>
-    <div class="ao-channel ao-setup" id="setup">
+    <div class="ao-channel ao-setup" id="setup" role="tabpanel">
       <div class="ao-ch-head" style="--cc: #EA580C">
         <span class="ao-ch-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76Z"/></svg></span>
         <h3>One-time setup services</h3>
@@ -213,6 +215,76 @@ $card = static function (array $c, string $cta, string $href, string $copy) use 
 </section>
 
 <?php if ($catalog['channels'] || $catalog['setup']): ?>
+<script>
+/* Channel tabs: one channel at a time, sticky bar, #sms / #setup links open that tab.
+   Without JavaScript every channel simply shows, one under the other. */
+(function () {
+  var bar = document.getElementById('aoTabsBar');
+  var tabs = [].slice.call(document.querySelectorAll('#aoTabs [data-tab]'));
+  if (!bar || !tabs.length) return;
+  var panels = {};
+  tabs.forEach(function (t) { panels[t.dataset.tab] = document.getElementById(t.dataset.tab); });
+  document.documentElement.classList.add('ao-tabbed');
+
+  function navH() { return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 76; }
+
+  // Bring the panel top just under the sticky bar, but only when it is above that point.
+  function settle() {
+    var panel = panels[current];
+    if (!panel) return;
+    var want = navH() + bar.offsetHeight + 8;
+    var top = panel.getBoundingClientRect().top;
+    if (top < want || top > innerHeight * 0.6) {
+      window.scrollTo({ top: Math.max(0, scrollY + top - want), behavior: 'instant' });
+    }
+  }
+
+  // On a phone the tab row scrolls sideways: keep the active tab in view.
+  function centreTab() {
+    var nav = document.getElementById('aoTabs');
+    var t = nav.querySelector('.is-active');
+    if (t && nav.scrollWidth > nav.clientWidth) {
+      nav.scrollTo({ left: t.offsetLeft - nav.offsetLeft - (nav.clientWidth - t.offsetWidth) / 2, behavior: 'instant' });
+    }
+  }
+
+  var current = null;
+  function show(slug, scroll) {
+    if (!panels[slug]) slug = tabs[0].dataset.tab;
+    current = slug;
+    tabs.forEach(function (t) {
+      var on = t.dataset.tab === slug;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      panels[t.dataset.tab].classList.toggle('is-active', on);
+    });
+    centreTab();
+    if (scroll) settle();
+  }
+
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (history.replaceState) history.replaceState(null, '', '#' + t.dataset.tab);
+      show(t.dataset.tab, true);
+    });
+  });
+
+  var fromHash = function (scroll) { show(location.hash.slice(1), scroll); };
+  window.addEventListener('hashchange', function () { if (panels[location.hash.slice(1)]) fromHash(true); });
+  fromHash(false);
+  window.addEventListener('load', centreTab);
+  if (panels[location.hash.slice(1)]) {
+    // The browser's own jump to #id ignores the sticky bars; redo it once the page has laid out.
+    window.addEventListener('load', function () { setTimeout(settle, 60); });
+  }
+
+  // Shadow on the bar while it is stuck under the navbar.
+  var onScroll = function () { bar.classList.toggle('is-stuck', bar.getBoundingClientRect().top <= navH() + 1); };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
 <script>
 /* "Copy for WhatsApp": puts a ready-to-send message on the clipboard. */
 (function () {
