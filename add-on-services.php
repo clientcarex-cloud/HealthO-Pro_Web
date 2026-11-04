@@ -36,8 +36,14 @@ $icons = [
 ];
 $tick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>';
 
+/** "Copy for WhatsApp" button: the text sits in data-copy, the click handler is at the foot of the page. */
+$copyBtn = static function (string $text, string $label, string $class = '') use ($icons): string {
+    return '<button type="button" class="ao-copy' . ($class !== '' ? ' ' . $class : '') . '" data-copy="' . h($text) . '" title="Copy a ready-to-send WhatsApp message">'
+        . '<span class="ao-copy-ic">' . $icons['whatsapp'] . '</span><span class="ao-copy-l">' . h($label) . '</span></button>';
+};
+
 /** One plan card. */
-$card = static function (array $c, string $cta, string $href) use ($tick): void { ?>
+$card = static function (array $c, string $cta, string $href, string $copy) use ($tick, $copyBtn): void { ?>
         <article class="ao-card<?= $c['best'] ? ' is-best' : '' ?>">
           <?php if ($c['best']): ?><span class="ao-best">Best value</span><?php endif; ?>
           <span class="ao-cycle"><?= h($c['cycle']) ?></span>
@@ -58,6 +64,7 @@ $card = static function (array $c, string $cta, string $href) use ($tick): void 
             <?php if ($c['offer']): ?><li><span class="ao-ck"><?= $tick ?></span><?= h($c['offer']) ?></li><?php endif; ?>
           </ul>
           <a href="<?= h($href) ?>" class="btn <?= $c['best'] ? 'btn-primary' : 'btn-navy' ?> btn-block ao-cta"><?= h($cta) ?></a>
+          <?= $copyBtn($copy, 'Copy for WhatsApp') ?>
         </article>
 <?php };
 ?>
@@ -132,17 +139,18 @@ $card = static function (array $c, string $cta, string $href) use ($tick): void 
         <span class="ao-ch-ic"><?= $icons[$ch['icon']] ?></span>
         <h3><?= h($ch['label']) ?></h3>
         <span class="ao-ch-count"><?= (int) $ch['count'] ?> plan<?= $ch['count'] > 1 ? 's' : '' ?></span>
+        <?= $copyBtn(ho_wa_channel($ch), 'Copy all ' . $ch['label'] . ' plans', 'ao-copy--head') ?>
       </div>
 <?php if ($ch['parts']): foreach ($ch['parts'] as $part): ?>
       <div class="ao-part" style="--tc: <?= h($part['colour']) ?>">
         <span class="ao-tag"><?= h($part['tag']) ?></span><p><?= h($part['desc']) ?></p>
       </div>
       <div class="ao-grid">
-<?php foreach ($part['cards'] as $c) { $card($c, 'Buy now', $login); } ?>
+<?php foreach ($part['cards'] as $c) { $card($c, 'Buy now', $login, ho_wa_plan($c, $ch['label'], $part['tag'], $ch['slug'])); } ?>
       </div>
 <?php endforeach; else: ?>
       <div class="ao-grid">
-<?php foreach ($ch['cards'] as $c) { $card($c, 'Buy now', $login); } ?>
+<?php foreach ($ch['cards'] as $c) { $card($c, 'Buy now', $login, ho_wa_plan($c, $ch['label'], '', $ch['slug'])); } ?>
       </div>
 <?php endif; ?>
     </div>
@@ -154,6 +162,7 @@ $card = static function (array $c, string $cta, string $href) use ($tick): void 
         <span class="ao-ch-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76Z"/></svg></span>
         <h3>One-time setup services</h3>
         <span class="ao-ch-count">Pay once · not a recharge</span>
+        <?= $copyBtn(ho_wa_setup_all($catalog['setup']), 'Copy all setup services', 'ao-copy--head') ?>
       </div>
       <p class="ao-setup-intro">New to SMS or official WhatsApp? Our team does the paperwork for you. You pay for this only once; if you already have it, skip it and just buy credits.</p>
       <div class="ao-grid">
@@ -174,6 +183,7 @@ $card = static function (array $c, string $cta, string $href) use ($tick): void 
 <?php endforeach; ?>
           </ul>
           <a href="<?= h($login) ?>" class="btn btn-navy btn-block ao-cta">Get it now</a>
+          <?= $copyBtn(ho_wa_setup($s), 'Copy for WhatsApp') ?>
         </article>
 <?php endforeach; ?>
       </div>
@@ -203,6 +213,58 @@ $card = static function (array $c, string $cta, string $href) use ($tick): void 
 </section>
 
 <?php if ($catalog['channels'] || $catalog['setup']): ?>
+<script>
+/* "Copy for WhatsApp": puts a ready-to-send message on the clipboard. */
+(function () {
+  function fallback(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    return ok ? Promise.resolve() : Promise.reject(new Error('copy failed'));
+  }
+  function copy(text) {
+    return navigator.clipboard && window.isSecureContext
+      ? navigator.clipboard.writeText(text).catch(function () { return fallback(text); })
+      : fallback(text);
+  }
+  // Clipboard blocked (old browser, in-app webview): show the text selected so it can be copied by hand.
+  function manual(text) {
+    var box = document.createElement('div');
+    box.className = 'ao-manual';
+    box.innerHTML = '<div class="ao-manual-in" role="dialog" aria-label="Copy message"><p>Copy this message, then paste it in WhatsApp:</p><textarea readonly rows="12"></textarea><button type="button" class="btn btn-navy">Done</button></div>';
+    var ta = box.querySelector('textarea');
+    ta.value = text;
+    box.addEventListener('click', function (ev) {
+      if (ev.target === box || ev.target.tagName === 'BUTTON') box.remove();
+    });
+    document.body.appendChild(box);
+    ta.focus();
+    ta.select();
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.ao-copy');
+    if (!btn) return;
+    var label = btn.querySelector('.ao-copy-l');
+    var idle = btn.dataset.idle || (btn.dataset.idle = label.textContent);
+    copy(btn.getAttribute('data-copy')).then(function () {
+      btn.classList.add('is-done');
+      label.textContent = 'Copied — paste in WhatsApp';
+      if (window.gtag) gtag('event', 'copy_addons_whatsapp', { label: idle });
+    }, function () {
+      manual(btn.getAttribute('data-copy'));
+    });
+    clearTimeout(btn._t);
+    btn._t = setTimeout(function () { btn.classList.remove('is-done'); label.textContent = idle; }, 2500);
+  });
+})();
+</script>
 <script>
 /* Pricing PDF: the live plans above, drawn by js/credits-brochure.js (the same
    renderer as the in-app "Download Pricing PDF"). Loaded on the first click. */

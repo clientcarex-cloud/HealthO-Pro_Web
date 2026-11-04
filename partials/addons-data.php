@@ -419,3 +419,122 @@ function ho_addons_brochure(array $catalog)
             . 'Live prices: ' . SITE_URL . '/add-on-services',
     ];
 }
+
+/* ------------------------------------------------ WhatsApp copy text */
+/*
+ * Ready-to-paste WhatsApp messages for the sales team ("Copy for WhatsApp"
+ * buttons). WhatsApp formatting: *bold*, _italic_, ~strike~. Built from the
+ * same live card data as the page, so the text always quotes current prices.
+ */
+
+const ADDONS_PAGE_URL = SITE_URL . '/add-on-services';
+const ADDONS_BUY_URL  = 'https://healtho.pro/login';
+
+/** "+ 18% GST = ₹1,504.50" or '' when the plan has no tax. */
+function ho_wa_tax(array $c)
+{
+    return $c['tax'] !== '' ? ' ' . $c['tax'] . ' = ' . $c['total'] : '';
+}
+
+/** One plan, written to be sent on its own. */
+function ho_wa_plan(array $c, string $channel, string $type, string $slug)
+{
+    $title = $c['name'] . ($c['name'] !== $c['cycle'] ? ' (' . $c['cycle'] . ')' : '');
+    $lines = [
+        '*' . $title . '*' . ($c['best'] ? ' ⭐ Best value' : ''),
+        '_HealthO Pro · ' . $channel . ($type !== '' ? ' · ' . $type : '') . '_',
+        '',
+        '💬 Rate: *' . $c['rate'] . '/credit*' . ($c['was_rate'] !== '' ? ' ~' . $c['was_rate'] . '~' : ''),
+        '📦 Credits: ' . $c['credits'],
+        '💰 You pay: *' . $c['pay'] . '*' . ho_wa_tax($c),
+    ];
+    if ($c['save'] !== '') {
+        $lines[] = '🎉 You save ' . $c['save'];
+    }
+    $lines[] = '⏳ Valid for ' . (int) $c['days'] . ' days' . ($c['per_day'] !== '' ? ' (about ' . $c['per_day'] . ' credits a day)' : '');
+    if ($c['offer'] !== '') {
+        $lines[] = '🎁 ' . $c['offer'];
+    }
+    $lines[] = '';
+    $lines[] = '🛒 Buy now: ' . ADDONS_BUY_URL;
+    $lines[] = '📄 All ' . $channel . ' plans: ' . ADDONS_PAGE_URL . '#' . $slug;
+
+    return implode("\n", $lines);
+}
+
+/** One line per plan inside a channel summary. */
+function ho_wa_line(array $c)
+{
+    return '• ' . $c['cycle'] . ': ' . $c['credits'] . ' credits — *' . $c['pay'] . '* (' . $c['rate'] . '/credit) · '
+        . (int) $c['days'] . ' days' . ($c['save'] !== '' ? ' · ' . preg_replace('/^.*\((.*)\)$/', '$1', $c['save']) : '')
+        . ($c['best'] ? ' ⭐' : '');
+}
+
+/** All plans of one channel, grouped by message type. */
+function ho_wa_channel(array $ch)
+{
+    $lines = ['*HealthO Pro — ' . $ch['label'] . ' credit plans*', '_Live prices · ' . date('j M Y') . '_', ''];
+
+    if ($ch['parts']) {
+        foreach ($ch['parts'] as $part) {
+            $t = ADDONS_TYPES[$part['key']];
+            $lines[] = '*' . strtoupper($part['tag']) . '* — ' . $t['title'] . ' (' . rtrim($t['eg'], '.') . ')';
+            foreach ($part['cards'] as $c) {
+                $lines[] = ho_wa_line($c);
+            }
+            $lines[] = '';
+        }
+    } else {
+        foreach ($ch['cards'] as $c) {
+            $lines[] = ho_wa_line($c);
+        }
+        $lines[] = '';
+    }
+
+    $lines[] = '_Prices are before 18% GST. Longer plans cost less per credit. ⭐ = best value._';
+    if ($ch['slug'] === 'sms') {
+        $lines[] = '_New to SMS? One-time DLT setup is needed once — see the link._';
+    }
+    $lines[] = '';
+    $lines[] = '📄 Details: ' . ADDONS_PAGE_URL . '#' . $ch['slug'];
+    $lines[] = '📞 ' . PHONE_SALES;
+
+    return implode("\n", $lines);
+}
+
+/** One one-time setup service. */
+function ho_wa_setup(array $s)
+{
+    $lines = [
+        '*' . $s['name'] . '*',
+        '_HealthO Pro · One-time setup · ' . $s['channel'] . '_',
+        '',
+        $s['who'],
+        '',
+        '💰 One-time fee: *' . $s['pay'] . '*' . ($s['was'] !== '' ? ' ~' . $s['was'] . '~' : '') . ho_wa_tax($s),
+    ];
+    foreach ($s['features'] as $f) {
+        $lines[] = '✅ ' . $f;
+    }
+    $lines[] = '';
+    $lines[] = 'Paid only once — it is not a recharge.';
+    $lines[] = '🛒 Get it: ' . ADDONS_BUY_URL;
+    $lines[] = '📄 Details: ' . ADDONS_PAGE_URL . '#setup';
+
+    return implode("\n", $lines);
+}
+
+/** All one-time setup services together. */
+function ho_wa_setup_all(array $setup)
+{
+    $lines = ['*HealthO Pro — One-time setup services*', '_Pay once · not a recharge_', ''];
+    foreach ($setup as $s) {
+        $lines[] = '• *' . $s['name'] . '* (' . $s['channel'] . '): *' . $s['pay'] . '*' . ho_wa_tax($s);
+        $lines[] = '   ' . $s['who'];
+    }
+    $lines[] = '';
+    $lines[] = '📄 Details: ' . ADDONS_PAGE_URL . '#setup';
+    $lines[] = '📞 ' . PHONE_SALES;
+
+    return implode("\n", $lines);
+}
