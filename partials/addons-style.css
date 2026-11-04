@@ -89,3 +89,7 @@
     .ao-ch-count { display: none; }
     .ao-jump { margin-top: -28px; }
 }
+
+/* Pricing PDF button (reuses the pricing page's .pb-brochure look) */
+.ao-pdf { display: flex; justify-content: center; margin: -24px 0 34px; }
+.ao-pdf + .ao-jump { margin-top: 0; }

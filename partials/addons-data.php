@@ -283,3 +283,139 @@ function ho_addons_catalog($force = false)
 
     return $out;
 }
+
+/* ------------------------------------------------------------- PDF data */
+
+/**
+ * The live catalog in the shape js/credits-brochure.js draws (the same shape
+ * the CRM's "Download Pricing PDF" builds), so the website PDF matches the
+ * in-app one card for card. "Prepared" is stamped in the browser at click time.
+ */
+function ho_addons_brochure(array $catalog)
+{
+    $link = 'https://healtho.pro/login';
+
+    $card = static function (array $c, bool $split) use ($link) {
+        $features = [['text' => 'Valid for ' . (int) $c['days'] . ' days']];
+        if ($c['per_day'] !== '') {
+            $features[] = ['text' => 'About ' . $c['per_day'] . ' credits a day'];
+        }
+
+        return [
+            'name'     => $c['name'],
+            'kicker'   => $c['cycle'],
+            'best'     => (bool) $c['best'],
+            'was'      => $c['was_rate'],
+            'amount'   => $c['rate'],
+            'unit'     => '/ credit',
+            'sumLeft'  => $c['credits'] . ' credits',
+            'sumRight' => $c['pay'],
+            'payLabel' => 'You pay once · ' . (int) $c['days'] . ' days',
+            'pay'      => $c['pay'],
+            'taxLeft'  => $c['tax'],
+            'taxRight' => $c['total'] !== '' ? $c['total'] . ' in total' : '',
+            'savings'  => $c['save'] !== '' ? 'You save ' . $c['save'] : '',
+            'features' => $features,
+            'cta'      => 'Recharge now  →',
+            'link'     => $link,
+        ];
+    };
+
+    $groups = [];
+    foreach ($catalog['channels'] as $ch) {
+        $g = [
+            'label'  => $ch['label'],
+            'colour' => $ch['colour'],
+            'count'  => $ch['count'] . ' plan' . ($ch['count'] > 1 ? 's' : ''),
+        ];
+        if ($ch['parts']) {
+            $g['parts'] = array_map(static function ($part) use ($card) {
+                return [
+                    'tag'    => strtoupper($part['tag']),
+                    'colour' => $part['colour'],
+                    'desc'   => $part['desc'],
+                    'plans'  => array_map(static function ($c) use ($card) { return $card($c, true); }, $part['cards']),
+                ];
+            }, $ch['parts']);
+        } else {
+            $g['plans'] = array_map(static function ($c) use ($card) { return $card($c, false); }, $ch['cards']);
+        }
+        $groups[] = $g;
+    }
+    $labels = array_column($groups, 'label');
+
+    if ($catalog['setup']) {
+        $groups[] = [
+            'label'  => 'One-Time Setup Services',
+            'colour' => '#EA580C',
+            'count'  => 'Pay once · not a recharge',
+            'setup'  => true,
+            'plans'  => array_map(static function ($s) use ($link) {
+                return [
+                    'name'     => $s['name'],
+                    'kicker'   => 'One-time · ' . $s['channel'],
+                    'tint'     => true,
+                    'best'     => false,
+                    'was'      => $s['was'],
+                    'amount'   => $s['pay'],
+                    'unit'     => 'one-time',
+                    'sumLeft'  => $s['summary'],
+                    'sumRight' => $s['pay'],
+                    'payLabel' => 'You pay once',
+                    'pay'      => $s['pay'],
+                    'taxLeft'  => $s['tax'],
+                    'taxRight' => $s['total'] !== '' ? $s['total'] . ' in total' : '',
+                    'savings'  => $s['save'] !== '' ? 'You save ' . $s['save'] : '',
+                    'features' => array_map(static function ($t) { return ['text' => $t]; }, $s['features']),
+                    'cta'      => 'Get it now  →',
+                    'link'     => $link,
+                ];
+            }, $catalog['setup']),
+        ];
+    }
+
+    $steps = [['title' => 'Pick the channel', 'text' => implode(', ', $labels) . '. Buy only the ones you use.']];
+    if ($catalog['split']) {
+        $steps[] = ['title' => 'Pick the message type', 'text' => 'Transactional for patient updates, Promotional for marketing. Most clinics need Transactional; add Promotional only if you run campaigns.'];
+    }
+    $steps[] = ['title' => 'Pick how long', 'text' => "Monthly, Quarterly or Yearly. Longer plans cost less per credit. Credits expire after the plan's days."];
+    if ($catalog['setup']) {
+        $steps[] = ['title' => 'New to SMS / WhatsApp?', 'text' => 'Add the one-time setup at the end of this sheet. It is paid only once.'];
+    }
+
+    $types = [];
+    if ($catalog['split']) {
+        foreach (ADDONS_TYPES as $t) {
+            $types[] = [
+                'tag'    => strtoupper($t['tag']),
+                'title'  => $t['title'],
+                'colour' => $t['colour'],
+                'lines'  => [
+                    ['text' => rtrim($t['lead'], '.'), 'bold' => true],
+                    ['text' => rtrim($t['eg'], '.')],
+                    ['text' => 'SMS: ' . lcfirst(rtrim($t['sms'], '.'))],
+                ],
+            ];
+        }
+    }
+
+    return [
+        'assets'      => [
+            'jspdf' => '/js/vendor/jspdf.umd.min.js?v=' . ASSET_VER,
+            'fonts' => '/js/vendor/pjs-fonts.js?v=' . ASSET_VER,
+            'logo'  => '/assets/images/logo.png',
+        ],
+        'product'     => 'Messaging Credits',
+        'productLong' => implode(' · ', $labels) . ' recharge plans',
+        'meta'        => [['Channels ', (string) count($labels)]],
+        'guide'       => ['title' => 'How to choose a plan', 'steps' => $steps, 'types' => $types],
+        'groups'      => $groups,
+        'site'        => SITE_URL,
+        'phone'       => PHONE_SALES,
+        'email'       => 'sales@healtho.pro',
+        'wa'          => WHATSAPP_URL,
+        'note'        => 'Amounts are exclusive of tax unless shown as "in total"; the per-credit rate is before tax. '
+            . 'Existing customers can buy any plan from Communication Hub → Recharge Credits in HealthO Pro. '
+            . 'Live prices: ' . SITE_URL . '/add-on-services',
+    ];
+}

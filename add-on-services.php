@@ -110,6 +110,13 @@ $card = static function (array $c, string $cta, string $href) use ($tick): void 
       <p>Please check back in a few minutes, or call us on <a href="tel:<?= str_replace(' ', '', PHONE_SALES) ?>"><?= PHONE_SALES ?></a> for the latest plans.</p>
     </div>
 <?php else: ?>
+    <div class="ao-pdf">
+      <button type="button" class="pb-brochure" id="aoPdf" aria-label="Download the messaging credits pricing as a PDF">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Download Pricing PDF</span><span class="pb-brochure-tag">PDF</span>
+      </button>
+    </div>
+
     <nav class="ao-jump" aria-label="Jump to a channel">
 <?php foreach ($catalog['channels'] as $ch): ?>
       <a href="#<?= h($ch['slug']) ?>" style="--cc: <?= h($ch['colour']) ?>"><span class="ao-jump-ic"><?= $icons[$ch['icon']] ?></span><?= h($ch['label']) ?></a>
@@ -195,4 +202,47 @@ $card = static function (array $c, string $cta, string $href) use ($tick): void 
   </div>
 </section>
 
+<?php if ($catalog['channels'] || $catalog['setup']): ?>
+<script>
+/* Pricing PDF: the live plans above, drawn by js/credits-brochure.js (the same
+   renderer as the in-app "Download Pricing PDF"). Loaded on the first click. */
+(function () {
+  var btn = document.getElementById('aoPdf');
+  if (!btn) return;
+  var data = <?= json_encode(ho_addons_brochure($catalog), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?>;
+  var label = btn.querySelector('span');
+  var idle = label.textContent;
+
+  function loadRenderer() {
+    if (window.HealthOCreditsBrochure) return Promise.resolve();
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = '/js/credits-brochure.js?v=<?= ASSET_VER ?>';
+      s.onload = function () { window.HealthOCreditsBrochure ? resolve() : reject(new Error('empty')); };
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  function say(text, ms) {
+    label.textContent = text;
+    if (ms) setTimeout(function () { label.textContent = idle; }, ms);
+  }
+
+  btn.addEventListener('click', function () {
+    if (btn.disabled) return;
+    btn.disabled = true;
+    say('Preparing PDF…');
+    data.prepared = new Date().toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+    data.meta = [data.meta[0], ['Prepared ', data.prepared]];
+    loadRenderer()
+      .then(function () { return window.HealthOCreditsBrochure.download(data); })
+      .then(function () { say('Downloaded ✓', 2500); })
+      .catch(function () { say('Could not prepare — try again', 3500); })
+      .then(function () { btn.disabled = false; });
+    if (window.gtag) gtag('event', 'download_addons_pdf');
+  });
+})();
+</script>
+<?php endif; ?>
 <?php require __DIR__ . '/partials/foot.php';
