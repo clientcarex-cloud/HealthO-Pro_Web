@@ -1,0 +1,285 @@
+<?php
+/**
+ * Live prices for the Add-on Services page (SMS, WhatsApp, Email, AI Call credits
+ * and the one-time setup services).
+ *
+ * Source: the CRM's keyless public endpoint that the in-app "Recharge Credits"
+ * window also uses, so the website and the app always show the same prices.
+ * Prices are set ONLY in the CRM (ccx_msgs pricing) — this page is a mirror.
+ *
+ * The response is cached for ADDONS_CACHE_TTL seconds. If the CRM cannot be
+ * reached, the last good copy is used instead of an empty page.
+ * Add ?refresh=1 to the page URL to rebuild the cache.
+ */
+
+require_once __DIR__ . '/site.php';
+
+const ADDONS_PLANS_URL = 'https://healtho.pro/ccx_msgs/ccx_msgs_public/get_pricing_plans';
+const ADDONS_CACHE_TTL = 600;
+const ADDONS_CURRENCY  = '₹';
+
+/** Channels shown, in order — the same four as the in-app Recharge window. */
+const ADDONS_CHANNELS = [
+    'sms'      => ['label' => 'SMS',      'colour' => '#2563EB', 'icon' => 'sms'],
+    'whatsapp' => ['label' => 'WhatsApp', 'colour' => '#16A34A', 'icon' => 'whatsapp'],
+    'email'    => ['label' => 'Email',    'colour' => '#D97706', 'icon' => 'email'],
+    'aicall'   => ['label' => 'AI Call',  'colour' => '#9333EA', 'icon' => 'aicall'],
+];
+
+/** Plain-words meaning of the two message types. */
+const ADDONS_TYPES = [
+    'transactional' => [
+        'tag'    => 'Transactional',
+        'title'  => 'Service updates',
+        'colour' => '#0F7A66',
+        'lead'   => 'Information the patient expects from you.',
+        'eg'     => 'OTPs, report ready, bills and payment receipts, appointment reminders.',
+        'sms'    => 'Delivered any time, even to DND numbers.',
+        'wa'     => 'Sent as WhatsApp Utility templates.',
+    ],
+    'promotional' => [
+        'tag'    => 'Promotional',
+        'title'  => 'Marketing',
+        'colour' => '#7C3AED',
+        'lead'   => 'Messages that promote your hospital.',
+        'eg'     => 'Offers, health camps, check-up packages, festival wishes.',
+        'sms'    => 'Daytime only, and not delivered to DND numbers.',
+        'wa'     => 'Sent as WhatsApp Marketing templates.',
+    ],
+];
+
+/** One-time setup services, keyed by the plan's message_subtype. */
+const ADDONS_SETUP = [
+    'dlt_setup' => [
+        'channel'  => 'SMS',
+        'summary'  => 'DLT registration',
+        'who'      => 'Needed once before any SMS can be sent in India.',
+        'features' => ['Entity + sender ID registration', 'Template approvals', 'Done for you by our team'],
+    ],
+    'wa_setup' => [
+        'channel'  => 'WhatsApp',
+        'summary'  => 'API setup + Blue Tick',
+        'who'      => 'For the official WhatsApp Business API on your own number.',
+        'features' => ['Official API + number onboarding', 'Display name and templates', 'Blue Tick (verified badge) process'],
+    ],
+];
+
+/* ------------------------------------------------------------------ fetch */
+
+function ho_addons_get($url)
+{
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 12,
+            CURLOPT_CONNECTTIMEOUT => 6,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_HTTPHEADER     => ['Accept: application/json'],
+        ]);
+        $body = curl_exec($ch);
+        $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if ($body === false || $code >= 400) {
+            return null;
+        }
+    } else {
+        $ctx  = stream_context_create(['http' => ['timeout' => 12, 'ignore_errors' => true]]);
+        $body = @file_get_contents($url, false, $ctx);
+        if ($body === false) {
+            return null;
+        }
+    }
+
+    $json = json_decode($body, true);
+
+    return is_array($json) && !empty($json['success']) && isset($json['plans']) && is_array($json['plans'])
+        ? $json['plans']
+        : null;
+}
+
+/** Raw plan rows from the CRM, cached; stale cache on failure; [] when nothing is available. */
+function ho_addons_plans($force = false)
+{
+    $cache = sys_get_temp_dir() . '/healtho_addons_' . md5(ADDONS_PLANS_URL) . '.json';
+
+    if (!$force && is_readable($cache) && (time() - filemtime($cache) < ADDONS_CACHE_TTL)) {
+        $cached = json_decode((string) file_get_contents($cache), true);
+        if (is_array($cached)) {
+            return $cached;
+        }
+    }
+
+    $plans = ho_addons_get(ADDONS_PLANS_URL);
+
+    if ($plans === null) {
+        $cached = is_readable($cache) ? json_decode((string) file_get_contents($cache), true) : null;
+        return is_array($cached) ? $cached : [];
+    }
+
+    @file_put_contents($cache, json_encode($plans, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), LOCK_EX);
+
+    return $plans;
+}
+
+/* ----------------------------------------------------------------- format */
+
+/** Indian digit grouping: 110000 → 1,10,000. Decimals only when they are not zero (or $dec forces them). */
+function ho_inr($amount, $dec = null)
+{
+    $amount = (float) $amount;
+    if ($dec === null) {
+        $dec = abs($amount - round($amount)) < 0.005 ? 0 : 2;
+    }
+    $fixed = number_format(abs($amount), $dec, '.', '');
+    $parts = explode('.', $fixed);
+    $int   = $parts[0];
+    if (strlen($int) > 3) {
+        $last = substr($int, -3);
+        $rest = substr($int, 0, -3);
+        $rest = preg_replace('/\B(?=(\d{2})+(?!\d))/', ',', $rest);
+        $int  = $rest . ',' . $last;
+    }
+
+    return ($amount < 0 ? '-' : '') . ADDONS_CURRENCY . $int . (isset($parts[1]) ? '.' . $parts[1] : '');
+}
+
+/** Indian grouping for plain counts (credits). */
+function ho_count($n)
+{
+    return substr(ho_inr((int) $n, 0), strlen(ADDONS_CURRENCY));
+}
+
+/* ------------------------------------------------------------------ shape */
+
+/** One price card's view-model. */
+function ho_addons_card(array $p)
+{
+    $cycles = ['monthly' => 'Monthly', 'quarterly' => 'Quarterly', 'yearly' => 'Yearly'];
+
+    $price = (float) ($p['price'] ?? 0);
+    $disc  = (float) ($p['discount_percent'] ?? 0);
+    $fin   = $price - $price * $disc / 100;
+    $taxP  = (float) ($p['tax_percent'] ?? 0);
+    $count = (int) ($p['message_count'] ?? 0);
+    $days  = (int) ($p['expiry_days'] ?? 0);
+
+    // Two decimals, same as the app. A small discount can round to the same
+    // figure, and then a struck-through twin is just noise.
+    $rate    = ho_inr($count ? $fin / $count : 0, 2);
+    $wasRate = $disc > 0 && $count ? ho_inr($price / $count, 2) : $rate;
+
+    return [
+        'name'     => (string) ($p['plan_name'] ?? ''),
+        'cycle'    => $cycles[$p['billing_cycle'] ?? 'monthly'] ?? 'Monthly',
+        'rate'     => $rate,
+        'was_rate' => $wasRate !== $rate ? $wasRate : '',
+        'credits'  => ho_count($count),
+        'days'     => $days,
+        'per_day'  => $count && $days ? ho_count((int) round($count / $days)) : '',
+        'was'      => $disc > 0 ? ho_inr($price) : '',
+        'pay'      => ho_inr($fin),
+        'tax'      => $taxP > 0 ? '+ ' . rtrim(rtrim(number_format($taxP, 2), '0'), '.') . '% ' . ($p['tax_name'] ?: 'tax') : '',
+        'total'    => $taxP > 0 ? ho_inr($fin + $fin * $taxP / 100) : '',
+        'save'     => $disc > 0 ? ho_inr($price - $fin) . ' (' . rtrim(rtrim(number_format($disc, 2), '0'), '.') . '% off)' : '',
+        'disc'     => $disc,
+        'offer'    => trim((string) ($p['offer_description'] ?? '')),
+        'best'     => false,
+    ];
+}
+
+/** Marks the deepest discount in a set as Best Value — the app's rule. */
+function ho_addons_best(array $cards)
+{
+    $best = -1;
+    $bestDisc = 0;
+    foreach ($cards as $i => $c) {
+        if ($c['disc'] > $bestDisc) {
+            $bestDisc = $c['disc'];
+            $best = $i;
+        }
+    }
+    if (count($cards) > 1 && $best >= 0) {
+        $cards[$best]['best'] = true;
+    }
+
+    return $cards;
+}
+
+/**
+ * Everything the page renders:
+ *   channels[]  label, colour, icon, slug, count, parts[] (type meta + cards) or cards[]
+ *   setup[]     one-time services
+ *   split       true when any channel sells both message types
+ */
+function ho_addons_catalog($force = false)
+{
+    $rows  = ho_addons_plans($force);
+    $order = ['monthly' => 1, 'quarterly' => 2, 'yearly' => 3];
+
+    $active = array_values(array_filter($rows, static function ($p) {
+        return !isset($p['active']) || (string) $p['active'] === '1';
+    }));
+
+    $out = ['channels' => [], 'setup' => [], 'split' => false];
+
+    foreach (ADDONS_CHANNELS as $type => $meta) {
+        $list = [];
+        foreach ($active as $p) {
+            if (($p['message_type'] ?? '') !== $type) {
+                continue;
+            }
+            $sub = $p['message_subtype'] ?: 'promotional';
+            if (isset(ADDONS_SETUP[$sub])) {
+                $card = ho_addons_card($p);
+                $out['setup'][] = $card + ADDONS_SETUP[$sub] + ['subtype' => $sub];
+                continue;
+            }
+            $p['message_subtype'] = $sub;
+            $list[] = $p;
+        }
+        if (!$list) {
+            continue;
+        }
+
+        usort($list, static function ($a, $b) use ($order) {
+            return (($order[$a['billing_cycle'] ?? 'monthly'] ?? 9) <=> ($order[$b['billing_cycle'] ?? 'monthly'] ?? 9))
+                ?: ((float) $a['price'] <=> (float) $b['price']);
+        });
+
+        $subs = array_unique(array_column($list, 'message_subtype'));
+        $both = in_array('transactional', $subs, true) && in_array('promotional', $subs, true);
+
+        $channel = $meta + [
+            'slug'  => $type,
+            'count' => count($list),
+            'parts' => [],
+            'cards' => [],
+        ];
+
+        if ($both) {
+            $out['split'] = true;
+            // Transactional first: it is what almost every clinic needs.
+            foreach (['transactional', 'promotional'] as $st) {
+                $set = array_values(array_filter($list, static function ($p) use ($st) {
+                    return $p['message_subtype'] === $st;
+                }));
+                $t = ADDONS_TYPES[$st];
+                $note = $type === 'sms' ? $t['sms'] : ($type === 'whatsapp' ? $t['wa'] : '');
+                $channel['parts'][] = [
+                    'key'    => $st,
+                    'tag'    => $t['tag'],
+                    'colour' => $t['colour'],
+                    'desc'   => trim($t['title'] . ': ' . rtrim($t['eg'], '.') . '. ' . $note),
+                    'cards'  => ho_addons_best(array_map('ho_addons_card', $set)),
+                ];
+            }
+        } else {
+            $channel['cards'] = ho_addons_best(array_map('ho_addons_card', $list));
+        }
+
+        $out['channels'][] = $channel;
+    }
+
+    return $out;
+}

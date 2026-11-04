@@ -22,7 +22,7 @@ $head_extra  = $head_extra  ?? '';
 $faqs        = $faqs        ?? [];
 
 // Product pages keep the Solutions tab lit.
-$nav_active = in_array($page, ['solutions', 'features', 'hims', 'lims', 'cims', 'ris'], true) ? 'solutions' : $page;
+$nav_active = in_array($page, ['solutions', 'features', 'add-on-services', 'hims', 'lims', 'cims', 'ris'], true) ? 'solutions' : $page;
 $active = static fn(string $slug): string => $slug === $nav_active ? ' active' : '';
 ?>
 <!DOCTYPE html>

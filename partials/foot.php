@@ -162,6 +162,7 @@ $demo_interest = $demo_interest ?? (PRODUCTS[$page ?? '']['short'] ?? '');
           <li><a href="/<?= $slug ?>"><?= h($p['short']) ?></a></li>
 <?php endforeach; ?>
           <li><a href="/features">All Features</a></li>
+          <li><a href="/add-on-services">Add-on Services</a></li>
           <li><a href="/pricing">Pricing</a></li>
         </ul>
       </div>

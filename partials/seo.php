@@ -67,6 +67,7 @@ const PAGE_LABELS = [
     'cims'             => 'CIMS',
     'ris'              => 'RIS / RIMS',
     'features'         => 'Features',
+    'add-on-services'  => 'Add-on Services',
     'blog'             => 'Blog',
     'pricing'          => 'Pricing',
     'our-clients'      => 'Our Clients',

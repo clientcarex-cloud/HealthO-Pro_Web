@@ -217,6 +217,7 @@ Local guides to HealthO Pro by city — one per product (HIMS, LIMS, CIMS, RIS) 
 ## Company
 
 - [Pricing](https://healtho.pro/pricing): current plans, billing cycles and FAQs.
+- [Add-on Services](https://healtho.pro/add-on-services): live SMS, WhatsApp, Email and AI Call credit plans (Transactional vs Promotional explained) and one-time DLT / WhatsApp API setup.
 - [Testimonials](https://healtho.pro/testimonials): client stories from hospitals, labs, clinics and imaging centers.
 - [Channel partners](https://healtho.pro/partners): authorized resellers and distributors. Each partner has a verifiable certificate.
 - [Careers](https://healtho.pro/careers): current job openings, internships and apprenticeships.
