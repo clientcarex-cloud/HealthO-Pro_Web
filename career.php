@@ -61,6 +61,12 @@ $resumeReq   = !empty($data['resume_required']) && !empty($fields['resume']);
 $page        = 'careers';
 $title       = ($job['seo_title'] !== '' ? $job['seo_title'] : $job['title'] . ' — Careers') . ' | ' . $company;
 $description = $job['seo_description'] !== '' ? $job['seo_description'] : $job['summary'];
+// Full formatted summary (rich text from the CRM editor). Older CRM payloads only
+// carried the plain-text teaser, so fall back to that.
+$summaryHtml = (string) ($job['summary_html'] ?? '');
+if ($summaryHtml === '' && $job['summary'] !== '') {
+    $summaryHtml = '<p>' . h($job['summary']) . '</p>';
+}
 $canonical   = career_url($job['slug'], true);
 $crumbs      = ['Careers' => SITE_URL . '/careers', $job['title'] => $canonical];
 
@@ -71,7 +77,7 @@ $posting = [
     '@type'       => 'JobPosting',
     'title'       => $job['title'],
     'description' => trim(
-        ($job['description'] ?: '<p>' . h($job['summary']) . '</p>')
+        $summaryHtml . $job['description']
         . ($job['responsibilities'] ? '<h3>Responsibilities</h3>' . $job['responsibilities'] : '')
         . ($job['requirements'] ? '<h3>Requirements</h3>' . $job['requirements'] : '')
         . ($job['benefits'] ? '<h3>Benefits</h3>' . $job['benefits'] : '')
@@ -165,6 +171,34 @@ $head_extra = '<script type="application/ld+json">'
 .jd-body table { width:100%; border-collapse:collapse; margin:14px 0; }
 .jd-body td, .jd-body th { border:1px solid var(--line); padding:8px 12px; font-size:.92rem; }
 
+/* Rich text from the CRM's TinyMCE fields: keep the author's structure
+   (headings, bold, lists, tables) but the site's own font and rhythm. */
+.jd-rich { margin-bottom:6px; overflow-wrap:anywhere; }
+.jd-rich > :first-child { margin-top:0; }
+.jd-rich p { margin:0 0 14px; }
+.jd-rich p:empty { display:none; }
+.jd-rich h2, .jd-rich h3, .jd-rich h4, .jd-rich h5, .jd-rich h6 { color:var(--navy); line-height:1.35; }
+.jd-rich h2 { font-size:1.15rem; margin:26px 0 10px; }
+.jd-rich h3 { font-size:1.05rem; margin:22px 0 8px; }
+.jd-rich h4, .jd-rich h5, .jd-rich h6 { font-size:.98rem; margin:18px 0 6px; }
+.jd-rich strong, .jd-rich b { color:var(--ink); font-weight:700; }
+.jd-rich ul { list-style:none; padding-left:0; }
+.jd-rich ul > li { position:relative; padding-left:26px; }
+.jd-rich ul > li::before { content:""; position:absolute; left:6px; top:.72em; width:7px; height:7px; border-radius:50%; background:var(--cyan-dark); }
+.jd-rich ol { padding-left:24px; }
+.jd-rich ol > li::marker { color:var(--cyan-dark); font-weight:700; }
+.jd-rich li > ul, .jd-rich li > ol { margin:6px 0 0; }
+.jd-rich li p { margin:0; }
+.jd-rich blockquote { margin:16px 0; padding:12px 18px; border-left:3px solid var(--cyan-dark); background:var(--cyan-tint); border-radius:0 var(--r-sm, 8px) var(--r-sm, 8px) 0; }
+.jd-rich blockquote p:last-child { margin-bottom:0; }
+.jd-rich hr { border:0; border-top:1px solid var(--line); margin:22px 0; }
+.jd-rich table { display:block; overflow-x:auto; }
+.jd-rich th { background:var(--cyan-tint); color:var(--navy); text-align:left; }
+.jd-rich [style*="font-family"] { font-family:inherit !important; }
+.jd-rich [style*="font-size"] { font-size:inherit !important; }
+.jd-rich [style*="line-height"] { line-height:inherit !important; }
+@media (max-width: 640px) { .jd-body { padding:24px 20px; } }
+
 .jd-side { position:sticky; top:96px; display:grid; gap:18px; }
 .jd-card { background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:24px 26px; box-shadow:var(--e1); }
 .jd-facts { display:grid; gap:14px; }
@@ -255,28 +289,29 @@ function jd_fact(string $icon, string $label, string $value): void
     <div class="jd-wrap">
       <div>
         <article class="jd-body reveal">
-          <?php if ($job['summary'] !== ''): ?>
-            <p class="lead" style="margin-bottom:24px;"><?= h($job['summary']) ?></p>
+          <?php if ($summaryHtml !== ''): ?>
+            <h2>Job description</h2>
+            <div class="jd-rich"><?= $summaryHtml /* admin-authored, tag-filtered by the CRM */ ?></div>
           <?php endif; ?>
 
           <?php if ($job['description'] !== ''): ?>
             <h2>About the role</h2>
-            <?= $job['description'] /* admin-authored, tag-filtered by the CRM */ ?>
+            <div class="jd-rich"><?= $job['description'] /* admin-authored, tag-filtered by the CRM */ ?></div>
           <?php endif; ?>
 
           <?php if ($job['responsibilities'] !== ''): ?>
             <h2>What you will do</h2>
-            <?= $job['responsibilities'] ?>
+            <div class="jd-rich"><?= $job['responsibilities'] ?></div>
           <?php endif; ?>
 
           <?php if ($job['requirements'] !== ''): ?>
             <h2>What we are looking for</h2>
-            <?= $job['requirements'] ?>
+            <div class="jd-rich"><?= $job['requirements'] ?></div>
           <?php endif; ?>
 
           <?php if ($job['benefits'] !== ''): ?>
             <h2>What we offer</h2>
-            <?= $job['benefits'] ?>
+            <div class="jd-rich"><?= $job['benefits'] ?></div>
           <?php endif; ?>
 
           <?php if (!empty($job['skills'])): ?>

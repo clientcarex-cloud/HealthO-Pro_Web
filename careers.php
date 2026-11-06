@@ -217,7 +217,7 @@ $head_extra = '<script type="application/ld+json">' . json_encode([
 .cr-tag--urgent { background:#FEF3C7; color:#B45309; }
 .cr-meta { display:flex; flex-wrap:wrap; gap:6px 18px; color:var(--text-soft); font-size:.86rem; margin:0 0 10px; }
 .cr-meta span { display:inline-flex; align-items:center; gap:6px; }
-.cr-job p.cr-summary { color:var(--text); font-size:.92rem; margin:0; max-width:70ch; }
+.cr-job p.cr-summary { color:var(--text); font-size:.92rem; line-height:1.6; margin:0; max-width:70ch; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 .cr-job-cta { display:flex; flex-direction:column; align-items:flex-end; gap:8px; white-space:nowrap; }
 .cr-posted { color:var(--text-mute); font-size:.78rem; }
 .cr-noresult { text-align:center; padding:40px 20px; color:var(--text-soft); }
