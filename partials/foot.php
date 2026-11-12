@@ -202,10 +202,7 @@ $demo_interest = $demo_interest ?? (PRODUCTS[$page ?? '']['short'] ?? '');
     </div>
     <div class="footer-bottom">
       <span>© <?= date('Y') ?> Healthocare Private Limited. All rights reserved.</span>
-      <div class="legal">
-        <a href="/privacy-policy">Privacy Policy</a>
-        <a href="/terms-conditions">Terms &amp; Conditions</a>
-      </div>
+      <span>CIN: U62090TS2023PTC180399</span>
     </div>
   </div>
 </footer>
