@@ -194,6 +194,8 @@ $demo_interest = $demo_interest ?? (PRODUCTS[$page ?? '']['short'] ?? '');
       <div class="legal">
         <a href="/privacy-policy">Privacy Policy</a>
         <a href="/terms-conditions">Terms &amp; Conditions</a>
+        <a href="/data-processing-agreement">Data Processing Agreement</a>
+        <a href="/sla-and-support-services">SLA &amp; Support</a>
       </div>
     </div>
   </div>

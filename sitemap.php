@@ -37,6 +37,8 @@ $pages = [
     'message-to-ceo'   => ['yearly',  '0.4', []],
     'privacy-policy'   => ['yearly',  '0.2', []],
     'terms-conditions' => ['yearly',  '0.2', []],
+    'data-processing-agreement' => ['yearly', '0.2', []],
+    'sla-and-support-services'  => ['yearly', '0.3', []],
 ];
 
 // Shared partials change what every page renders, so they count towards lastmod.

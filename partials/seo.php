@@ -79,6 +79,8 @@ const PAGE_LABELS = [
     'message-to-ceo'   => 'Message to CEO',
     'privacy-policy'   => 'Privacy Policy',
     'terms-conditions' => 'Terms & Conditions',
+    'data-processing-agreement' => 'Data Processing Agreement',
+    'sla-and-support-services'  => 'SLA & Support Services',
 ];
 
 function seo_organization(): array
