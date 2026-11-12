@@ -18,7 +18,7 @@ require __DIR__ . '/partials/head.php';
   <div class="container">
     <div class="prose">
       <p>This Data Processing Agreement ("DPA") forms part of the subscription, service or licence agreement (the "Principal Agreement") between Healthocare Private Limited ("HealthO Pro", "we", "us" or "our") and the customer that uses HealthO Pro HIMS, LIMS, CIMS, RIS/RIMS or any related module, app or add-on service (the "Customer", "you" or "your"). It sets out how we process personal data, including patient health data, on your behalf.</p>
-      <p>If this DPA and the Principal Agreement conflict on the processing of personal data, this DPA prevails.</p>
+      <p>This DPA summarises the commitments set out in full in our <a href="/data-protection-addendum">Data Protection Addendum</a>. If the two differ, the Data Protection Addendum prevails.</p>
 
       <h2>1. Roles of the Parties</h2>
       <ul>
@@ -70,7 +70,7 @@ require __DIR__ . '/partials/head.php';
       <ul>
         <li>You give us general authorisation to engage Sub-processors, such as cloud hosting and infrastructure providers, SMS and WhatsApp messaging providers, email delivery services, payment gateways and, where you enable them, AI service providers.</li>
         <li>We bind every Sub-processor by written terms that protect Customer Data at least as well as this DPA, and we remain responsible for their performance.</li>
-        <li>An up-to-date list of Sub-processors is available on request from <a href="mailto:support@healtho.pro">support@healtho.pro</a>. We will give reasonable notice before adding or replacing a Sub-processor that processes Health Data. You may object on reasonable data-protection grounds, and we will work with you in good faith to resolve the concern.</li>
+        <li>An up-to-date list of Sub-processors is available on request from <a href="mailto:support@healtho.pro">support@healtho.pro</a>. We will give at least 15 days’ notice by email or in-app notice before adding or replacing a Sub-processor. You may object on reasonable data-protection grounds, and we will work with you in good faith to resolve the concern.</li>
       </ul>
 
       <h2>7. Data Location and Transfers</h2>

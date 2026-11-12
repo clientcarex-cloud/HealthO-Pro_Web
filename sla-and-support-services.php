@@ -18,7 +18,7 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
 <section class="section section--soft">
   <div class="container">
     <div class="prose">
-      <p>This Service Level Agreement ("SLA") describes the availability, maintenance and support that Healthocare Private Limited ("HealthO Pro", "we", "us" or "our") provides to customers of HealthO Pro HIMS, LIMS, CIMS, RIS/RIMS and related modules (the "Customer", "you" or "your"). It forms part of your subscription or service agreement (the "Principal Agreement").</p>
+      <p>This Service Level Agreement ("SLA") describes the availability, maintenance and support that Healthocare Private Limited ("HealthO Pro", "we", "us" or "our") provides to customers of HealthO Pro HIMS, LIMS, CIMS, RIS/RIMS and related modules (the "Customer", "you" or "your"). It forms part of your subscription or service agreement (the "Principal Agreement"), including our <a href="/subscription-terms">Platform Subscription Terms</a>. If this page and those Terms differ, the Terms prevail.</p>
 
       <h2>1. Objectives</h2>
       <ul>
@@ -49,9 +49,9 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
       </ul>
 
       <h2>3. Service Availability</h2>
-      <p>We target <strong>99.5% monthly uptime</strong> for the HealthO Pro cloud application, measured over each calendar month and excluding the events listed in Section 8.</p>
+      <p>We target <strong>99.5% monthly uptime</strong> for the HealthO Pro cloud application, measured over each calendar month and excluding the events listed in Section 8. If monthly availability falls below this target, you are eligible for service credits as set out in Section 5 of our <a href="/subscription-terms#s5">Platform Subscription Terms</a>.</p>
       <ul>
-        <li><strong>Planned maintenance</strong> is scheduled outside peak hours, normally between 11:00 PM and 6:00 AM IST, and announced at least 24 hours ahead through in-app notices, email or WhatsApp.</li>
+        <li><strong>Planned maintenance</strong> is scheduled outside peak hours, normally between 11:00 PM and 6:00 AM IST, and announced at least 48 hours ahead through in-app notices, email or WhatsApp.</li>
         <li><strong>Emergency maintenance</strong>, such as an urgent security fix, may be carried out with shorter notice. We will keep any disruption as short as possible.</li>
       </ul>
 
@@ -61,37 +61,37 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
           <tr><th>Channel</th><th>Availability</th><th>Best for</th></tr>
         </thead>
         <tbody>
-          <tr><td>Phone: <a href="tel:<?= $tel ?>"><?= PHONE_SUPPORT ?></a></td><td>Monday to Saturday, 9:30 AM to 7:00 PM IST</td><td>Urgent issues and anything blocking patient work</td></tr>
-          <tr><td>WhatsApp: <a href="<?= WHATSAPP_URL ?>" target="_blank" rel="noopener"><?= PHONE_SALES ?></a></td><td>Monday to Saturday, 9:30 AM to 7:00 PM IST</td><td>Quick questions, screenshots and short how-tos</td></tr>
+          <tr><td>Phone: <a href="tel:<?= $tel ?>"><?= PHONE_SUPPORT ?></a></td><td>Monday to Saturday, 9:00 AM to 7:00 PM IST</td><td>Urgent issues and anything blocking patient work</td></tr>
+          <tr><td>WhatsApp: <a href="<?= WHATSAPP_URL ?>" target="_blank" rel="noopener"><?= PHONE_SALES ?></a></td><td>Monday to Saturday, 9:00 AM to 7:00 PM IST</td><td>Quick questions, screenshots and short how-tos</td></tr>
           <tr><td>Email: <a href="mailto:support@healtho.pro">support@healtho.pro</a></td><td>Received 24/7, handled during support hours</td><td>Detailed requests, change requests and documents</td></tr>
           <tr><td>Support ticket (in the software)</td><td>Raised 24/7, handled during support hours</td><td>Tracked issues with a full history</td></tr>
         </tbody>
       </table>
-      <p>Severity 1 (Critical) incidents reported by phone are handled outside these hours and on Sundays and public holidays as well. Other requests received outside support hours are picked up on the next working day.</p>
+      <p>P1 (Critical) incidents reported by phone are handled 24×7, outside these hours and on Sundays and public holidays as well. Other requests received outside support hours are picked up on the next working day.</p>
 
-      <h2>5. Incident Severity Levels</h2>
+      <h2>5. Incident Priority Levels</h2>
       <table>
         <thead>
-          <tr><th>Severity</th><th>Definition</th><th>Examples</th></tr>
+          <tr><th>Priority</th><th>Definition</th><th>Examples</th></tr>
         </thead>
         <tbody>
-          <tr><td><strong>S1: Critical</strong></td><td>The software is down or unusable for all users, or there is a risk to data integrity, with no workaround.</td><td>Unable to sign in; billing or registration completely stopped; data loss suspected.</td></tr>
-          <tr><td><strong>S2: High</strong></td><td>A core function is badly affected for many users and no reasonable workaround exists.</td><td>Reports not printing or not being delivered; lab machine interface stopped; payments not saving.</td></tr>
-          <tr><td><strong>S3: Medium</strong></td><td>A function is partly affected, or a workaround exists.</td><td>A single report format wrong; an MIS report showing incorrect totals; slowness in one screen.</td></tr>
-          <tr><td><strong>S4: Low</strong></td><td>A minor issue, a cosmetic problem, a how-to question or a feature request.</td><td>Label alignment; a spelling error; a request for a new field or report.</td></tr>
+          <tr><td><strong>P1: Critical</strong></td><td>The software is down or unusable for all users, or there is a risk to data integrity, with no workaround.</td><td>Unable to sign in; billing or registration completely stopped; data loss suspected.</td></tr>
+          <tr><td><strong>P2: High</strong></td><td>A core function is badly affected for many users and no reasonable workaround exists.</td><td>Reports not printing or not being delivered; lab machine interface stopped; payments not saving.</td></tr>
+          <tr><td><strong>P3: Normal</strong></td><td>A function is partly affected, or a workaround exists.</td><td>A single report format wrong; an MIS report showing incorrect totals; slowness in one screen.</td></tr>
+          <tr><td><strong>P4: Low</strong></td><td>A minor issue, a cosmetic problem, a how-to question or a feature request.</td><td>Label alignment; a spelling error; a request for a new field or report.</td></tr>
         </tbody>
       </table>
 
       <h2>6. Response and Resolution Times</h2>
       <table>
         <thead>
-          <tr><th>Severity</th><th>First response</th><th>Target resolution or workaround</th></tr>
+          <tr><th>Priority</th><th>First response</th><th>Target resolution or workaround</th></tr>
         </thead>
         <tbody>
-          <tr><td>S1: Critical</td><td>Within 30 minutes</td><td>Within 4 hours</td></tr>
-          <tr><td>S2: High</td><td>Within 2 working hours</td><td>Within 1 working day</td></tr>
-          <tr><td>S3: Medium</td><td>Within 4 working hours</td><td>Within 3 working days</td></tr>
-          <tr><td>S4: Low</td><td>Within 1 working day</td><td>Scheduled in a future release, or as agreed</td></tr>
+          <tr><td>P1: Critical</td><td>Within 1 hour, 24×7</td><td>Within 4 hours</td></tr>
+          <tr><td>P2: High</td><td>Within 4 business hours</td><td>Within 1 working day</td></tr>
+          <tr><td>P3: Normal</td><td>Within 1 business day</td><td>Within 3 working days</td></tr>
+          <tr><td>P4: Low</td><td>Within 2 business days</td><td>Scheduled in a future release, or as agreed</td></tr>
         </tbody>
       </table>
       <p>Times run from when we receive a complete report (see Section 7). Resolution means the issue is fixed or a workaround is in place that lets your work continue; a permanent fix may follow in a later update. Issues that depend on third parties, such as a telecom operator, WhatsApp, a payment gateway or an equipment manufacturer, are escalated to them, and their timelines may be outside our control.</p>
@@ -132,7 +132,7 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
       <ul>
         <li>Meet the response and resolution targets in Section 6.</li>
         <li>Notify you in advance of planned maintenance and major changes.</li>
-        <li>Keep you informed during incidents and explain the cause of any S1 incident once it is resolved.</li>
+        <li>Keep you informed during incidents and explain the cause of any P1 incident once it is resolved.</li>
         <li>Protect your data as described in our <a href="/data-processing-agreement">Data Processing Agreement</a> and <a href="/privacy-policy">Privacy Policy</a>.</li>
       </ul>
 

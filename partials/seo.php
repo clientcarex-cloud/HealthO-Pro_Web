@@ -81,6 +81,8 @@ const PAGE_LABELS = [
     'terms-conditions' => 'Terms & Conditions',
     'data-processing-agreement' => 'Data Processing Agreement',
     'sla-and-support-services'  => 'SLA & Support Services',
+    'subscription-terms'        => 'Platform Subscription Terms',
+    'data-protection-addendum'  => 'Data Protection Addendum',
 ];
 
 function seo_organization(): array
