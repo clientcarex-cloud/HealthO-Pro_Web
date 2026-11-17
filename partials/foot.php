@@ -183,6 +183,7 @@ $demo_interest = $demo_interest ?? (PRODUCTS[$page ?? '']['short'] ?? '');
       <div>
         <h5>Legal</h5>
         <ul class="footer-links">
+          <li><a href="/saas-agreement">SaaS Agreement</a></li>
           <li><a href="/privacy-policy">Privacy Policy</a></li>
           <li><a href="/terms-conditions">Terms &amp; Conditions</a></li>
           <li><a href="/subscription-terms">Subscription Terms</a></li>

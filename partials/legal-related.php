@@ -10,8 +10,11 @@
  *   legal_framework_related($page) full "Related legal documents" section
  *
  * $page is the current page slug (the same $page every legal page sets).
- * Keep this list in sync with the footer "Legal" column in partials/foot.php.
+ * Keep this list in sync with the footer "Legal" column in partials/foot.php
+ * and with the documents seeded in the CCX Legal module (modules/ccx_legal).
  */
+
+require_once __DIR__ . '/legal-live.php';
 
 function legal_framework_docs(): array
 {
@@ -53,7 +56,7 @@ function legal_framework_notice(string $current): void
     }
     $last = array_pop($links);
     ?>
-      <div class="legal-note legal-note--blue legal-framework-note"><strong>Part of one legal framework.</strong> This document must be read together with our <?= implode(', ', $links) ?> and <?= $last ?>. By accessing our website, signing an Order Form or using any HealthO Pro product or service, you accept all of these documents as they apply to you. See <a href="#legal-related">Related legal documents</a> below.</div>
+      <div class="legal-note legal-note--blue legal-framework-note"><strong>Part of one legal framework.</strong> This document must be read together with our <?= implode(', ', $links) ?> and <?= $last ?>. Together they form the <a href="/saas-agreement">HealthO Pro SaaS Agreement</a>. By accessing our website, signing an Order Form or using any HealthO Pro product or service, you accept all of these documents as they apply to you. See <a href="#legal-related">Related legal documents</a> below.</div>
     <?php
 }
 
@@ -92,5 +95,9 @@ function legal_framework_related(string $current): void
         <?php endforeach; ?>
       </ol>
       <p>Each of these documents may be updated from time to time as described in it. The current version is always the one published on this website at the link above.</p>
+
+      <h3>The HealthO Pro SaaS Agreement and changes</h3>
+      <p>Together, these documents form the <a href="/saas-agreement">HealthO Pro SaaS Agreement</a>. Every customer accepts the agreement as a whole, at sign-up and again whenever we publish a new release. When we make a material change, we publish a new release that lists the version of every document, explain what changed, and ask your account administrator to accept it within the deadline shown. We keep a record of each acceptance (who accepted, when, and the exact versions accepted). Each page shows its own version history below.</p>
+      <?php legal_version_history($current); ?>
     <?php
 }

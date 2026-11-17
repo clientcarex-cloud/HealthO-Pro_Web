@@ -226,6 +226,7 @@ Local guides to HealthO Pro by city — one per product (HIMS, LIMS, CIMS, RIS) 
 ## Optional
 
 - [Message to the CEO](https://healtho.pro/message-to-ceo)
+- [HealthO Pro SaaS Agreement](https://healtho.pro/saas-agreement)
 - [Privacy policy](https://healtho.pro/privacy-policy)
 - [Terms and conditions](https://healtho.pro/terms-conditions)
 - [Data processing agreement](https://healtho.pro/data-processing-agreement)

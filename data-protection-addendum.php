@@ -13,7 +13,7 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
     <div class="breadcrumb"><a href="/">Home</a><span>›</span>Data Protection Addendum</div>
     <h1>Data Protection <span class="text-grad">Addendum</span></h1>
     <p>How HealthO Pro handles, secures and safeguards the patient and practice data that healthcare providers entrust to our platform.</p>
-    <p class="legal-meta">Issued by Healthocare Private Limited · Applies to HealthO Pro Subscribers · Last updated: November 2026</p>
+    <p class="legal-meta">Issued by Healthocare Private Limited · Applies to HealthO Pro Subscribers · <?php legal_meta_inline($page, 'November 2026'); ?></p>
   </div>
 </header>
 

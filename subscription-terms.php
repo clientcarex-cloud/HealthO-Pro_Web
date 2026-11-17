@@ -13,7 +13,7 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
     <div class="breadcrumb"><a href="/">Home</a><span>›</span>Platform Subscription Terms</div>
     <h1>Platform Subscription <span class="text-grad">Terms</span></h1>
     <p>The terms on which clinics, diagnostic labs, hospitals and other healthcare providers subscribe to and use the HealthO Pro cloud platform.</p>
-    <p class="legal-meta">Issued by Healthocare Private Limited · Product: HealthO Pro (SaaS) · Last updated: November 2026</p>
+    <p class="legal-meta">Issued by Healthocare Private Limited · Product: HealthO Pro (SaaS) · <?php legal_meta_inline($page, 'November 2026'); ?></p>
   </div>
 </header>
 

@@ -12,7 +12,7 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
   <div class="container">
     <div class="breadcrumb"><a href="/">Home</a><span>›</span>SLA &amp; Support Services</div>
     <h1>SLA &amp; <span class="text-grad">Support Services</span></h1>
-    <p>Last updated: November 2026</p>
+    <p><?php legal_meta_inline($page, 'November 2026'); ?></p>
   </div>
 </header>
 

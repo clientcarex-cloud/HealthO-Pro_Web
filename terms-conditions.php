@@ -11,7 +11,7 @@ require_once __DIR__ . '/partials/legal-related.php';
   <div class="container">
     <div class="breadcrumb"><a href="/">Home</a><span>›</span>Terms &amp; Conditions</div>
     <h1>Terms &amp; <span class="text-grad">Conditions</span></h1>
-    <p>Last updated: January 2026</p>
+    <p><?php legal_meta_inline($page, 'January 2026'); ?></p>
   </div>
 </header>
 

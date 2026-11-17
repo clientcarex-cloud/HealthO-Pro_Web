@@ -1647,3 +1647,16 @@ body.demo-open { overflow: hidden; }
     .legal-amp { text-align: center; }
 }
 @media (min-width: 681px) and (max-width: 900px) { .legal-cards--3 { grid-template-columns: repeat(2, 1fr); } }
+
+/* Live legal metadata: version history + SaaS Agreement (partials/legal-live.php) */
+.legal-history { margin-top: 30px; }
+.legal-history-wrap { overflow-x: auto; margin: 14px 0 18px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--e1); }
+.legal-history-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.legal-history-table th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-mute); font-weight: 700; padding: 12px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.legal-history-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.legal-history-table tr:last-child td { border-bottom: 0; }
+.legal-history-table tr.is-current td { background: var(--cyan-tint); }
+.legal-history-table small { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--cyan-dark); }
+.legal-agreement-table td small { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--text-soft); font-size: .85rem; }
+.legal-agreement-table td:not(:nth-child(2)) { white-space: nowrap; }
+.legal-history-note { font-size: .9rem; color: var(--text-soft); }
