@@ -3,6 +3,7 @@ $page        = 'data-processing-agreement';
 $title       = 'Data Processing Agreement | HealthO Pro';
 $description = 'HealthO Pro (Healthocare Private Limited) Data Processing Agreement: how we process patient and personal data on behalf of hospitals, laboratories, clinics and radiology centers under the DPDP Act, 2023.';
 require __DIR__ . '/partials/head.php';
+require_once __DIR__ . '/partials/legal-related.php';
 ?>
 <header class="page-hero">
   <div class="hero-glow glow-1"></div>
@@ -19,6 +20,8 @@ require __DIR__ . '/partials/head.php';
     <div class="prose">
       <p>This Data Processing Agreement ("DPA") forms part of the subscription, service or licence agreement (the "Principal Agreement") between Healthocare Private Limited ("HealthO Pro", "we", "us" or "our") and the customer that uses HealthO Pro HIMS, LIMS, CIMS, RIS/RIMS or any related module, app or add-on service (the "Customer", "you" or "your"). It sets out how we process personal data, including patient health data, on your behalf.</p>
       <p>This DPA summarises the commitments set out in full in our <a href="/data-protection-addendum">Data Protection Addendum</a>. If the two differ, the Data Protection Addendum prevails.</p>
+
+      <?php legal_framework_notice($page); ?>
 
       <h2>1. Roles of the Parties</h2>
       <ul>
@@ -117,6 +120,8 @@ require __DIR__ . '/partials/head.php';
           <tr><th>Duration</th><td>The term of the Principal Agreement, plus the return and deletion period in Section 10.</td></tr>
         </tbody>
       </table>
+
+      <?php legal_framework_related($page); ?>
 
       <h2>Contact</h2>
       <p>For questions about this DPA, a list of Sub-processors, or to report a privacy concern, contact us at <a href="mailto:support@healtho.pro">support@healtho.pro</a> or call <a href="tel:<?= str_replace(' ', '', PHONE_SUPPORT) ?>"><?= PHONE_SUPPORT ?></a>. See also our <a href="/privacy-policy">Privacy Policy</a> and <a href="/sla-and-support-services">SLA &amp; Support Services</a>.</p>

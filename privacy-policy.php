@@ -3,6 +3,7 @@ $page        = 'privacy-policy';
 $title       = 'Privacy Policy | HealthO Pro';
 $description = 'HealthO Pro (Healthocare Private Limited) Privacy Policy — how we collect, use and protect your information.';
 require __DIR__ . '/partials/head.php';
+require_once __DIR__ . '/partials/legal-related.php';
 ?>
 <header class="page-hero">
   <div class="hero-glow glow-1"></div>
@@ -18,6 +19,8 @@ require __DIR__ . '/partials/head.php';
   <div class="container">
     <div class="prose">
       <p>Healthocare Private Limited ("HealthO Pro", "we", "us" or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose and safeguard your information when you visit our website or use our products and services.</p>
+
+      <?php legal_framework_notice($page); ?>
 
       <h2>Information We Collect</h2>
       <p>We may collect the following information when you interact with us:</p>
@@ -46,6 +49,8 @@ require __DIR__ . '/partials/head.php';
 
       <h2>Cookies</h2>
       <p>Our website may use cookies and similar technologies to enhance your experience and analyze usage. You can control cookies through your browser settings.</p>
+
+      <?php legal_framework_related($page); ?>
 
       <h2>Contact Us</h2>
       <p>For any privacy-related questions, please contact us at <a href="mailto:support@healtho.pro">support@healtho.pro</a> or call <a href="tel:+919700710055">+91 97007 10055</a>.</p>

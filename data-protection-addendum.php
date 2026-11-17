@@ -3,6 +3,7 @@ $page        = 'data-protection-addendum';
 $title       = 'Data Protection Addendum | HealthO Pro';
 $description = 'HealthO Pro Data Protection Addendum: how Healthocare Private Limited handles, secures and safeguards the patient and practice data healthcare providers entrust to the platform, under the DPDP Act 2023, IT Act 2000 and GDPR.';
 require __DIR__ . '/partials/head.php';
+require_once __DIR__ . '/partials/legal-related.php';
 $tel = str_replace(' ', '', PHONE_SUPPORT);
 ?>
 <header class="page-hero">
@@ -28,6 +29,8 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
         <div class="legal-card"><span class="legal-ic">4</span><h4>Clean exit</h4><p>When your subscription ends you can export your data. We then delete it from live systems within 30 days, subject to legal retention needs.</p></div>
       </div>
 
+      <?php legal_framework_notice($page); ?>
+
       <nav class="legal-toc" aria-label="Contents">
         <h3>Contents</h3>
         <ol>
@@ -48,6 +51,7 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
           <li><a href="#sa"><span>A</span>Schedule A – Processing details</a></li>
           <li><a href="#sb"><span>B</span>Schedule B – Security controls</a></li>
           <li><a href="#sc"><span>C</span>Schedule C – Sub-processor register</a></li>
+          <li><a href="#legal-related"><span>§</span>Related legal documents</a></li>
         </ol>
       </nav>
 
@@ -194,6 +198,8 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
           <tr><td>Support desk tool</td><td>Customer support tickets</td><td>As notified on request</td></tr>
         </tbody>
       </table>
+
+      <?php legal_framework_related($page); ?>
 
       <h2>Contact</h2>
       <p>Questions about this Addendum or how we handle data: <a href="mailto:legal@healtho.pro">legal@healtho.pro</a> · <a href="mailto:support@healtho.pro">support@healtho.pro</a> · <a href="tel:<?= $tel ?>"><?= PHONE_SUPPORT ?></a>. See also our <a href="/subscription-terms">Platform Subscription Terms</a> and <a href="/privacy-policy">Privacy Policy</a>.</p>

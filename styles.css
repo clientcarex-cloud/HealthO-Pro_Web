@@ -1630,8 +1630,18 @@ body.demo-open { overflow: hidden; }
 .legal-caps { font-size: .9rem; text-transform: uppercase; letter-spacing: .01em; color: var(--text-soft); }
 .legal-annex { display: inline-block; margin-top: 40px; padding: 4px 12px; border-radius: var(--r-pill); background: var(--navy); color: #fff; font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; scroll-margin-top: 96px; }
 .legal-doc h2.legal-annex-h { margin-top: 8px; }
+/* Related legal documents (partials/legal-related.php) */
+.legal-related { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0 26px; }
+.prose a.legal-related-item, .legal-related-item { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 16px 18px; box-shadow: var(--e1); color: inherit; text-decoration: none; transition: border-color .15s, transform .15s; }
+.prose a.legal-related-item:hover { border-color: var(--cyan); transform: translateY(-1px); }
+.legal-related-item h4 { color: var(--ink); font-size: 1rem; margin: 0 0 6px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.legal-related-item h4 span { color: var(--cyan-dark); }
+.legal-related-item p { font-size: .9rem; margin: 0; color: var(--text-soft); }
+.legal-related-item.is-current { background: var(--cyan-tint); border-color: var(--cyan); box-shadow: none; }
+.legal-related-item.is-current small { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--cyan-dark); }
+.prose h2.legal-related-h { display: flex; align-items: baseline; gap: 12px; scroll-margin-top: 96px; }
 @media (max-width: 680px) {
-    .legal-cards, .legal-cards--3 { grid-template-columns: 1fr; }
+    .legal-cards, .legal-cards--3, .legal-related { grid-template-columns: 1fr; }
     .prose .legal-toc ol { columns: 1; }
     .legal-parties { grid-template-columns: 1fr; }
     .legal-amp { text-align: center; }

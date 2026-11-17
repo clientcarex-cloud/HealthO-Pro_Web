@@ -3,6 +3,7 @@ $page        = 'sla-and-support-services';
 $title       = 'SLA & Support Services | HealthO Pro';
 $description = 'HealthO Pro Service Level Agreement: uptime commitment, support hours and channels, incident severity levels, response and resolution times, and maintenance for HIMS, LIMS, CIMS and RIS customers.';
 require __DIR__ . '/partials/head.php';
+require_once __DIR__ . '/partials/legal-related.php';
 $tel = str_replace(' ', '', PHONE_SUPPORT);
 ?>
 <header class="page-hero">
@@ -19,6 +20,8 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
   <div class="container">
     <div class="prose">
       <p>This Service Level Agreement ("SLA") describes the availability, maintenance and support that Healthocare Private Limited ("HealthO Pro", "we", "us" or "our") provides to customers of HealthO Pro HIMS, LIMS, CIMS, RIS/RIMS and related modules (the "Customer", "you" or "your"). It forms part of your subscription or service agreement (the "Principal Agreement"), including our <a href="/subscription-terms">Platform Subscription Terms</a>. If this page and those Terms differ, the Terms prevail.</p>
+
+      <?php legal_framework_notice($page); ?>
 
       <h2>1. Objectives</h2>
       <ul>
@@ -141,6 +144,8 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
 
       <h2>12. Changes to this SLA</h2>
       <p>We may update this SLA to reflect improvements to our services. Changes will be posted on this page, and any change that reduces the service levels in your current agreement will not apply until your next renewal.</p>
+
+      <?php legal_framework_related($page); ?>
 
       <h2>Contact</h2>
       <p>Support: <a href="tel:<?= $tel ?>"><?= PHONE_SUPPORT ?></a> · <a href="mailto:support@healtho.pro">support@healtho.pro</a></p>

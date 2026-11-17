@@ -3,6 +3,7 @@ $page        = 'terms-conditions';
 $title       = 'Terms & Conditions | HealthO Pro';
 $description = 'HealthO Pro (Healthocare Private Limited) Terms & Conditions governing the use of our website, products and services.';
 require __DIR__ . '/partials/head.php';
+require_once __DIR__ . '/partials/legal-related.php';
 ?>
 <header class="page-hero">
   <div class="hero-glow glow-1"></div>
@@ -18,6 +19,8 @@ require __DIR__ . '/partials/head.php';
   <div class="container">
     <div class="prose">
       <p>These Terms &amp; Conditions ("Terms") govern your access to and use of the website, products and services provided by Healthocare Private Limited ("HealthO Pro", "we", "us" or "our"). By accessing our website or using our services, you agree to be bound by these Terms.</p>
+
+      <?php legal_framework_notice($page); ?>
 
       <h2>Use of Our Services</h2>
       <ul>
@@ -40,6 +43,8 @@ require __DIR__ . '/partials/head.php';
 
       <h2>Governing Law</h2>
       <p>These Terms are governed by and construed in accordance with the laws of India, without regard to conflict-of-law principles.</p>
+
+      <?php legal_framework_related($page); ?>
 
       <h2>Contact Us</h2>
       <p>For any questions regarding these Terms, please contact us at <a href="mailto:support@healtho.pro">support@healtho.pro</a> or call <a href="tel:+919700710055">+91 97007 10055</a>.</p>

@@ -3,6 +3,7 @@ $page        = 'subscription-terms';
 $title       = 'Platform Subscription Terms | HealthO Pro';
 $description = 'HealthO Pro Platform Subscription Terms: the terms on which clinics, diagnostic labs, hospitals and other healthcare providers subscribe to and use the HealthO Pro cloud platform.';
 require __DIR__ . '/partials/head.php';
+require_once __DIR__ . '/partials/legal-related.php';
 $tel = str_replace(' ', '', PHONE_SUPPORT);
 ?>
 <header class="page-hero">
@@ -28,6 +29,8 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
         <div class="legal-card"><span class="legal-ic">↻</span><h4>Renewal &amp; exit</h4><p>Plans renew automatically unless either side gives 30 days’ notice. You can export your data before you leave.</p></div>
       </div>
 
+      <?php legal_framework_notice($page); ?>
+
       <nav class="legal-toc" aria-label="Contents">
         <h3>Contents</h3>
         <ol>
@@ -49,6 +52,7 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
           <li><a href="#s16"><span>16</span>Term, renewal and termination</a></li>
           <li><a href="#s17"><span>17</span>Law and disputes</a></li>
           <li><a href="#s18"><span>18</span>General</a></li>
+          <li><a href="#legal-related"><span>§</span>Related legal documents</a></li>
         </ol>
       </nav>
 
@@ -195,6 +199,8 @@ $tel = str_replace(' ', '', PHONE_SUPPORT);
         <dt>Severability &amp; waiver</dt><dd>If any part is found unenforceable, the rest stays in effect. Not enforcing a right does not waive it.</dd>
         <dt>Anti-bribery</dt><dd>Each party will comply with applicable anti-corruption laws and will not offer or accept improper payments in connection with this Agreement.</dd>
       </dl>
+
+      <?php legal_framework_related($page); ?>
 
       <h2 id="contact"><span class="legal-n">✉</span>Contact us</h2>
       <table>
