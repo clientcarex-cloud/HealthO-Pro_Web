@@ -182,3 +182,62 @@ function legal_version_history($slug)
       </div>
     <?php
 }
+
+/* ───────────── Software Update & Maintenance notices (healtho.pro/maintenance) ───────────── */
+
+/** Public notices feed, cached 60 s (maintenance status changes quickly). Null when unavailable. */
+function legal_live_notices()
+{
+    static $data = false;
+    if ($data !== false) {
+        return $data;
+    }
+
+    $api   = rtrim(legal_live_env('CCX_LEGAL_API_URL', 'https://healtho.pro/ccx_legal/ccx_legal_api'), '/');
+    $cache = rtrim(sys_get_temp_dir(), '/') . '/healtho_notices_' . md5($api) . '.json';
+    $ttl   = 60;
+
+    $cached = is_readable($cache) ? json_decode((string) @file_get_contents($cache), true) : null;
+    if (is_array($cached) && (time() - (int) @filemtime($cache)) < $ttl) {
+        return $data = (!empty($cached['ok']) ? $cached : null);
+    }
+
+    $fresh = null;
+    if (function_exists('curl_init')) {
+        $ch = curl_init($api . '/notices');
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 4, CURLOPT_CONNECTTIMEOUT => 3, CURLOPT_HTTPHEADER => ['Accept: application/json']]);
+        $body = curl_exec($ch);
+        $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if (is_string($body) && $code === 200) {
+            $fresh = json_decode($body, true);
+        }
+    }
+
+    if (is_array($fresh) && !empty($fresh['ok'])) {
+        @file_put_contents($cache, json_encode($fresh), LOCK_EX);
+        return $data = $fresh;
+    }
+    if (is_array($cached) && !empty($cached['ok'])) {
+        @touch($cache, time() - $ttl + 30);
+        return $data = $cached;
+    }
+    @file_put_contents($cache, '{"ok":false}', LOCK_EX);
+
+    return $data = null;
+}
+
+/** ISO-8601 (with +05:30) → "Thu 20 Nov 2026, 11:00 PM". */
+function legal_live_ist($iso, $format = 'D j M Y, g:i A')
+{
+    if (!$iso) {
+        return '';
+    }
+    try {
+        $d = new DateTime($iso);
+        $d->setTimezone(new DateTimeZone('Asia/Kolkata'));
+        return $d->format($format);
+    } catch (Exception $e) {
+        return '';
+    }
+}

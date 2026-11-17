@@ -190,6 +190,7 @@ $demo_interest = $demo_interest ?? (PRODUCTS[$page ?? '']['short'] ?? '');
           <li><a href="/data-protection-addendum">Data Protection Addendum</a></li>
           <li><a href="/data-processing-agreement">Data Processing Agreement</a></li>
           <li><a href="/sla-and-support-services">SLA &amp; Support Services</a></li>
+          <li><a href="/maintenance">Updates &amp; Maintenance</a></li>
         </ul>
       </div>
       <div>
