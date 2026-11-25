@@ -203,10 +203,13 @@ require __DIR__ . '/partials/head.php';
     </div>
     <div class="tech-groups">
     <div class="tech-group reveal d1">
-      <h3 class="tech-label">Cloud &amp; Security</h3>
+      <h3 class="tech-label">Cloud &amp; Infrastructure</h3>
       <div class="tech-grid">
         <div class="tech-item"><img src="assets/images/tech/azure.svg" alt="Microsoft Azure logo" width="56" height="56" loading="lazy" decoding="async"><span>Microsoft Azure</span></div>
         <div class="tech-item"><img src="assets/images/tech/cloudflare.svg" alt="Cloudflare logo" width="56" height="56" loading="lazy" decoding="async"><span>Cloudflare</span></div>
+        <div class="tech-item"><img src="assets/images/tech/googlecloud.svg" alt="Google Cloud logo" width="56" height="56" loading="lazy" decoding="async"><span>Google Cloud</span></div>
+        <div class="tech-item"><img src="assets/images/tech/aws.svg" alt="Amazon Web Services logo" width="56" height="56" loading="lazy" decoding="async"><span>AWS</span></div>
+        <div class="tech-item"><img src="assets/images/tech/iot.svg" alt="IoT icon" width="56" height="56" loading="lazy" decoding="async"><span>IoT</span></div>
       </div>
     </div>
     <div class="tech-group reveal d1">
@@ -214,6 +217,8 @@ require __DIR__ . '/partials/head.php';
       <div class="tech-grid">
         <div class="tech-item"><img src="assets/images/tech/nabl.png" alt="NABL logo" width="41" height="56" loading="lazy" decoding="async"><span>NABL</span></div>
         <div class="tech-item"><img src="assets/images/tech/nabh.png" alt="NABH logo" width="56" height="56" loading="lazy" decoding="async"><span>NABH</span></div>
+        <div class="tech-item"><img src="assets/images/tech/iso27001.svg" alt="ISO/IEC 27001:2022 badge" width="56" height="56" loading="lazy" decoding="async"><span>ISO 27001:2022</span></div>
+        <div class="tech-item"><img src="assets/images/tech/gdpr.svg" alt="GDPR compliant badge" width="56" height="56" loading="lazy" decoding="async"><span>GDPR Compliant</span></div>
       </div>
     </div>
     <div class="tech-group reveal d2">
@@ -222,6 +227,10 @@ require __DIR__ . '/partials/head.php';
         <div class="tech-item"><img src="assets/images/tech/python.svg" alt="Python logo" width="56" height="56" loading="lazy" decoding="async"><span>Python</span></div>
         <div class="tech-item"><img src="assets/images/tech/php.svg" alt="PHP logo" width="56" height="56" loading="lazy" decoding="async"><span>PHP</span></div>
         <div class="tech-item"><img src="assets/images/tech/dotnetcore.svg" alt=".NET logo" width="56" height="56" loading="lazy" decoding="async"><span>.NET</span></div>
+        <div class="tech-item"><img src="assets/images/tech/nodejs.svg" alt="Node.js logo" width="56" height="56" loading="lazy" decoding="async"><span>Node.js</span></div>
+        <div class="tech-item"><img src="assets/images/tech/flutter.svg" alt="Flutter logo" width="56" height="56" loading="lazy" decoding="async"><span>Flutter</span></div>
+        <div class="tech-item"><img src="assets/images/tech/angularjs.svg" alt="AngularJS logo" width="56" height="56" loading="lazy" decoding="async"><span>AngularJS</span></div>
+        <div class="tech-item"><img src="assets/images/tech/react.svg" alt="React logo" width="56" height="56" loading="lazy" decoding="async"><span>React</span></div>
       </div>
     </div>
     <div class="tech-group reveal d2">
