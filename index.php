@@ -193,6 +193,49 @@ require __DIR__ . '/partials/head.php';
   </div>
 </section>
 
+<!-- ===== TECHNOLOGY & COMPLIANCE ===== -->
+<section class="section section--soft" id="technology">
+  <div class="container">
+    <div class="sec-head reveal" style="margin-bottom:40px;">
+      <span class="eyebrow">Technology &amp; Compliance</span>
+      <h2 class="h-sec">Built on <span class="text-grad">trusted technology</span></h2>
+      <p class="lead">Enterprise-grade cloud, proven languages and databases, and workflows aligned with India's healthcare quality standards.</p>
+    </div>
+    <div class="tech-groups">
+    <div class="tech-group reveal d1">
+      <h3 class="tech-label">Cloud &amp; Security</h3>
+      <div class="tech-grid">
+        <div class="tech-item"><img src="assets/images/tech/azure.svg" alt="Microsoft Azure logo" width="56" height="56" loading="lazy" decoding="async"><span>Microsoft Azure</span></div>
+        <div class="tech-item"><img src="assets/images/tech/cloudflare.svg" alt="Cloudflare logo" width="56" height="56" loading="lazy" decoding="async"><span>Cloudflare</span></div>
+      </div>
+    </div>
+    <div class="tech-group reveal d1">
+      <h3 class="tech-label">Compliance Ready</h3>
+      <div class="tech-grid">
+        <div class="tech-item"><img src="assets/images/tech/nabl.png" alt="NABL logo" width="41" height="56" loading="lazy" decoding="async"><span>NABL</span></div>
+        <div class="tech-item"><img src="assets/images/tech/nabh.png" alt="NABH logo" width="56" height="56" loading="lazy" decoding="async"><span>NABH</span></div>
+      </div>
+    </div>
+    <div class="tech-group reveal d2">
+      <h3 class="tech-label">Languages &amp; Frameworks</h3>
+      <div class="tech-grid">
+        <div class="tech-item"><img src="assets/images/tech/python.svg" alt="Python logo" width="56" height="56" loading="lazy" decoding="async"><span>Python</span></div>
+        <div class="tech-item"><img src="assets/images/tech/php.svg" alt="PHP logo" width="56" height="56" loading="lazy" decoding="async"><span>PHP</span></div>
+        <div class="tech-item"><img src="assets/images/tech/dotnetcore.svg" alt=".NET logo" width="56" height="56" loading="lazy" decoding="async"><span>.NET</span></div>
+      </div>
+    </div>
+    <div class="tech-group reveal d2">
+      <h3 class="tech-label">Databases</h3>
+      <div class="tech-grid">
+        <div class="tech-item"><img src="assets/images/tech/mysql.svg" alt="MySQL logo" width="56" height="56" loading="lazy" decoding="async"><span>MySQL</span></div>
+        <div class="tech-item"><img src="assets/images/tech/postgresql.svg" alt="PostgreSQL logo" width="56" height="56" loading="lazy" decoding="async"><span>PostgreSQL</span></div>
+        <div class="tech-item"><img src="assets/images/tech/microsoftsqlserver.svg" alt="Microsoft SQL Server logo" width="56" height="56" loading="lazy" decoding="async"><span>MS SQL Server</span></div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== TRUSTED BY (CLIENT LOGOS) ===== -->
 <?php [$rowA, $rowB] = client_featured_rows(); ?>
 <section class="section" style="overflow:hidden;">
