@@ -61,13 +61,14 @@ function interest_options(string $last = 'Multiple / Not sure'): array
  *                  message ['label', 'placeholder', 'required']
  *                  submit  button label
  *                  note    raw HTML footnote
+ *                  attrs   extra attributes for the <form> tag, ['name' => 'value']
  */
 function lead_form(array $o = []): void
 {
     $msg = ($o['message'] ?? []) + ['label' => 'Message', 'placeholder' => 'Tell us about your requirements…', 'required' => false];
     $note = $o['note'] ?? 'By submitting, you agree to our <a href="/privacy-policy" class="link-cyan">Privacy Policy</a>.';
     ?>
-    <form data-ajax novalidate>
+    <form data-ajax novalidate<?php foreach (($o['attrs'] ?? []) as $an => $av): ?> <?= h($an) ?>="<?= h($av) ?>"<?php endforeach; ?>>
       <div class="form-status"></div>
 <?php foreach (($o['hidden'] ?? []) as $name => $value): ?>
       <input type="hidden" name="<?= h($name) ?>" value="<?= h($value) ?>">

@@ -467,6 +467,8 @@ require __DIR__ . '/partials/head.php';
         <p style="color:var(--text-mute);font-size:.92rem;margin-bottom:24px;">Fields marked * are required.</p>
         <?php lead_form([
           'hidden'   => ['orgType' => 'Job Application', 'formType' => 'General Career Application'],
+          // Also filed into the CRM's Careers → Applications (General Application posting).
+          'attrs'    => ['data-careers-endpoint' => CAREERS_EMBED_BASE . '/apply_general'],
           'aside'    => form_select('interest', 'Area of interest', [
               'Engineering', 'Product & Design', 'Sales & Business Development',
               'Customer Success / Implementation', 'Support', 'Marketing',

@@ -1918,11 +1918,32 @@
                 var data = new FormData(form);
                 var src = leadSource();
                 Object.keys(src).forEach(function (k) { if (!data.has(k)) data.append(k, src[k]); });
-                fetch('api/contact.php', { method: 'POST', body: data })
+                // Careers general application: also file it into the CRM's
+                // Careers → Applications (careers_embed/apply_general), straight
+                // from the browser so the CV and the candidate's IP reach it.
+                // The e-mail via contact.php still goes out; either one landing
+                // counts as received.
+                var careersEndpoint = form.getAttribute('data-careers-endpoint');
+                var crm = careersEndpoint
+                    ? fetch(careersEndpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
+                        .then(function (r) { return r.json(); })
+                        .catch(function () { return null; })
+                    : Promise.resolve(null);
+                var mail = fetch('api/contact.php', { method: 'POST', body: data })
                     .then(function (r) {
                         return r.json().catch(function () {
                             throw new Error('Invalid response from server.');
                         });
+                    });
+                Promise.all([mail.catch(function (err) { return { status: 'error', _err: err }; }), crm])
+                    .then(function (both) {
+                        var res = both[0], c = both[1];
+                        if (c && (c.ok || c.duplicate)) {
+                            if (res.status !== 'success') res = { status: 'success', message: c.message || c.error };
+                        } else if (res._err) {
+                            throw res._err;
+                        }
+                        return res;
                     })
                     .then(function (res) {
                         if (res.status === 'success') {
